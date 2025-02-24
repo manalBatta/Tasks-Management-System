@@ -1,0 +1,60 @@
+.dashboard {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: 0.5fr 5fr;
+  grid-template-areas: "header header" "sidebar content";
+  background-color: @background-color;
+  color: @text-color;
+
+  .header {
+    grid-area: header;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 10px;
+    gap: 2%;
+    font-size: 1rem;
+    border-bottom: 2px #9b9b9bb2 solid;
+    .log-out-btn {
+      background-color: red;
+      color: @text-color;
+      border-radius: 10px;
+      padding: 0 2px;
+      border: none;
+      width: 92px;
+      @media (max-width: 400px) {
+        width: 30%;
+      }
+
+      height: 45px;
+      font-size: 1.2rem;
+    }
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    background-color: @dashboard-bg-color;
+    border-right: 1px #9b9b9bb2 solid;
+    .sidebar-list {
+      list-style: none;
+      padding: 0 4%;
+      .sidebar-item {
+        margin-bottom: 15px;
+        padding: 13px 0;
+        padding-left: 5%;
+        font-size: 1.2rem;
+        border-radius: 5px;
+        background-color: @dashboard-option-color;
+      }
+      .selected {
+        background-color: @blue-color;
+      }
+    }
+  }
+
+  .content {
+    grid-area: content;
+  }
+}
