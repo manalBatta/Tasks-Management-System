@@ -21,6 +21,30 @@ const updateTime = () => {
   }
 };
 
+const loadChart = () => {
+  const ctx = document.getElementById("myChart");
+  console.log(ctx);
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Projects", "Students", "Tasks", "Finished Projects"],
+      datasets: [
+        {
+          label: "# of Votes",
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+};
 // Update time every second
 setInterval(updateTime, 1000);
 updateTime();

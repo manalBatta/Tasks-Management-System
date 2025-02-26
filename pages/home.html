@@ -12,5 +12,33 @@
     <div class="item">Number of Tasks <br />20</div>
     <div class="item">Number of Finished Projects <br />2</div>
   </section>
-  <section class="chart"></section>
+  <div class="chart">
+    <canvas id="myChart"></canvas>
+
+    <!-- <script>
+      console.log("chart is loaded now");
+      const ctx = document.getElementById("myChart");
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+          datasets: [
+            {
+              label: "# of Votes",
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    </script> -->
+  </div>
 </main>

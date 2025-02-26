@@ -16,9 +16,11 @@ const dashboardRout = async (page) => {
     const response = await fetch(`../pages/${page}.html`);
     const html = await response.text();
     index.innerHTML = html;
+    loadChart();
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
 };
+
 
 mainRoute(true);
