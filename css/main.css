@@ -25,16 +25,16 @@
 }
 .main-container .chart-description {
   display: flex;
-  padding: 0 1%;
+  padding: 0 2.5%;
   color: #ffffff;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   min-height: 20%;
 }
 .main-container .chart-description .item {
   background-color: #393939;
   border-radius: 10px;
-  width: 20%;
+  width: 18%;
   min-width: 133px;
   max-width: 300px;
   height: 100%;
@@ -42,6 +42,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   text-align: center;
   -webkit-box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.75);
@@ -49,7 +50,11 @@
 }
 .main-container .chart {
   width: 100%;
-  height: 60%;
+  min-height: 66%;
+}
+.main-container .chart canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 body {
   padding: 0;
