@@ -68,6 +68,109 @@ body {
   width: 100%;
   background-color: #f10f80;
 }
+.chat-contianer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.chat-contianer .contacts-container {
+  width: 25%;
+  padding: 0 1%;
+}
+.chat-contianer .contacts-container h1 {
+  margin-top: 0;
+}
+.chat-contianer .contacts-container #contacts-list {
+  list-style: none;
+  padding: 0 4%;
+  overflow: scroll;
+  scrollbar-width: none;
+  max-height: 67vh;
+  /*  .selected {
+        background-color: @blue-color;
+      } */
+}
+.chat-contianer .contacts-container #contacts-list .contact-item {
+  margin-bottom: 5px;
+  padding: 13px 0;
+  padding-left: 5%;
+  font-size: 1rem;
+  border-radius: 5px;
+  background-color: #444444;
+  cursor: pointer;
+}
+.chat-contianer .chat-area {
+  background-color: #2a2a2a;
+  border: 1px #9b9b9b67 solid;
+  width: 75%;
+  height: 100%;
+  border-radius: 5px;
+  position: relative;
+  padding: 2%;
+}
+.chat-contianer .chat-area h2 {
+  font-size: 1rem;
+  font-weight: 200;
+}
+.chat-contianer .chat-area #messages-list {
+  list-style: none;
+  padding: 0 4%;
+  overflow: scroll;
+  scrollbar-width: none;
+  position: absolute;
+  bottom: 90px;
+  width: 100%;
+  left: 1%;
+  max-height: 55vh;
+}
+.chat-contianer .chat-area #messages-list .message {
+  width: 100%;
+  margin: 7px auto;
+  height: 50px;
+}
+.chat-contianer .chat-area #messages-list .message .message-content {
+  height: 100%;
+  width: fit-content;
+  background-color: #4caf50;
+  padding: 13px 5%;
+  font-size: 1rem;
+  border-radius: 5px;
+  margin: auto 1px;
+}
+.chat-contianer .chat-area #messages-list .message .myMessage {
+  float: right;
+  padding: 13px 2%;
+  background-color: #027bff;
+}
+.chat-contianer .chat-area .message-input-contianer {
+  position: absolute;
+  bottom: 0px;
+  padding: 1%;
+  width: 100%;
+  left: 1%;
+}
+.chat-contianer .chat-area .message-input-contianer #message-input {
+  padding: 1.5% 1%;
+  background-color: #444444;
+  color: white;
+  border: 1px #9b9b9bb2 solid;
+  border-radius: 5px;
+  width: 90%;
+  font-size: 0.9rem;
+}
+.chat-contianer .chat-area .message-input-contianer .message-input::placeholder {
+  color: #9b9b9bb2;
+}
+.chat-contianer .chat-area .message-input-contianer .send-btn {
+  margin-left: 10px;
+  padding: 1.4%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
 .dashboard {
   height: 100%;
   width: 100%;
@@ -119,6 +222,7 @@ body {
   font-size: 1.2rem;
   border-radius: 5px;
   background-color: #444444;
+  cursor: pointer;
 }
 .dashboard .sidebar .sidebar-list .selected {
   background-color: #027bff;
