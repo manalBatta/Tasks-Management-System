@@ -1,0 +1,111 @@
+.chat-contianer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  .contacts-container {
+    width: 25%;
+    padding: 0 1%;
+
+    h1 {
+      margin-top: 0;
+    }
+    #contacts-list {
+      list-style: none;
+      padding: 0 4%;
+      overflow: scroll;
+      scrollbar-width: none;
+      max-height: 67vh;
+
+      .contact-item {
+        margin-bottom: 5px;
+        padding: 13px 0;
+        padding-left: 5%;
+        font-size: 1rem;
+        border-radius: 5px;
+        background-color: @dashboard-option-color;
+        cursor: pointer;
+      }
+     /*  .selected {
+        background-color: @blue-color;
+      } */
+    }
+  }
+
+  .chat-area {
+    background-color: @dashboard-bg-color;
+    border: 1px #9b9b9b67 solid;
+    width: 75%;
+    height: 100%;
+    border-radius: 5px;
+    position: relative;
+    padding: 2%;
+    h2 {
+      font-size: 1rem;
+      font-weight: 200;
+    }
+
+    #messages-list {
+      list-style: none;
+      padding: 0 4%;
+      overflow: scroll;
+      scrollbar-width: none;
+      position: absolute;
+      bottom: 90px;
+      width: 100%;
+      left: 1%;
+
+      max-height: 55vh;
+      .message {
+        width: 100%;
+        margin: 7px auto;
+        height: 50px;
+        .message-content {
+          height: 100%;
+          width: fit-content;
+          background-color: @primary-color;
+          padding: 13px 5%;
+          font-size: 1rem;
+          border-radius: 5px;
+          margin: auto 1px;
+        }
+
+        .myMessage {
+          float: right;
+          padding: 13px 2%;
+          background-color: @blue-color;
+        }
+      }
+    }
+
+    .message-input-contianer {
+      position: absolute;
+      bottom: 0px;
+      padding: 1%;
+      width: 100%;
+      left: 1%;
+
+      #message-input {
+        padding: 1.5% 1%;
+        background-color: @dashboard-option-color;
+        color: white;
+        border: 1px #9b9b9bb2 solid;
+        border-radius: 5px;
+        width: 90%;
+        font-size: 0.9rem;
+      }
+      .message-input::placeholder {
+        color: #9b9b9bb2;
+      }
+      .send-btn {
+        margin-left: 10px;
+        padding: 1.4%;
+        background-color: @primary-color;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+    }
+  }
+}

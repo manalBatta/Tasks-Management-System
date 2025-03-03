@@ -1,0 +1,115 @@
+@primary-color: #1e1e1e;
+@secondary-color: #2a2a2a;
+@text-color: #ffffff;
+@button-color: #007bff;
+@button-hover: #0056b3;
+@border-color: #444;
+@pending: orange;
+@completed: lightgreen;
+@in-progress: #00ff00;
+@header-bg: #121212;
+@table-bg: #1e1e1e;
+@row-hover: #333;
+@rounded: 10px;
+
+body {
+    background-color: @primary-color;
+    color: @text-color;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 85%;
+    margin: 40px auto;
+    background-color: @secondary-color;
+    padding: 20px;
+    border-radius: @rounded;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn.create-task {
+    background-color: @button-color;
+    color: @text-color;
+    border: none;
+    padding: 12px 20px;
+    border-radius: @rounded;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s;
+    margin-right: 10px; 
+
+    &:hover {
+        background-color: @button-hover;
+    }
+}
+
+.sort {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+
+    label {
+        margin-right: 8px;
+    }
+
+    select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid @border-color;
+        background: @header-bg;
+        color: @text-color;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: @table-bg;
+    border-radius: @rounded;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+
+    thead {
+        background-color: @header-bg;
+        color: @text-color;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid @border-color;
+    }
+
+    th {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    tbody tr {
+        &:hover {
+            background-color: @row-hover;
+        }
+    }
+
+    .status {
+        font-weight: bold;
+        text-transform: capitalize;
+        &.pending { color: @pending; }
+        &.completed { color: @completed; }
+        &.in-progress { color: @in-progress; }
+    }
+}

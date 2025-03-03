@@ -5,12 +5,14 @@
   </header>
   <aside class="sidebar">
     <ul class="sidebar-list">
-      <li class="sidebar-item selected" onclick="dashboardRout('home')">
+      <li class="sidebar-item selected" onclick="dashboardRout('home',event)">
         Home
       </li>
-      <li class="sidebar-item" onclick="dashboardRout('projects')">Projects</li>
-      <li class="sidebar-item" onclick="dashboardRout('tasks')">Tasks</li>
-      <li class="sidebar-item" onclick="dashboardRout('chat')">Chat</li>
+      <li class="sidebar-item" onclick="dashboardRout('projects',event)">
+        Projects
+      </li>
+      <li class="sidebar-item" onclick="dashboardRout('tasks',event)">Tasks</li>
+      <li class="sidebar-item" onclick="dashboardRout('chat',event)">Chat</li>
     </ul>
   </aside>
   <section id="content"></section>
