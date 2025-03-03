@@ -1,12 +1,11 @@
 let interval; //a global variable to store the interval for the home page real time clock
 
-const mainRoute = async (isLogged) => {
+const mainRoute = async (page) => {
   const index = document.getElementById("app");
   try {
-    const response = await fetch(isLogged ? "dashboard.html" : "signin.html");
+    const response = await fetch(`${page}.html`);
     const html = await response.text();
     index.innerHTML = html;
-    dashboardRout("chat"); //By default display the home page
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
@@ -33,7 +32,4 @@ const homeIntialize = () => {
   return setInterval(updateTime, 1000);
 };
 
-mainRoute(true);
-/* document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM is fully loaded and parsed.");
-}); */
+mainRoute("pages/signin");

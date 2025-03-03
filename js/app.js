@@ -101,6 +101,8 @@ const loadContacts = () => {
     const li = `<li class="contact-item" onclick="loadChat(${contact.id})">${contact.username}</li>`;
     list.innerHTML += li;
   });
+
+  chatContact = contacts[0];
 };
 
 const loadChat = (contactId) => {
@@ -159,6 +161,19 @@ sendMessage = () => {
     );
 
     loadChat(chatContact.id);
+  }
+};
+
+const isStudent = (event) => {
+  const universityIdContainer = document.getElementById(
+    "university-id-container"
+  );
+
+  const studentCheckbox = event.target;
+  if (studentCheckbox.checked) {
+    universityIdContainer.style.display = "block";
+  } else {
+    universityIdContainer.style.display = "none";
   }
 };
 
