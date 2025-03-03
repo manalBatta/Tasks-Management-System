@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Example</title>
+   </head>
+   <body>
+    <h2> </h2>
+<form id="myForm">
+<label for="title">Project Title</label>
+<input name="title" type="text" required>
+<label for="description">Project Description</label>
+<input name="title" type="text" required>
+<label for="studentList">Students List</label>
+<!---
+<ul name="studentList">
+  <li>  <label for="student1">sStudent1</label>
+     <input name="student1" type="checkbox" required> </li>
+  <li>  <label for="student2">sStudent2</label>
+      <input name="student2" type="checkbox" required> </li>
+   <li>  <label for="student3">sStudent3</label>
+       <input name="student3" type="checkbox" required> </li>
+  
+
+</ul>  -->
+<ul name="studentList">
+<li  class="students" id="student1" data-value="student1" > Student1    </li>
+<li  class="students" id="student2" data-value="student2" > Student2    </li>
+<li  class="students" id="student3" data-value="student3" > Student3    </li>
+<li  class="students" id="student4" data-value="student4" > Student4    </li>
+<li  class="students" id="student5" data-value="student5" > Student5    </li>
+
+</ul>
+<label for="category">Project Category</label>
+ <select name="category" id="category">
+    <option value="MD"> Mobile Development</option>
+    <option value="WD">Web Development</option>
+    <option value="DS">Data Science</option>
+    <opyion value="ML">Machine Learning</opyion>
+    <option value="others">Others</option>
+ </select>
+ <label for="startDate">Starting Date</label>
+<input name="startDate" id="startDate" type="date">
+<label for="endDate">Ending Date</label>
+<input name="endDate" id="endDate" type="date">
+
+<select name="status" class="list">
+    <option value="InProgress"> In Progress </option>
+    <option value=" Completed">Completed</option>
+    <option value="Pending">Pending</option>
+    <option value="OnHold">On Hold</option>
+    <option value="Cancelled">Cancelled</option>
+</select>
+
+<button type="submit">Add Project</button>
+
+
+
+
+
+
+
+</form>
+<!---
+<script>
+    // Add event listeners to toggle selection
+    document.querySelectorAll('.item').forEach(item => {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+        });
+    });
+
+    // Handle the form submission
+    document.getElementById("myForm").addEventListener("submit", function(event) {
+        event.preventDefault();  // Prevent the form from submitting traditionally
+
+        const selectedItems = [];
+        const selectedElements = document.querySelectorAll('.item.selected');
+        selectedElements.forEach(element => {
+            selectedItems.push(element.getAttribute('data-value'));
+        });
+
+        alert("Selected items: " + selectedItems.join(", "));
+    });
+</script> 
+
+
+
+    <script>
+        // Open the calendar when the calendar icon is clicked
+        document.getElementById("calendarIcon").addEventListener("click", function() {
+            document.getElementById("dateInput").click();  // Trigger the click event on the input field
+        });
+
+        document.getElementById("myForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // Prevent the form from submitting traditionally
+
+            const selectedDate = document.getElementById("dateInput").value;
+            alert("Selected date: " + selectedDate);
+        });
+    </script> -->
+
+</body>
+</html>
+
+
+   </body>
+
+
+
+</html>
