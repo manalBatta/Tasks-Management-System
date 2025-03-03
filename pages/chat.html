@@ -17,6 +17,8 @@
         type="text"
         id="message-input"
         placeholder="Type your message ..."
+        onkeydown="if (event.key === 'Enter') sendMessage();
+        "
       />
       <button class="send-btn" onclick="sendMessage()">send</button>
     </div>

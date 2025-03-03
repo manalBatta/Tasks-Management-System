@@ -6,6 +6,7 @@ const mainRoute = async (page) => {
     const response = await fetch(`${page}.html`);
     const html = await response.text();
     index.innerHTML = html;
+    if (page == "dashboard") dashboardRout("home");
   } catch (error) {
     console.error("Error fetching the page:", error);
   }

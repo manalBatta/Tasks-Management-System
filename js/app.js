@@ -122,7 +122,7 @@ const loadChat = (contactId) => {
   );
 
   const messagesList = document.getElementById("messages-list");
-
+  messagesList.innerHTML = "";
   messages.forEach((message) => {
     const li = `<li class="message">
         <p class="message-content ${
@@ -140,7 +140,7 @@ sendMessage = () => {
     const input = document.getElementById("message-input");
     const text = input.value;
     const data = JSON.parse(localStorage.getItem("data"));
-    const messagesList = document.getElementById("messages-list");
+    /* const messagesList = document.getElementById("messages-list"); */
 
     input.value = "";
     localStorage.setItem(
