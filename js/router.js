@@ -1,3 +1,4 @@
+
 let interval; //a global variable to store the interval for the home page real time clock
 
 const mainRoute = async (isLogged) => {
@@ -21,6 +22,7 @@ const dashboardRout = async (page, event) => {
     clearInterval(interval);
     if (page === "home") interval = homeIntialize();
     else if (page == "chat") loadContacts();
+    else if (page == "tasks") loadTasks();
     highlightSelectedPageLink(event.target);
   } catch (error) {
     console.error("Error fetching the page:", error);
@@ -33,7 +35,7 @@ const homeIntialize = () => {
   return setInterval(updateTime, 1000);
 };
 
-mainRoute(true);
+mainRoute(true );
 /* document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM is fully loaded and parsed.");
 }); */

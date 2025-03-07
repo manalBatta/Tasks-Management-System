@@ -101,6 +101,8 @@ const loadContacts = () => {
     const li = `<li class="contact-item" onclick="loadChat(${contact.id})">${contact.username}</li>`;
     list.innerHTML += li;
   });
+
+  chatContact = contacts[0];
 };
 
 const loadChat = (contactId) => {
@@ -160,6 +162,50 @@ sendMessage = () => {
 
     loadChat(chatContact.id);
   }
+};
+
+const isStudent = (event) => {
+  const universityIdContainer = document.getElementById(
+    "university-id-container"
+  );
+
+  const studentCheckbox = event.target;
+  if (studentCheckbox.checked) {
+    universityIdContainer.style.display = "block";
+  } else {
+    universityIdContainer.style.display = "none";
+  }
+};
+
+// for task 
+const loadTasks = () => {
+  
+  const data = JSON.parse(localStorage.getItem("data"));
+
+  if (!data || !data.tasks || data.tasks.length === 0) {
+    console.log(" there is no information in localStorage");
+    return;
+  }
+
+  const tasksTableBody = document.querySelector(".tasksTable tbody");
+
+  tasksTableBody.innerHTML = "";
+
+  data.tasks.forEach((task) => {
+
+    const row = tasksTableBody.insertRow();
+    
+    row.insertCell().textContent = task.id;
+    row.insertCell().textContent = task.projectTitle;
+    row.insertCell().textContent = task.title;
+    row.insertCell().textContent = task.description;
+    
+    row.insertCell().textContent = data.users.find(user => user.id === task.assignedTo)?.username || "Unknown";
+    
+    row.insertCell().textContent = task.status;
+    
+    row.insertCell().textContent = new Date(task.createdAt).toLocaleDateString();
+  });
 };
 
 //intialization
@@ -330,3 +376,47 @@ sendMessage = () => {
 
   localStorage.setItem("data", JSON.stringify(mockData));
 })();
+window.onload = () => {
+  
+  loadTasks();
+};
+const sorttable =(event)=>{
+  console.log("hi")
+document.getElementById('sort').addEventListener('change', function () {
+  let table = document.getElementById('tasksTable');
+  let rows = Array.from(table.querySelectorAll('tbody tr'));
+
+  if (this.value === 'Task Status') {
+    const statusOrder = {
+      'Completed': 1,
+      'In Progress': 2,
+      'Pending': 3
+    };
+
+    rows.sort((a, b) => {
+      let statusA = a.cells[5].textContent.trim();
+      let statusB = b.cells[5].textContent.trim();
+      return statusOrder[statusA] - statusOrder[statusB];
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+  }
+  
+  else if (this.value === 'Due Date') {
+  rows.sort((a, b) => {
+    let dateA = a.cells[6].textContent.trim();
+    let dateB = b.cells[6].textContent.trim();
+    
+    let [monthA, dayA, yearA] = dateA.split('/').map(Number);
+    let [monthB, dayB, yearB] = dateB.split('/').map(Number);
+    
+    let parsedDateA = new Date(yearA, monthA - 1, dayA); 
+    let parsedDateB = new Date(yearB, monthB - 1, dayB); 
+
+    return parsedDateA - parsedDateB;
+  });
+
+  rows.forEach(row => table.querySelector('tbody').appendChild(row));
+}
+});
+}

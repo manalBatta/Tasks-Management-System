@@ -7,16 +7,22 @@
   </head>
   <body>
     <div class="container">
-        <div class="header">
-            <button class="btn create-task">Create a New Task</button>
+        <div class="task-header">
+           
             <div class="sort">
                 <label for="sort">Sort By:</label>
-                <select id="sort">
-                    <option value="status">Task Status</option>
+                <select id="sort"  class="list" onchange ="sorttable(event)"  >
+                    <option value="Task Status">Task Status </option>
+                    <option value="Project">Project </option>
+                    <option value=" Due Date">Due Date</option>
+                    <option value="Assigned Student">Assigned Student</option>
+                    
                 </select>
             </div>
+            <button class="btn create-task">Create a New Task</button>
         </div>
-        <table class="task-table">
+    </div>
+        <table  id="tasksTable" class="task-table">
           <thead>
               <tr>
                   <th>Task ID</th>
@@ -29,9 +35,33 @@
               </tr>
           </thead>
           <tbody>
-              <!-- سيتم ملء البيانات هنا لاحقًا -->
+            <tr>
+                <td>1</td>
+                <td>Website Development</td>
+                <td>Design Homepage</td>
+                <td>Design the homepage layout</td>
+                <td>Fatima Nasser</td>
+                <td>In Progress</td>
+                <td>4/3/2025</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>App Development</td>
+                <td>Build Login Screen</td>
+                <td>Develop the login screen of the app</td>
+                <td>Lama Dwikat</td>
+                <td>Completed</td>
+                <td>5/3/2025</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Marketing</td>
+                <td>Launch Campaign</td>
+                <td>Prepare materials for the marketing campaign</td>
+                <td>Manal Batta</td>
+                <td>Pending</td>
+                <td>20/3/2025</td>
+            </tr>  
           </tbody>
       </table>
-      
-    </div>
-</body>
+     

@@ -247,38 +247,98 @@ input::placeholder {
   justify-content: center;
   align-items: center;
 }
+.projectSec1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2%;
+  justify-content: space-between;
+}
+h2 {
+  color: #027bff;
+}
+#searchProject {
+  width: 70%;
+  height: 6vh;
+  margin-right: 3%;
+  border-radius: 10px;
+}
+input::placeholder {
+  font-size: 16px;
+}
+#addProject {
+  width: 14%;
+  height: 6vh;
+  margin-right: 3%;
+  background-color: #027bff;
+  border-color: #027bff;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 16px;
+}
+.list {
+  padding-left: 1%;
+  font-size: 16px;
+  text-align: center;
+  appearance: none;
+  width: 14%;
+  height: 6vh;
+  border-radius: 10px;
+  margin-right: 3%;
+  cursor: pointer;
+}
+.projectSec2 h3 {
+  color: #027bff;
+}
+.projectSec2 {
+  padding-left: 1%;
+  width: 27%;
+  height: 30vh;
+  margin: 1%;
+  background-color: #393939;
+  border-radius: 10px;
+  border: 1px solid #989494;
+}
+.projectSec2 .dates {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-right: 6%;
+  font-size: 0.8rem;
+}
+.maindiv {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
 body {
   background-color: #1e1e1e;
   color: #ffffff;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   margin: 0;
   padding: 0;
 }
-.container {
-  width: 85%;
-  margin: 40px auto;
-  background-color: #2a2a2a;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-.header {
+.task-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  border-bottom: none;
 }
 .btn.create-task {
   background-color: #007bff;
   color: #ffffff;
   border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
   transition: background 0.3s;
-  margin-right: 10px;
 }
 .btn.create-task:hover {
   background-color: #0056b3;
@@ -288,48 +348,65 @@ body {
   align-items: center;
   font-size: 16px;
   font-weight: bold;
+  flex-grow: 1;
+  text-align: left;
 }
 .sort label {
-  margin-right: 8px;
+  margin-right: 10px;
+  text-align: left;
+  display: block;
 }
 .sort select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #444;
-  background: #121212;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: #3d3b3be2;
   color: #ffffff;
   font-weight: bold;
   cursor: pointer;
+  width: 220px;
+  text-align: left;
+  text-align-last: left;
 }
 .task-table {
   width: 100%;
   border-collapse: collapse;
   background: #1e1e1e;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.848);
   text-align: left;
+  border-bottom: 1px solid #636363c1;
 }
 .task-table thead {
-  background-color: #121212;
+  background-color: #1e1e1e;
   color: #ffffff;
 }
 .task-table th,
 .task-table td {
-  padding: 15px;
+  padding: 16px;
   text-align: left;
-  border-bottom: 1px solid #444;
+  border-bottom: none;
 }
 .task-table th {
   font-weight: bold;
-  text-transform: uppercase;
+  text-transform: none;
+}
+.task-table tr {
+  border-bottom: 1px solid #636363c1;
+}
+.task-table tbody tr {
+  transition: background 0.3s;
+  border-bottom: 1px solid #636363c1;
 }
 .task-table tbody tr:hover {
-  background-color: #333;
+  background-color: #2a2a2a;
 }
 .task-table .status {
   font-weight: bold;
   text-transform: capitalize;
+  border-radius: 5px;
+  padding: 5px 10px;
 }
 .task-table .status.pending {
   color: orange;
@@ -436,7 +513,7 @@ body {
 .chat-contianer .chat-area .message-input-contianer .send-btn {
   margin-left: 10px;
   padding: 1.4%;
-  background-color: #1e1e1e;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
