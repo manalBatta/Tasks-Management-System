@@ -178,7 +178,7 @@ const isStudent = (event) => {
 };
 
 // for task 
-const loadTasks = () => {
+/*const loadTasks = () => {
   
   const data = JSON.parse(localStorage.getItem("data"));
 
@@ -207,7 +207,7 @@ const loadTasks = () => {
     row.insertCell().textContent = new Date(task.createdAt).toLocaleDateString();
   });
 };
-
+*/
 //intialization
 (function () {
   const mockData = {
@@ -312,7 +312,7 @@ const loadTasks = () => {
     ],
     tasks: [
       {
-        id: 1,
+        id: 10,
         title: "Data Collection",
         description: "Gather historical weather data.",
         status: "Pending",
@@ -323,7 +323,7 @@ const loadTasks = () => {
         createdAt: "2024-02-26T12:00:00Z",
       },
       {
-        id: 2,
+        id: 11,
         title: "UI Design",
         description: "Create a responsive UI for the web app.",
         status: "In Progress",
@@ -375,6 +375,11 @@ const loadTasks = () => {
   };
 
   localStorage.setItem("data", JSON.stringify(mockData));
+ 
+  
+ /* if (!localStorage.getItem("tasks")) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }*/
 })();
 /*window.onload = () => {
   
@@ -487,3 +492,39 @@ const sortState =(event)=>{
     cell.textContent = nextStatus; 
     cell.setAttribute("data-status", nextStatus);
 };
+
+const loadTasks = () => {
+  console.log("Stored Tasks:");  
+
+    const tableBody = document.querySelector("#tasksTable tbody");
+  
+    // استرجاع البيانات من localStorage
+    const storedTasks = JSON.parse(localStorage.getItem("data")).tasks || [];
+  
+    // تحقق من أن البيانات تم استرجاعها بشكل صحيح
+    console.log("Stored Tasks:", storedTasks);  // طباعة البيانات في console
+  
+    // تفريغ الجدول قبل الإضافة (إذا تم التحديث)
+    tableBody.innerHTML = "";
+  
+    // إضافة البيانات إلى الجدول
+    storedTasks.forEach((task) => {
+      const row = document.createElement("tr");
+  
+      row.innerHTML = `
+        <td><span>${task.id}</span></td>
+        <td><span>${task.projectTitle}</span></td>
+        <td><span>${task.title}</span></td>
+        <td><span>${task.description}</span></td>
+        <td><span>${task.assignedTo}</span></td>
+        <td class="status">
+          <span>${task.status}</span>
+        </td>
+        <td><span>${new Date(task.createdAt).toLocaleDateString()}</span></td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
+  
+  
+}
