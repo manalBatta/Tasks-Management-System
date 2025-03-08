@@ -408,14 +408,14 @@ body {
   border-radius: 5px;
   padding: 5px 10px;
 }
-.task-table .status.pending {
-  color: orange;
+.task-table .status[data-status="Completed"] {
+  color: blue;
 }
-.task-table .status.completed {
-  color: lightgreen;
-}
-.task-table .status.in-progress {
+.task-table .status[data-status="In Progress"] {
   color: #00ff00;
+}
+.task-table .status[data-status="Pending"] {
+  color: orange;
 }
 .chat-contianer {
   width: 100%;

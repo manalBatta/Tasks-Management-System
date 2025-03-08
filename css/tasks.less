@@ -5,8 +5,8 @@
 @button-hover: #0056b3;
 @border-color: #444;
 @pending: orange;
-@completed: lightgreen;
-@in-progress: #00ff00;
+@completed: rgba(0, 85, 255, 0.832);
+@in-progress: #2ad51ed5;
 @header-bg: #3d3b3be2;
 @table-bg: #1e1e1e;
 @row-hover: #2a2a2a;
@@ -117,9 +117,18 @@ body {
         text-transform: capitalize;
         border-radius: 5px;
         padding: 5px 10px;
-        &.pending { color: @pending; }
-        &.completed { color: @completed; }
-        &.in-progress { color: @in-progress; }
+        &[data-status="Completed"] {
+            color: @completed;
+            
+        }
+    
+        &[data-status="In Progress"] {
+            color: @in-progress;
+        }
+    
+        &[data-status="Pending"] {
+            color: @pending;
+        }
     }
 }
     

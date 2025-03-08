@@ -404,6 +404,25 @@ document.getElementById('sort').addEventListener('change', function () {
 
   }
 
+
+  else if (this.value === 'Project') {
+    //console.log("Sorting by Project Name..."); 
+
+    rows.sort((a, b) => {
+      let projectA = a.cells[1].textContent.trim(); 
+      let projectB = b.cells[1].textContent.trim();
+
+      if (projectA === projectB) {
+        return 0; 
+      }
+
+      return projectA.localeCompare(projectB); 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    //console.log("Sorting completed by Project Name!"); 
+  }
+
  else if (this.value === 'Task Status') {
     const statusOrder = {
       'Completed': 1,
@@ -419,6 +438,19 @@ document.getElementById('sort').addEventListener('change', function () {
 
     rows.forEach(row => table.querySelector('tbody').appendChild(row));
   }
+
+  else if (this.value === 'Assigned Student') {
+
+    rows.sort((a, b) => {
+      let studentA = a.cells[4].textContent.trim(); 
+      let studentB = b.cells[4].textContent.trim();
+
+      return studentA.localeCompare(studentB); 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    //console.log("Sorting completed by Assigned Student!");
+  }
   
    
 });
@@ -432,3 +464,26 @@ if (parts.length === 3) {
 }
 return new Date(0); 
 }
+
+const sortState =(event)=>{
+  let cell = event.target;  
+    let currentStatus = cell.textContent.trim(); 
+    
+    console.log("Clicked on:", currentStatus); 
+    
+    let nextStatus;
+    if (currentStatus === 'Pending') {
+        nextStatus = 'In Progress';
+    } else if (currentStatus === 'In Progress') {
+        nextStatus = 'Completed';
+    } else if (currentStatus === 'Completed') {
+        nextStatus = 'Pending';
+    } else {
+        nextStatus = 'Pending';  
+    }
+
+    console.log("New Status:", nextStatus); 
+    
+    cell.textContent = nextStatus; 
+    cell.setAttribute("data-status", nextStatus);
+};
