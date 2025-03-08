@@ -376,17 +376,35 @@ const loadTasks = () => {
 
   localStorage.setItem("data", JSON.stringify(mockData));
 })();
-window.onload = () => {
+/*window.onload = () => {
   
   loadTasks();
-};
-const sorttable =(event)=>{
-  console.log("hi")
+};*/
+const sortTable =(event)=>{
+  
 document.getElementById('sort').addEventListener('change', function () {
   let table = document.getElementById('tasksTable');
   let rows = Array.from(table.querySelectorAll('tbody tr'));
 
-  if (this.value === 'Task Status') {
+
+  console.log("Selected value:", this.value);
+
+  if (this.value === 'Due Date') {
+   // console.log("Parsed dates: Due date "); 
+    rows.sort((a, b) => {
+      let dateA = parseDate(a.cells[6].textContent.trim()); 
+      let dateB = parseDate(b.cells[6].textContent.trim()); 
+      console.log("Raw text dates:", a.cells[6].textContent.trim(), b.cells[6].textContent.trim());
+
+
+      return dateB - dateA; 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+
+  }
+
+ else if (this.value === 'Task Status') {
     const statusOrder = {
       'Completed': 1,
       'In Progress': 2,
@@ -402,21 +420,15 @@ document.getElementById('sort').addEventListener('change', function () {
     rows.forEach(row => table.querySelector('tbody').appendChild(row));
   }
   
-  else if (this.value === 'Due Date') {
-  rows.sort((a, b) => {
-    let dateA = a.cells[6].textContent.trim();
-    let dateB = b.cells[6].textContent.trim();
-    
-    let [monthA, dayA, yearA] = dateA.split('/').map(Number);
-    let [monthB, dayB, yearB] = dateB.split('/').map(Number);
-    
-    let parsedDateA = new Date(yearA, monthA - 1, dayA); 
-    let parsedDateB = new Date(yearB, monthB - 1, dayB); 
-
-    return parsedDateA - parsedDateB;
-  });
-
-  rows.forEach(row => table.querySelector('tbody').appendChild(row));
-}
+   
 });
+};
+
+function parseDate(dateStr) {
+let parts = dateStr.split('/'); 
+if (parts.length === 3) {
+  let [month, day, year] = parts.map(Number);
+  return new Date(year, month - 1, day);
+}
+return new Date(0); 
 }
