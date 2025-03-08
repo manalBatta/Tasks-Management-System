@@ -68,6 +68,13 @@ body {
   width: 100%;
   background-color: #f10f80;
 }
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
 body {
   display: flex;
   justify-content: center;
@@ -135,7 +142,7 @@ body {
   color: white;
 }
 .signup-container {
-  background: #181818;
+  background: #1e1e1e;
   padding: 30px;
   width: 350px;
   border-radius: 10px;
@@ -409,10 +416,10 @@ body {
   padding: 5px 10px;
 }
 .task-table .status[data-status="Completed"] {
-  color: blue;
+  color: rgba(0, 85, 255, 0.832);
 }
 .task-table .status[data-status="In Progress"] {
-  color: #00ff00;
+  color: #2ad51ed5;
 }
 .task-table .status[data-status="Pending"] {
   color: orange;
@@ -527,7 +534,7 @@ body {
   grid-template-columns: 1fr 4fr;
   grid-template-rows: 0.5fr 5fr;
   grid-template-areas: "header header" "sidebar content";
-  background-color: #181818;
+  background-color: #1e1e1e;
   color: #ffffff;
 }
 .dashboard .header {

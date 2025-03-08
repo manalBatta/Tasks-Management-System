@@ -469,7 +469,7 @@ const sortState =(event)=>{
   let cell = event.target;  
     let currentStatus = cell.textContent.trim(); 
     
-    console.log("Clicked on:", currentStatus); 
+    //console.log("Clicked on:", currentStatus); 
     
     let nextStatus;
     if (currentStatus === 'Pending') {
@@ -482,7 +482,7 @@ const sortState =(event)=>{
         nextStatus = 'Pending';  
     }
 
-    console.log("New Status:", nextStatus); 
+    //console.log("New Status:", nextStatus); 
     
     cell.textContent = nextStatus; 
     cell.setAttribute("data-status", nextStatus);
