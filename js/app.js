@@ -315,7 +315,7 @@ const isStudent = (event) => {
         id: 10,
         title: "Data Collection",
         description: "Gather historical weather data.",
-        status: "Pending",
+        status : "Pending",
         assignedTo: 2,
         assignedBy: 1,
         projectId: 1,
@@ -375,7 +375,7 @@ const isStudent = (event) => {
   };
 
   localStorage.setItem("data", JSON.stringify(mockData));
- 
+  const statusCycle = ["Pending", "In Progress", "Completed"];
   
  /* if (!localStorage.getItem("tasks")) {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -491,6 +491,9 @@ const sortState =(event)=>{
     
     cell.textContent = nextStatus; 
     cell.setAttribute("data-status", nextStatus);
+    cell.classList.remove('status-pending', 'status-inprogress', 'status-completed');
+    cell.classList.add(getStatusClass(nextStatus));
+
 };
 
 const loadTasks = () => {
@@ -517,8 +520,8 @@ const loadTasks = () => {
         <td><span>${task.title}</span></td>
         <td><span>${task.description}</span></td>
         <td><span>${task.assignedTo}</span></td>
-        <td class="status">
-          <span>${task.status}</span>
+        <td class="status ${getStatusClass(task.status)}"  onclick="sortState(event)"  data-status="${task.status}">
+          <span >${task.status}</span>
         </td>
         <td><span>${new Date(task.createdAt).toLocaleDateString()}</span></td>
       `;
@@ -528,3 +531,25 @@ const loadTasks = () => {
   
   
 }
+const getStatusClass = (status) => {
+  switch (status) {
+      case "Pending": return "status-pending";
+      case "In Progress": return "status-inprogress";
+      case "Completed": return "status-completed";
+      default: return "";
+  }
+};
+
+document.addEventListener("DOMContentLoaded", loadTasks);
+
+// إضافة أنماط للألوان عبر LESS
+const style = document.createElement('style');
+style.innerHTML = `
+  .status {
+      font-weight: bold;
+  }
+  .status-pending { color: orange !important; }
+  .status-inprogress { color: green !important; }
+  .status-completed { color: blue !important; }
+`;
+document.head.appendChild(style);
