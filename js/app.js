@@ -286,7 +286,7 @@ const isStudent = (event) => {
         title: "Data Collection",
         description: "Gather historical weather data.",
         status : "Pending",
-        assignedTo: 2,
+        assignedTo: "Fatima Nasser",
         assignedBy: 1,
         projectId: 1,
         projectTitle: "AI Research",
@@ -297,7 +297,7 @@ const isStudent = (event) => {
         title: "UI Design",
         description: "Create a responsive UI for the web app.",
         status: "In Progress",
-        assignedTo: 3,
+        assignedTo:"Nour Omar" ,
         assignedBy: 1,
         projectId: 2,
         projectTitle: "Web App Development",
@@ -558,3 +558,53 @@ const AddTasks = (event) => {
 document.addEventListener('DOMContentLoaded', () => {
   AddTasks();
 });
+
+
+
+
+
+ const saveTaskToLocalStorage = (task) => {
+  console.log("in save task");
+  let tasks = JSON.parse(localStorage.getItem("data")).tasks || []; // Get tasks from localStorage or initialize as empty array
+  tasks.push(task); // Add new task to the tasks array
+  localStorage.setItem('tasks', JSON.stringify(data)).tasks; // Save updated tasks array back to localStorage
+};
+
+// Event listener for form submission
+document.getElementById('taskForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent form from refreshing the page
+  console.log("in save task2");
+
+  // Collect data from form inputs
+  const taskName = document.getElementById('task-name').value;
+  const description = document.getElementById('description').value;
+  const assignedStudent = document.getElementById('assigned-student').value;
+  const status = document.getElementById('status').value;
+  const dueDate = document.getElementById('due-date').value;
+
+  // Get current date for the createdAt field
+  const createdAt = new Date().toISOString();
+
+  // Create new task object
+  const newTask = {
+      id: Date.now(), // Use the current timestamp as a unique ID
+      title: taskName,
+      description: description,
+      status: status,
+      assignedTo: assignedStudent,
+      assignedBy: 1, // Assuming user ID is 1 for now
+      projectId: document.getElementById('project-title').value,
+      projectTitle: document.getElementById('project-title').selectedOptions[0].text,
+      createdAt: createdAt,
+  };
+
+  // Save task to localStorage
+  saveTaskToLocalStorage(newTask);
+
+  // Optionally, clear form inputs after submitting
+  document.getElementById('taskForm').reset();
+
+  // You can also update the UI to show the new task immediately if needed
+  alert("Task added successfully!");
+});
+
