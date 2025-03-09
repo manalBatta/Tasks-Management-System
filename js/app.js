@@ -177,37 +177,7 @@ const isStudent = (event) => {
   }
 };
 
-// for task 
-/*const loadTasks = () => {
-  
-  const data = JSON.parse(localStorage.getItem("data"));
 
-  if (!data || !data.tasks || data.tasks.length === 0) {
-    console.log(" there is no information in localStorage");
-    return;
-  }
-
-  const tasksTableBody = document.querySelector(".tasksTable tbody");
-
-  tasksTableBody.innerHTML = "";
-
-  data.tasks.forEach((task) => {
-
-    const row = tasksTableBody.insertRow();
-    
-    row.insertCell().textContent = task.id;
-    row.insertCell().textContent = task.projectTitle;
-    row.insertCell().textContent = task.title;
-    row.insertCell().textContent = task.description;
-    
-    row.insertCell().textContent = data.users.find(user => user.id === task.assignedTo)?.username || "Unknown";
-    
-    row.insertCell().textContent = task.status;
-    
-    row.insertCell().textContent = new Date(task.createdAt).toLocaleDateString();
-  });
-};
-*/
 //intialization
 (function () {
   const mockData = {
@@ -482,7 +452,11 @@ const sortState =(event)=>{
     } else if (currentStatus === 'In Progress') {
         nextStatus = 'Completed';
     } else if (currentStatus === 'Completed') {
-        nextStatus = 'Pending';
+        nextStatus = 'On Hold';
+    } else if (currentStatus === 'On Hold') {
+      nextStatus = 'Cancled';
+    }  else if (currentStatus === 'Cancled') {
+    nextStatus = 'Pending';
     } else {
         nextStatus = 'Pending';  
     }
@@ -491,7 +465,7 @@ const sortState =(event)=>{
     
     cell.textContent = nextStatus; 
     cell.setAttribute("data-status", nextStatus);
-    cell.classList.remove('status-pending', 'status-inprogress', 'status-completed');
+    cell.classList.remove('status-pending', 'status-inprogress', 'status-completed', 'status-onHold', 'status-cancled');
     cell.classList.add(getStatusClass(nextStatus));
 
 };
@@ -501,16 +475,12 @@ const loadTasks = () => {
 
     const tableBody = document.querySelector("#tasksTable tbody");
   
-    // استرجاع البيانات من localStorage
     const storedTasks = JSON.parse(localStorage.getItem("data")).tasks || [];
   
-    // تحقق من أن البيانات تم استرجاعها بشكل صحيح
-    console.log("Stored Tasks:", storedTasks);  // طباعة البيانات في console
+    console.log("Stored Tasks:", storedTasks);  
   
-    // تفريغ الجدول قبل الإضافة (إذا تم التحديث)
     tableBody.innerHTML = "";
   
-    // إضافة البيانات إلى الجدول
     storedTasks.forEach((task) => {
       const row = document.createElement("tr");
   
@@ -536,6 +506,9 @@ const getStatusClass = (status) => {
       case "Pending": return "status-pending";
       case "In Progress": return "status-inprogress";
       case "Completed": return "status-completed";
+      case "On Hold": return "status-onHold";
+      case "Cancled": return "status-cancled";
+
       default: return "";
   }
 };
@@ -551,6 +524,9 @@ style.innerHTML = `
   .status-pending { color: orange !important; }
   .status-inprogress { color: green !important; }
   .status-completed { color: blue !important; }
+  .status-onHold { color: yellow !important; }
+  .status-cancled { color: red !important; }
+
 `;
 document.head.appendChild(style);
 
