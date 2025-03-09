@@ -178,6 +178,24 @@ const isStudent = (event) => {
   }
 };
 
+const homeIntialize = () => {
+  loadChart();
+  updateTime();
+  return setInterval(updateTime, 1000);
+};
+
+const homeStudentIntialize = () => {
+  const data = JSON.parse(localStorage.getItem("data"));
+  const userId = JSON.parse(localStorage.getItem("user")).id;
+  const tasksCount = data.tasks.filter(
+    (task) => task.assignedTo === userId
+  ).length;
+  document.getElementById("StudentTasksCount").textContent = tasksCount;
+
+  updateTime();
+  return setInterval(updateTime, 1000);
+};
+
 //intialization
 (function () {
   const mockData = {

@@ -57,6 +57,27 @@
   width: 100% !important;
   height: 100% !important;
 }
+/* home student view  styles */
+.tasks-count {
+  background-color: #393939;
+  border-radius: 10px;
+  min-width: 133px;
+  height: 100px;
+  padding: 3%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  -webkit-box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.75);
+  font-size: 1.1rem;
+}
+.tasks-count #StudentTasksCount {
+  color: #027bff;
+  margin: 0 11px;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
 body {
   padding: 0;
   margin: 0;
@@ -536,6 +557,7 @@ body {
   padding: 0 2px;
   border: none;
   width: 92px;
+  cursor: pointer;
   height: 45px;
   font-size: 1.2rem;
 }
@@ -543,6 +565,9 @@ body {
   .dashboard .header .log-out-btn {
     width: 30%;
   }
+}
+.dashboard .header .log-out-btn:hover {
+  background-color: rgba(255, 0, 0, 0.559);
 }
 .dashboard .sidebar {
   grid-area: sidebar;

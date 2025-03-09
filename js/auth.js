@@ -2,10 +2,10 @@
 localStorage.setItem(
   "user",
   JSON.stringify({
-    id: 1,
-    username: "adminUser",
-    password: "hashedpassword1",
-    role: "admin",
-    universityID: null,
+    id: 2,
+    username: "AliYaseen",
+    password: "hashedpassword2",
+    role: "student",
+    universityID: "UNI12345",
   })
 );
