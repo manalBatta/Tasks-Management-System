@@ -41,7 +41,6 @@ const loadChart = () => {
   ).length;
 
   document.getElementById("projectsCount").innerHTML = projectsCount;
-  console.log(document.getElementById("projectsCount"));
   document.getElementById("studentsCount").textContent = studentsCount;
   document.getElementById("tasksCount").textContent = tasksCount;
   document.getElementById("finishedProjectsCount").textContent =
@@ -95,7 +94,10 @@ const loadChart = () => {
 
 let chatContact;
 const loadContacts = () => {
-  const contacts = JSON.parse(localStorage.getItem("data")).users;
+  const userID = JSON.parse(localStorage.getItem("user")).id;
+  const contacts = JSON.parse(localStorage.getItem("data")).users.filter(
+    (user) => user.id !== userID
+  );
 
   const list = document.getElementById("contacts-list");
   contacts.forEach((contact) => {

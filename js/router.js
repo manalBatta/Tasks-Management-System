@@ -15,7 +15,7 @@ const mainRoute = async (page) => {
 
 const dashboardRout = async (page, event) => {
   const index = document.getElementById("content");
-  const userName=document.getElementById("userName");
+  const userName = document.getElementById("userName");
   const user = JSON.parse(localStorage.getItem("user"));
   userName.innerHTML = user.username;
   try {
@@ -31,7 +31,5 @@ const dashboardRout = async (page, event) => {
     console.error("Error fetching the page:", error);
   }
 };
-
-
 
 mainRoute("pages/signin");
