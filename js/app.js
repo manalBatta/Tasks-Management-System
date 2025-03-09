@@ -41,6 +41,7 @@ const loadChart = () => {
   ).length;
 
   document.getElementById("projectsCount").innerHTML = projectsCount;
+  console.log(document.getElementById("projectsCount"));
   document.getElementById("studentsCount").textContent = studentsCount;
   document.getElementById("tasksCount").textContent = tasksCount;
   document.getElementById("finishedProjectsCount").textContent =

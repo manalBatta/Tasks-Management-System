@@ -51,6 +51,7 @@
 .main-container .chart {
   width: 100%;
   min-height: 66%;
+  height: auto;
 }
 .main-container .chart canvas {
   width: 100% !important;
