@@ -553,3 +553,32 @@ style.innerHTML = `
   .status-completed { color: blue !important; }
 `;
 document.head.appendChild(style);
+
+
+const AddTasks = (event) => {
+  const openBtn = document.querySelector('.create-task');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.querySelector('.overlay');
+  const taskContainer = document.querySelector('.task-container');
+
+  openBtn.addEventListener('click', () => {
+      overlay.style.display = 'block';
+      taskContainer.style.display = 'flex';
+  });
+
+  closeBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      taskContainer.style.display = 'none';
+  });
+
+  overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+          overlay.style.display = 'none';
+          taskContainer.style.display = 'none';
+      }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  AddTasks();
+});

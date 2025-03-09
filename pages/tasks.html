@@ -19,7 +19,7 @@
                     
                 </select>
             </div>
-            <button class="btn create-task">Create a New Task</button>
+            <button class="btn create-task" onclick="AddTasks(event)">Create a New Task</button>
         </div>
     </div>
         <table  id="tasksTable" class="task-table">
@@ -39,6 +39,57 @@
           </tbody>
       </table>
 
+
+
+      <div class="overlay"></div>
+
+      <div class="task-container">
+          <div class="task-form">
+              <button class="close-btn">&times;</button>
+              <h2>Create New Task</h2>
+              <form>
+                  <div class="form-group">
+                      <label for="project-title">Project Title:</label>
+                      <select id="project-title" name="project-title">
+                          <option>Select a project</option>
+                      </select>
+                  </div>
+  
+                  <div class="form-group">
+                      <label for="task-name">Task Name:</label>
+                      <input type="text" id="task-name" name="task-name" placeholder="Enter task name">
+                  </div>
+  
+                  <div class="form-group">
+                      <label for="description">Description:</label>
+                      <textarea id="description" name="description" placeholder="Enter task description"></textarea>
+                  </div>
+  
+                  <div class="form-group">
+                      <label for="assigned-student">Assigned Student:</label>
+                      <select id="assigned-student" name="assigned-student">
+                          <option>Select a student</option>
+                      </select>
+                  </div>
+  
+                  <div class="form-group">
+                      <label for="status">Status:</label>
+                      <select id="status" name="status">
+                          <option>Select a status</option>
+                      </select>
+                  </div>
+  
+                  <div class="form-group">
+                      <label for="due-date">Due Date:</label>
+                      <input type="date" id="due-date" name="due-date">
+                  </div>
+  
+                  <button type="submit">Add Task</button>
+              </form>
+          </div>
+      </div>
+
+      
 <!-- <tr>
                 <td>1</td>
                 <td>Website Development</td>
