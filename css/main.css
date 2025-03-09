@@ -94,14 +94,12 @@ body {
   height: 100%;
   width: 100%;
 }
-body {
+.page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  background-color: #000000;
-  font-family: Arial, sans-serif;
+  height: 100%;
+  width: 100%;
 }
 .login-container {
   background-color: #000000;
@@ -126,7 +124,7 @@ body {
   border: none;
   border-color: #00000031;
   border-radius: 5px;
-  background-color: #2D2D2D;
+  background-color: #2d2d2d;
   color: white;
   outline: none;
 }
@@ -141,7 +139,7 @@ body {
   /* Add margin between buttons */
   border: none;
   border-radius: 5px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -151,17 +149,17 @@ body {
 }
 .signup-button {
   background-color: transparent;
-  border: 2px solid #4CAF50;
-  color: #4CAF50;
+  border: 2px solid #4caf50;
+  color: #4caf50;
   text-align: center;
   cursor: pointer;
 }
 .signup-button:hover {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 .signup-container {
-  background: #181818;
+  background: #000000;
   padding: 30px;
   width: 350px;
   border-radius: 10px;
