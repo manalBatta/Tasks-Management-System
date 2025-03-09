@@ -5,7 +5,7 @@ localStorage.setItem(
     id: 2,
     username: "AliYaseen",
     password: "hashedpassword2",
-    role: "student",
+    role: "admin",
     universityID: "UNI12345",
   })
 );

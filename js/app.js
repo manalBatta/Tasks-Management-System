@@ -178,6 +178,14 @@ const isStudent = (event) => {
   }
 };
 
+const userTypeDashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role === "admin") {
+    mainRoute("dashboard");
+  } else {
+    mainRoute("dashboardStudentView");
+  }
+};
 const homeIntialize = () => {
   loadChart();
   updateTime();
