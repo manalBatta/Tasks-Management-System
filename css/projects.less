@@ -1,86 +1,442 @@
-@border-radius: 10px;
-@width:14%;
-@height:6vh;
-@font-size:16px;
 
-.projectSec1{
+
+
+.projectH2 {
+  color: #027bff;
+  text-align: left;
+}
+
+.projectSec1 {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 2%;
   justify-content: space-between;
 
+  #searchProject {
+    width: 70%;
+    height: @height;
+    margin-right: 3%;
+    border-radius: @border-radius;
+  }
+
+  input::placeholder {
+    font-size: @font-size;
+  }
+
+  #addProj {
+    width: @width;
+    height: @height;
+    margin-right: 2%;
+    background-color: @blue-color;
+    border-color: @blue-color;
+    color: @text-color;
+    border-radius: @border-radius;
+    font-size: @font-size;
+  }
+
+
+  .icon{
+    display: flex;
+    width:17%;
+    padding-bottom: 2%;
+
+  .list {
+    padding-top: 5%;
+    padding-left: 5%;
+    font-size: @font-size;
+    text-align: center;
+    appearance: none;
+    width: 100%;
+    height: 6vh;
+    border-radius: @border-radius;
+    margin-right: 2%;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+  }
+ 
+  
+  
+   .drop{
+    position: absolute;
+    bottom: 74.1%;
+    left:97%;
+    color: #1c1c1c;
+    font-weight: bold;
+    font-size: small;
+  }}
+
+
 
 }
 
-.projectH2{
-  color: #027bff;
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .projectSec1 {
+    flex-direction: column;
+    align-items: stretch;
 
+    #searchProject {
+      width: 90%;
+      margin-bottom: 10px;
+    }
+
+    #addProj {
+      width: 100%;
+      text-align: center;
+    }
+
+    .list {
+      width: 100%;
+    }
+  }
 }
 
-#searchProject{
-  width: 70%;
-  height: @height;
-  // margin-left: 3%;
-  margin-right: 3%;
-  border-radius: @border-radius;
-}
-input::placeholder{
-  font-size: @font-size;
-}
-
-#addProject{
-  width: @width;
-  height: @height;
-  margin-right: 3%;
-  background-color: @blue-color;
-  border-color: @blue-color;
-  color:@text-color;
-  border-radius: @border-radius;
-  font-size: @font-size;
-}
-
-.list  {
-  padding-left: 1%;
-  font-size: @font-size;
-  text-align: center;
-  appearance: none;
-  width: 14%;
-  height: 6vh;
-  border-radius: @border-radius;
-  margin-right: 3%;
-  cursor: pointer;
-
-}
-
-
-
-.projectSec2 h3{
-  color: #027bff;
-}
-
-.projectSec2{
-  padding-left: 1%;
-  width: 27%;
-  height: 30vh;
-  margin: 1%;
-  background-color:  #393939;
-  border-radius: @border-radius;
-  border: 1px solid #989494;
-
-}
-
-.projectSec2 .dates{
-  display: flex;
-  flex-direction: row;
-  justify-content:space-between;
-  padding-right: 6%;
-  font-size: 0.8rem;
-}
-.maindiv{
+.maindiv {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  padding-left: 2%;
+  overflow-y: auto;
+
+  .projectSec2 {
+    padding-left: 1%;
+    width: 27%;
+    height: auto;  // Default auto height
+    min-height: 30vh; // Ensures content is not squeezed
+    margin: 1%;
+    background-color: #393939;
+    border-radius: @border-radius;
+    border: 1px solid #989494;
+
+    h3 {
+      color: #027bff;
+    }
+
+    .dates {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-right: 6%;
+      font-size: 0.8rem;
+    }
+
+    .progress-bar {
+      text-align: center;
+      padding: 3px 0;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      background-color: #027bff;
+      width: 95%;
+    }
+  }
 }
+
+/* Tablet View */
+@media (max-width: 768px) {
+  .maindiv {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 0;
+
+    .projectSec2 {
+      width: 90%;
+      height: auto; 
+      min-height: 25vh; // Adjusts for smaller screens
+    }
+  }
+}
+
+/* Mobile View */
+@media (max-width: 480px) {
+  .projectSec1 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    #searchProject {
+      width: 100%;
+    }
+
+    #addProj {
+      width: 100%;
+    }
+  }
+
+  .maindiv {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 0;
+   overflow-y: auto;
+
+
+    .projectSec2 {
+      width: 95%;
+      height: auto;
+      min-height: 20vh; // Ensures proper spacing for mobile devices
+    }
+  }
+}
+
+
+
+
+
+
+
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -80%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 1px solid black;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: @background-color;
+  width: 35%;
+  height: 92vh;
+  max-width: 80%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: 2px solid #989494;
+  border-radius: 7px;
+   margin: 0%;
+   padding: 0%;
+
+
+
+   #myForm {
+    display: flex;
+    flex-direction: column;
+    background-color: @background-color;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-left: 3%;
+    width: 100%;
+  
+    label {
+      margin-bottom: 0.5%;
+      margin-top: 1%;
+    }
+  
+  #submitProject {
+    background-color: rgb(64, 134, 64);
+    margin-top: 1%;
+    width: 95%;
+    height: 4vh;
+    color: rgb(224, 226, 229);
+    border: none;
+    cursor: pointer;
+    margin-top: 2.5%;
+    //margin-bottom: 0.6% ;
+    font-size: medium;
+    border: 1px solid rgb(64, 134, 64);
+    border-radius: 7px;
+    font-weight: bold;
+  }
+  
+  #submitProject:hover {
+    background-color: darkgreen;
+  }
+  
+  
+  
+  .form {
+    background-color: #393939;
+    color: rgb(224, 226, 229);
+    appearance: none;
+    width: 95%;
+    height: 5vh;
+    border: 1px solid #989494;
+    padding: 5px;
+    font-size: small;
+    border-radius: 7px;
+    margin-bottom: 1%;
+  
+  }
+  
+  
+  
+  .specialForm{
+    height: 12vh;  
+    }
+    
+    label {
+      font-weight: bold;
+      font-size: medium;
+     color: rgb(224, 226, 229);
+    }
+
+
+  
+.custom-multiselect {
+  width: 95%;
+  max-height: 12vh; 
+  overflow-y: auto;
+  border: 1px solid #989494;
+  border-radius: 7px;
+  background-color: #393939;
+  color: rgb(224, 226, 229);
+  padding: 5px;
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+
+}
+  
+.student-item {
+  padding: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.student-item:hover {
+  background-color: #4a4a4a; /* Subtle hover effect */
+}
+
+.student-item.selected {
+  background-color: gray;
+  //font-weight: bold;
+  //border-radius: 4px;
+}
+
+
+
+
+
+
+
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+.modal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 200ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+
+}
+
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+
+
+
+
+
+
+.modal-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0;
+  width: 100%;
+  padding-left: 5%;
+
+
+
+
+.close-button{
+  display: flex;
+  background-color: @background-color;
+  color: rgb(224, 226, 229);
+  border: 0.1px solid  @background-color;
+  width: 10%;
+  height: 4vh;
+  font-size: x-large;
+  display: inline;
+  font-weight: bold;
+}
+}
+
+
+
+.projectSec2.status-InProgress {
+  border-color: green;  /* Green border for active projects */
+}
+
+.projectSec2.status-Completed {
+  border-color: blue;   /* Blue border for completed projects */
+}
+
+.projectSec2.status-Pending {
+  border-color: orange; /* Yellow border for pending projects */
+}
+
+
+
+
+
+
+
+.icon-input {
+
+  position: relative;
+  width: 100%;
+
+
+ input, select {
+  width: 100%;
+  padding: 10px;
+  padding-right: 35px; /* Space for icon */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #1c1c1c; /* Adjust to match your theme */
+  color: white;
+}
+
+ i {
+  position: absolute;
+  top: 50%;
+  left:90%;
+  transform: translateY(-50%);
+  //color: #a8a8a8; /* Adjust color to match your UI */
+  color: @background-color;
+  pointer-events: none;
+  font-size: small;}
+
+
+
+
+ .dropdown{
+  color: rgb(224, 226, 229);
+}}
+
+
+
+
+

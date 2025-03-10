@@ -6,7 +6,7 @@ const mainRoute = async (isLogged) => {
     const response = await fetch(isLogged ? "dashboard.html" : "signin.html");
     const html = await response.text();
     index.innerHTML = html;
-    dashboardRout("chat"); //By default display the home page
+    dashboardRout("home"); //By default display the home page
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
@@ -21,11 +21,32 @@ const dashboardRout = async (page, event) => {
     clearInterval(interval);
     if (page === "home") interval = homeIntialize();
     else if (page == "chat") loadContacts();
-    highlightSelectedPageLink(event.target);
+    highlightSelectedPageLink(event?.target);
+
+    if (page === "projects") {addProjectEventListener();
+      showProjects();
+      populateStudentList();
+    }
+
+  if (page=="studentProject"){
+    studentProj();
+  }
+  
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
 };
+
+
+
+
+
+
+
+
+
+
+
 
 const homeIntialize = () => {
   loadChart();
@@ -33,7 +54,19 @@ const homeIntialize = () => {
   return setInterval(updateTime, 1000);
 };
 
+
+
+
+// Call the function to attach the event listener
+
 mainRoute(true);
+
+
+
 /* document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM is fully loaded and parsed.");
 }); */
+
+
+
+
