@@ -561,50 +561,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+const AddnewTasks = (event) => {
+  console.log("hi ");
+
+  event.preventDefault(); // منع إعادة تحميل الصفحة
+      // جلب القيم من الحقول
+      const projectTitle = document.getElementById("project-title").value;
+      const taskName = document.getElementById("task-name").value;
+      const description = document.getElementById("description").value;
+      const assignedStudent = document.getElementById("assigned-student").value;
+      const status = document.getElementById("status").value;
+      const dueDate = document.getElementById("due-date").value;
+
+      // التحقق من ملء جميع الحقول المطلوبة
+      if (
+          projectTitle === "Select a project" ||
+          assignedStudent === "Select a student" ||
+          status === "Select a status" ||
+          taskName.trim() === "" ||
+          dueDate.trim() === ""
+      ) {
+          alert("Enter Information Please");
+          return;
+      }
+
+      // استرجاع البيانات السابقة من localStorage أو تهيئة كائن جديد
+      let data = JSON.parse(localStorage.getItem("data")).tasks ||  [] ;
+
+      // إنشاء كائن المهمة الجديدة
+      const newTask = {
+          id: data.tasks.length + 1, // ID فريد بناءً على طول المصفوفة
+          description,
+          status,
+          assignedTo,
+          assignedBy: 1,
+          projectId,
+          projectTitle,
+          createdAt: new Date().toISOString(),
+      };
 
 
- const saveTaskToLocalStorage = (task) => {
-  console.log("in save task");
-  let tasks = JSON.parse(localStorage.getItem("data")).tasks || []; // Get tasks from localStorage or initialize as empty array
-  tasks.push(task); // Add new task to the tasks array
-  localStorage.setItem('tasks', JSON.stringify(data)).tasks; // Save updated tasks array back to localStorage
+      // تحديث البيانات في localStorage بنفس الطريقة التي طلبتها
+      localStorage.setItem(
+          "data",
+          JSON.stringify({
+              ...data,
+              tasks: [...data.tasks, newTask], // إضافة المهمة إلى المصفوفة
+          })
+      );
+
+      // إعادة تعيين الحقول بعد الحفظ
+      form.reset();
+
+      // تنبيه المستخدم
+      alert("Done ! ");
+  
 };
 
-// Event listener for form submission
-document.getElementById('taskForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent form from refreshing the page
-  console.log("in save task2");
 
-  // Collect data from form inputs
-  const taskName = document.getElementById('task-name').value;
-  const description = document.getElementById('description').value;
-  const assignedStudent = document.getElementById('assigned-student').value;
-  const status = document.getElementById('status').value;
-  const dueDate = document.getElementById('due-date').value;
-
-  // Get current date for the createdAt field
-  const createdAt = new Date().toISOString();
-
-  // Create new task object
-  const newTask = {
-      id: Date.now(), // Use the current timestamp as a unique ID
-      title: taskName,
-      description: description,
-      status: status,
-      assignedTo: assignedStudent,
-      assignedBy: 1, // Assuming user ID is 1 for now
-      projectId: document.getElementById('project-title').value,
-      projectTitle: document.getElementById('project-title').selectedOptions[0].text,
-      createdAt: createdAt,
-  };
-
-  // Save task to localStorage
-  saveTaskToLocalStorage(newTask);
-
-  // Optionally, clear form inputs after submitting
-  document.getElementById('taskForm').reset();
-
-  // You can also update the UI to show the new task immediately if needed
-  alert("Task added successfully!");
-});
 
