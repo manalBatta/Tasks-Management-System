@@ -347,14 +347,9 @@ const isStudent = (event) => {
   localStorage.setItem("data", JSON.stringify(mockData));
   const statusCycle = ["Pending", "In Progress", "Completed"];
   
- /* if (!localStorage.getItem("tasks")) {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }*/
+ 
 })();
-/*window.onload = () => {
-  
-  loadTasks();
-};*/
+
 const sortTable =(event)=>{
   
 document.getElementById('sort').addEventListener('change', function () {
@@ -562,61 +557,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const AddnewTasks = (event) => {
-  console.log("hi ");
+  console.log("hi");
 
-  event.preventDefault(); // منع إعادة تحميل الصفحة
-      // جلب القيم من الحقول
-      const projectTitle = document.getElementById("project-title").value;
-      const taskName = document.getElementById("task-name").value;
-      const description = document.getElementById("description").value;
-      const assignedStudent = document.getElementById("assigned-student").value;
-      const status = document.getElementById("status").value;
-      const dueDate = document.getElementById("due-date").value;
+  event.preventDefault();
 
-      // التحقق من ملء جميع الحقول المطلوبة
-      if (
-          projectTitle === "Select a project" ||
-          assignedStudent === "Select a student" ||
-          status === "Select a status" ||
-          taskName.trim() === "" ||
-          dueDate.trim() === ""
-      ) {
-          alert("Enter Information Please");
-          return;
-      }
+  const projectTitle1 = document.getElementById("project-title").value;
+  const taskName1 = document.getElementById("task-name").value;
+  const description1 = document.getElementById("description").value;
+  const assignedStudent1 = document.getElementById("assigned-student").value;
+  const status1 = document.getElementById("status").value;
+  const dueDate1 = document.getElementById("due-date").value;
 
-      // استرجاع البيانات السابقة من localStorage أو تهيئة كائن جديد
-      let data = JSON.parse(localStorage.getItem("data")).tasks ||  [] ;
+  if (
+    projectTitle1 === "Select a project" ||
+    assignedStudent1 === "Select a student" ||
+    status1 === "Select a status" ||
+    taskName1.trim() === "" ||
+    dueDate1.trim() === ""
+  ) {
+    alert("Enter Information Please");
+    return;
+  }
 
-      // إنشاء كائن المهمة الجديدة
-      const newTask = {
-          id: data.tasks.length + 1, // ID فريد بناءً على طول المصفوفة
-          description,
-          status,
-          assignedTo,
-          assignedBy: 1,
-          projectId,
-          projectTitle,
-          createdAt: new Date().toISOString(),
-      };
+  let storedData = JSON.parse(localStorage.getItem("data")) || { tasks: [] };
+  let data = storedData.tasks || [];
 
+  const newTask = {
+    id: data.length + 1,
+    description: description1,
+    status: status1,
+    assignedTo: assignedStudent1,
+    assignedBy: 1,
+    projectId: data.length + 1,
+    projectTitle: projectTitle1,
+    createdAt: new Date().toISOString(),
+  };
 
-      // تحديث البيانات في localStorage بنفس الطريقة التي طلبتها
-      localStorage.setItem(
-          "data",
-          JSON.stringify({
-              ...data,
-              tasks: [...data.tasks, newTask], // إضافة المهمة إلى المصفوفة
-          })
-      );
+  localStorage.setItem(
+    "data",
+    JSON.stringify({
+      ...storedData,
+      tasks: [...data, newTask],
+    })
+  );
 
-      // إعادة تعيين الحقول بعد الحفظ
-      form.reset();
+  loadTasks();
 
-      // تنبيه المستخدم
-      alert("Done ! ");
-  
+  alert("Done!");
 };
-
-
-
