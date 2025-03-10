@@ -7,157 +7,91 @@
   </head>
   <body>
     <div class="container">
-        <div class="task-header">
-           
-            <div class="sort">
-                <label for="sort">Sort By:</label>
-                <select id="sort"  class="list" onchange ="sortTable(event)"  >
-                    <option value="Task Status">Task Status </option>
-                    <option value="Project">Project </option>
-                    <option value="Due Date">Due Date</option>
-                    <option value="Assigned Student">Assigned Student</option>
-                    
-                </select>
-            </div>
-            <button class="btn create-task" onclick="AddTasks(event)">Create a New Task</button>
+      <div class="task-header">
+        <div class="sort">
+          <label for="sort">Sort By:</label>
+          <select id="sort" class="list" onchange="sortTable(event)">
+            <option value="Task Status">Task Status</option>
+            <option value="Project">Project</option>
+            <option value="Due Date">Due Date</option>
+            <option value="Assigned Student">Assigned Student</option>
+          </select>
         </div>
-    </div>
-        <table  id="tasksTable" class="task-table">
-          <thead>
-              <tr>
-                  <th>Task ID</th>
-                  <th>Project</th>
-                  <th>Task Name</th>
-                  <th>Description</th>
-                  <th>Assigned Student</th>
-                  <th>Status</th>
-                  <th>Due Date</th>
-              </tr>
-          </thead>
-          <tbody>
-           
-          </tbody>
-      </table>
-
-
-
-      <div class="overlay"></div>
-
-      <div class="task-container">
-          <div class="task-form">
-              <button class="close-btn">&times;</button>
-              <h2>Create New Task</h2>
-              <form>
-                  <div class="form-group">
-                      <label for="project-title">Project Title:</label>
-                      <select id="project-title" name="project-title">
-                          <option>Select a project</option>
-                          <option>Website Redesign</option>
-                          <option>Mobile App Development</option>
-                          <option>Data Analysis Project</option>
-                          <option>Machine Learning Model/option>
-                          <option>Machine Learning Model/option>
-
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="task-name">Task Name:</label>
-                      <input type="text" id="task-name" name="task-name" >
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="description">Description:</label>
-                      <textarea id="description" name="description" ></textarea>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="assigned-student">Assigned Student:</label>
-                      <select id="assigned-student" name="assigned-student" >
-                          <option>Select a student</option>
-                          <option>Ali Yaseen</option>
-                          <option>Braa Aeesh</option>
-                          <option>Ibn Al-Jawzee</option>
-                          <option>Ibn Malik</option>
-                          <option>Ayman Outom</option>
-                          <option>Salah Salah</option>
-                          <option>Yahya Leader</option>
-                          <option>Salam Kareem</option>
-                          <option>Issac Nasir</option>
-                          <option>Saeed Salam</option>
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="status">Status:</label>
-                      <select id="status" name="status">
-                          <option>Select a status</option>
-                          <option>In Progress</option>
-                          <option>Completed</option>
-                          <option>Pending</option>
-                          <option>On Hold</option>
-                          <option>Cancelled</option>
-
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="due-date">Due Date:</label>
-                      <input type="date" id="due-date" name="due-date" placeholder="dd/mm/yyyy">
-                  </div>
-  
-                  <button type="submit" onclick="AddnewTasks(event)">Add Task</button>
-              </form>
-          </div>
+        <button class="btn create-task">Create a New Task</button>
       </div>
+    </div>
+    <table id="tasksTable" class="task-table">
+      <thead>
+        <tr>
+          <th>Task ID</th>
+          <th>Project</th>
+          <th>Task Name</th>
+          <th>Description</th>
+          <th>Assigned Student</th>
+          <th>Status</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
-      
-<!-- <tr>
-                <td>1</td>
-                <td>Website Development</td>
-                <td>Design Homepage</td>
-                <td>Design the homepage layout</td>
-                <td>Fatima Nasser</td>
-                <td class="status" onclick="sortState(event)">In Progress</td>
-                <td>4/3/2025</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>App Development</td>
-                <td>Build Login Screen</td>
-                <td>Develop the login screen of the app</td>
-                <td>Lama Dwikat</td>
-                <td class="status" onclick="sortState(event)" >Completed</td>
-                <td>5/3/2025</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Marketing</td>
-                <td>Launch Campaign</td>
-                <td>Prepare materials for the marketing campaign</td>
-                <td>Manal Batta</td>
-                <td>Pending</td>
-                <td>20/3/2025</td>
-            </tr>  
-            <tr>
-                <td>4</td>
-                <td>Marketing</td>
-                <td>Launch Campaign</td>
-                <td>Prepare materials for the marketing campaign</td>
-                <td>Manal Batta2</td>
-                <td>Pending</td>
-                <td>21/3/2025</td>
-            </tr>  
-            <tr>
-                <td>5</td>
-                <td>Website Development</td>
-                <td>Design Homepage</td>
-                <td>Design the homepage layout</td>
-                <td>Fatima Nasser</td>
-                <td>In Progress</td>
-                <td>14/3/2025</td>
-            </tr>-->
+    <div class="overlay"></div>
 
+    <!-- fill this from localstorage -->
+    <div class="task-container">
+      <div class="task-form">
+        <button class="close-btn">&times;</button>
+        <h2>Create New Task</h2>
+        <form>
+          <div class="form-group">
+            <label for="project-title">Project Title:</label>
+            <select id="project-title" name="project-title">
+              <option>Select a project</option>
+            </select>
+          </div>
 
-      
-     
+          <div class="form-group">
+            <label for="task-name">Task Name:</label>
+            <input type="text" id="task-name" name="task-name" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="assigned-student">Assigned Student:</label>
+            <select id="assigned-student" name="assigned-student">
+              <option>Select a student</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+              <option>Select a status</option>
+              <option>In Progress</option>
+              <option>Completed</option>
+              <option>Pending</option>
+              <option>On Hold</option>
+              <option>Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="due-date">Due Date:</label>
+            <input
+              type="date"
+              id="due-date"
+              name="due-date"
+              placeholder="dd/mm/yyyy"
+            />
+          </div>
+
+          <button type="button" onclick="addnewTask(event)">Add Task</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

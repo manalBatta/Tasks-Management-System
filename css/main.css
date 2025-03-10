@@ -105,8 +105,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  margin: 0;
+  background-color: #000000;
+  font-family: Arial, sans-serif;
 }
 .login-container {
   background-color: #000000;
@@ -166,7 +168,54 @@ body {
   color: white;
 }
 .signup-container {
-  background: #1e1e1e;
+  background: #181818;
+  padding: 30px;
+  width: 350px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+.signup-container h2 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.signup-container label {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 10px;
+}
+.signup-container input[type="text"],
+.signup-container input[type="password"],
+.signup-container input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  background: #2b2b2bcd;
+  border: none;
+  color: #ffffff;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.signup-container input[type="checkbox"] {
+  margin-right: 5px;
+}
+.signup-container button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.signup-container button:hover {
+  background: #0062cc;
+}
+.signup-container {
+  background: #000000;
   padding: 30px;
   width: 350px;
   border-radius: 10px;
@@ -438,6 +487,7 @@ body {
   text-transform: capitalize;
   border-radius: 5px;
   padding: 5px 10px;
+  cursor: pointer;
 }
 .task-table .status[data-status="Completed"] {
   color: rgba(0, 85, 255, 0.832);
@@ -645,7 +695,7 @@ body {
   grid-template-columns: 1fr 4fr;
   grid-template-rows: 0.5fr 5fr;
   grid-template-areas: "header header" "sidebar content";
-  background-color: #1e1e1e;
+  background-color: #181818;
   color: #ffffff;
 }
 .dashboard .header {

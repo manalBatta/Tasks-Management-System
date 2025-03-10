@@ -1,7 +1,14 @@
 <main class="dashboard">
   <header class="header">
     <h1 id="userName"></h1>
-    <button class="log-out-btn" onclick="mainRoute('pages/signin');">Logout</button>
+    <button
+      class="log-out-btn"
+      onclick="()=>{
+      localStorage.removeItem('user');
+      mainRoute('pages/signin');}"
+    >
+      Logout
+    </button>
   </header>
   <aside class="sidebar">
     <ul class="sidebar-list">

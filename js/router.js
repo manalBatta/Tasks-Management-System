@@ -1,4 +1,3 @@
-
 let interval; //a global variable to store the interval for the home page real time clock
 
 const mainRoute = async (page) => {
@@ -34,4 +33,10 @@ const dashboardRout = async (page, event) => {
   }
 };
 
-mainRoute("pages/signin");
+(function () {
+  if (!localStorage.getItem("user")) {
+    mainRoute("pages/signin");
+  } else {
+    userTypeDashboard();
+  }
+})();

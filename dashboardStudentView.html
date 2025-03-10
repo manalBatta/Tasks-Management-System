@@ -1,7 +1,12 @@
 <main class="dashboard">
   <header class="header">
     <h1 id="userName"></h1>
-    <button class="log-out-btn" onclick="mainRoute('pages/signin');">
+    <button
+      class="log-out-btn"
+      onclick="()=>{
+      localStorage.removeItem('user');
+      mainRoute('pages/signin');}"
+    >
       Logout
     </button>
   </header>
@@ -19,12 +24,7 @@
       >
         Projects
       </li>
-      <li
-        class="sidebar-item"
-        onclick="dashboardRout('tasksStudentView',event)"
-      >
-        Tasks
-      </li>
+      <li class="sidebar-item" onclick="dashboardRout('tasks',event)">Tasks</li>
       <li class="sidebar-item" onclick="dashboardRout('chat',event)">Chat</li>
     </ul>
   </aside>
