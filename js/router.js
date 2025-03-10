@@ -1,3 +1,4 @@
+
 let interval; //a global variable to store the interval for the home page real time clock
 
 const mainRoute = async (page) => {
@@ -26,6 +27,7 @@ const dashboardRout = async (page, event) => {
     if (page === "home") interval = homeIntialize();
     else if (page === "homeStudentView") interval = homeStudentIntialize();
     else if (page == "chat") loadContacts();
+    else if (page == "tasks") loadTasks();
     highlightSelectedPageLink(event.target);
   } catch (error) {
     console.error("Error fetching the page:", error);

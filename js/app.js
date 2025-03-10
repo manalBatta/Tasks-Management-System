@@ -106,6 +106,8 @@ const loadContacts = () => {
   });
 
   chatContact = contacts[0];
+
+  chatContact = contacts[0];
 };
 
 const loadChat = (contactId) => {
@@ -310,22 +312,22 @@ const homeStudentIntialize = () => {
     ],
     tasks: [
       {
-        id: 1,
+        id: 10,
         title: "Data Collection",
         description: "Gather historical weather data.",
-        status: "Pending",
-        assignedTo: 2,
+        status : "Pending",
+        assignedTo: "Fatima Nasser",
         assignedBy: 1,
         projectId: 1,
         projectTitle: "AI Research",
         createdAt: "2024-02-26T12:00:00Z",
       },
       {
-        id: 2,
+        id: 11,
         title: "UI Design",
         description: "Create a responsive UI for the web app.",
         status: "In Progress",
-        assignedTo: 3,
+        assignedTo:"Nour Omar" ,
         assignedBy: 1,
         projectId: 2,
         projectTitle: "Web App Development",
@@ -373,4 +375,263 @@ const homeStudentIntialize = () => {
   };
 
   localStorage.setItem("data", JSON.stringify(mockData));
+  const statusCycle = ["Pending", "In Progress", "Completed"];
+  
+ 
 })();
+
+const sortTable =(event)=>{
+  
+document.getElementById('sort').addEventListener('change', function () {
+  let table = document.getElementById('tasksTable');
+  let rows = Array.from(table.querySelectorAll('tbody tr'));
+
+
+  console.log("Selected value:", this.value);
+
+  if (this.value === 'Due Date') {
+   // console.log("Parsed dates: Due date "); 
+    rows.sort((a, b) => {
+      let dateA = parseDate(a.cells[6].textContent.trim()); 
+      let dateB = parseDate(b.cells[6].textContent.trim()); 
+      console.log("Raw text dates:", a.cells[6].textContent.trim(), b.cells[6].textContent.trim());
+
+
+      return dateB - dateA; 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+
+  }
+
+
+  else if (this.value === 'Project') {
+    //console.log("Sorting by Project Name..."); 
+
+    rows.sort((a, b) => {
+      let projectA = a.cells[1].textContent.trim(); 
+      let projectB = b.cells[1].textContent.trim();
+
+      if (projectA === projectB) {
+        return 0; 
+      }
+
+      return projectA.localeCompare(projectB); 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    //console.log("Sorting completed by Project Name!"); 
+  }
+
+ else if (this.value === 'Task Status') {
+    const statusOrder = {
+      'Completed': 1,
+      'In Progress': 2,
+      'Pending': 3
+    };
+
+    rows.sort((a, b) => {
+      let statusA = a.cells[5].textContent.trim();
+      let statusB = b.cells[5].textContent.trim();
+      return statusOrder[statusA] - statusOrder[statusB];
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+  }
+
+  else if (this.value === 'Assigned Student') {
+
+    rows.sort((a, b) => {
+      let studentA = a.cells[4].textContent.trim(); 
+      let studentB = b.cells[4].textContent.trim();
+
+      return studentA.localeCompare(studentB); 
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    //console.log("Sorting completed by Assigned Student!");
+  }
+  
+   
+});
+};
+
+function parseDate(dateStr) {
+let parts = dateStr.split('/'); 
+if (parts.length === 3) {
+  let [month, day, year] = parts.map(Number);
+  return new Date(year, month - 1, day);
+}
+return new Date(0); 
+}
+
+const sortState =(event)=>{
+  let cell = event.target;  
+    let currentStatus = cell.textContent.trim(); 
+    
+    //console.log("Clicked on:", currentStatus); 
+    
+    let nextStatus;
+    if (currentStatus === 'Pending') {
+        nextStatus = 'In Progress';
+    } else if (currentStatus === 'In Progress') {
+        nextStatus = 'Completed';
+    } else if (currentStatus === 'Completed') {
+        nextStatus = 'On Hold';
+    } else if (currentStatus === 'On Hold') {
+      nextStatus = 'Cancled';
+    }  else if (currentStatus === 'Cancled') {
+    nextStatus = 'Pending';
+    } else {
+        nextStatus = 'Pending';  
+    }
+
+    //console.log("New Status:", nextStatus); 
+    
+    cell.textContent = nextStatus; 
+    cell.setAttribute("data-status", nextStatus);
+    cell.classList.remove('status-pending', 'status-inprogress', 'status-completed', 'status-onHold', 'status-cancled');
+    cell.classList.add(getStatusClass(nextStatus));
+
+};
+
+const loadTasks = () => {
+  console.log("Stored Tasks:");  
+
+    const tableBody = document.querySelector("#tasksTable tbody");
+  
+    const storedTasks = JSON.parse(localStorage.getItem("data")).tasks || [];
+  
+    console.log("Stored Tasks:", storedTasks);  
+  
+    tableBody.innerHTML = "";
+  
+    storedTasks.forEach((task) => {
+      const row = document.createElement("tr");
+  
+      row.innerHTML = `
+        <td><span>${task.id}</span></td>
+        <td><span>${task.projectTitle}</span></td>
+        <td><span>${task.title}</span></td>
+        <td><span>${task.description}</span></td>
+        <td><span>${task.assignedTo}</span></td>
+        <td class="status ${getStatusClass(task.status)}"  onclick="sortState(event)"  data-status="${task.status}">
+          <span >${task.status}</span>
+        </td>
+        <td><span>${new Date(task.createdAt).toLocaleDateString()}</span></td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
+  
+  
+}
+const getStatusClass = (status) => {
+  switch (status) {
+      case "Pending": return "status-pending";
+      case "In Progress": return "status-inprogress";
+      case "Completed": return "status-completed";
+      case "On Hold": return "status-onHold";
+      case "Cancled": return "status-cancled";
+
+      default: return "";
+  }
+};
+
+document.addEventListener("DOMContentLoaded", loadTasks);
+
+// إضافة أنماط للألوان عبر LESS
+const style = document.createElement('style');
+style.innerHTML = `
+  .status {
+      font-weight: bold;
+  }
+  .status-pending { color: orange !important; }
+  .status-inprogress { color: green !important; }
+  .status-completed { color: blue !important; }
+  .status-onHold { color: yellow !important; }
+  .status-cancled { color: red !important; }
+
+`;
+document.head.appendChild(style);
+
+
+const AddTasks = (event) => {
+  const openBtn = document.querySelector('.create-task');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.querySelector('.overlay');
+  const taskContainer = document.querySelector('.task-container');
+
+  openBtn.addEventListener('click', () => {
+      overlay.style.display = 'block';
+      taskContainer.style.display = 'flex';
+  });
+
+  closeBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      taskContainer.style.display = 'none';
+  });
+
+  overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+          overlay.style.display = 'none';
+          taskContainer.style.display = 'none';
+      }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  AddTasks();
+});
+
+
+
+const AddnewTasks = (event) => {
+  console.log("hi");
+
+  event.preventDefault();
+
+  const projectTitle1 = document.getElementById("project-title").value;
+  const taskName1 = document.getElementById("task-name").value;
+  const description1 = document.getElementById("description").value;
+  const assignedStudent1 = document.getElementById("assigned-student").value;
+  const status1 = document.getElementById("status").value;
+  const dueDate1 = document.getElementById("due-date").value;
+
+  if (
+    projectTitle1 === "Select a project" ||
+    assignedStudent1 === "Select a student" ||
+    status1 === "Select a status" ||
+    taskName1.trim() === "" ||
+    dueDate1.trim() === ""
+  ) {
+    alert("Enter Information Please");
+    return;
+  }
+
+  let storedData = JSON.parse(localStorage.getItem("data")) || { tasks: [] };
+  let data = storedData.tasks || [];
+
+  const newTask = {
+    id: data.length + 1,
+    description: description1,
+    status: status1,
+    assignedTo: assignedStudent1,
+    assignedBy: 1,
+    projectId: data.length + 1,
+    projectTitle: projectTitle1,
+    createdAt: new Date().toISOString(),
+  };
+
+  localStorage.setItem(
+    "data",
+    JSON.stringify({
+      ...storedData,
+      tasks: [...data, newTask],
+    })
+  );
+
+  loadTasks();
+
+  alert("Done!");
+};

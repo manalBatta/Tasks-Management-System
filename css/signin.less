@@ -12,10 +12,21 @@
 
 .page {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+  justify-content: center;  
+  align-items: center;  
+  height: 100vh;  
+  background-color: #f4f4f4; 
+}
+
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: @backgroundColor;
+    font-family: Arial, sans-serif;
 }
 .login-container {
   background-color: @containeColor;
@@ -77,8 +88,65 @@
   text-align: center;
   cursor: pointer;
 
-  &:hover {
-    background-color: @buttonColor;
-    color: @textColor;
+    &:hover {
+        background-color: @buttonColor;
+        color: @textColor;
+    }
+}
+
+@input-background: #2b2b2bcd;
+
+
+.signup-container {
+  background: @background-color;
+  padding: 30px;
+  width: 350px;
+  border-radius: @border-radius;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  
+  h2 {
+    color: @text-color;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    color: @text-color;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background: @input-background;
+    border: none;
+    color: @text-color;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 5px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background: @button-color;
+    color: @text-color;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    
+    &:hover {
+      background: darken(@button-color, 10%);
+    }
   }
 }
