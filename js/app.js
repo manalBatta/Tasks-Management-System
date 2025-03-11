@@ -283,7 +283,7 @@ function parseDate(dateStr) {
   return new Date(0);
 }
 
-const sortState = (event) => {
+const sortState = (event, taskId) => {
   let cell = event.target;
   let currentStatus = cell.textContent.trim();
 
@@ -304,8 +304,6 @@ const sortState = (event) => {
     nextStatus = "Pending";
   }
 
-  //console.log("New Status:", nextStatus);
-
   cell.textContent = nextStatus;
   cell.setAttribute("data-status", nextStatus);
   cell.classList.remove(
@@ -316,6 +314,16 @@ const sortState = (event) => {
     "status-cancled"
   );
   cell.classList.add(getStatusClass(nextStatus));
+
+  const data = JSON.parse(localStorage.getItem("data"));
+  let tasks = data.tasks;
+  const task = tasks.find((task) => task.id === taskId);
+  task.status = nextStatus;
+  tasks = tasks.filter((task) => task.id !== taskId);
+  localStorage.setItem(
+    "data",
+    JSON.stringify({ ...data, tasks: [...tasks, task] })
+  );
 };
 
 const loadTasks = () => {
@@ -370,7 +378,9 @@ const loadTasks = () => {
         <td><span>${student.username}</span></td>
         <td class="status ${getStatusClass(
           task.status
-        )}"  onclick="sortState(event)"  data-status="${task.status}">
+        )}"  onclick="sortState(event,${task.id})"  data-status="${
+      task.status
+    }">
           <span >${task.status}</span>
         </td>
         <td><span>${new Date(task.createdAt).toLocaleDateString()}</span></td>
@@ -382,12 +392,18 @@ const loadTasks = () => {
 
 const populateTaskForm = () => {
   const storedData = JSON.parse(localStorage.getItem("data"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const { projects, users } = storedData;
 
   const projectDropdown = document.getElementById("project-title");
   projectDropdown.innerHTML = "<option>Select a project</option>";
 
+  if (user.role === "student") {
+    /* will be continued when asking to add a new table that combines the projectid and studentID */
+    /*     projects.filter((project) => project.createdBy === user.id);
+     */
+  }
   projects.forEach((project) => {
     const option = document.createElement("option");
     option.value = project.id;
@@ -406,6 +422,10 @@ const populateTaskForm = () => {
       option.textContent = student.username;
       studentDropdown.appendChild(option);
     });
+  if (user.role === "student") {
+    const assignedStudent = document.getElementById("assigned-student");
+    assignedStudent.innerHTML = `<option value=${user.id}>${user.username}</option>`;
+  }
 };
 
 const getStatusClass = (status) => {
@@ -426,7 +446,6 @@ const getStatusClass = (status) => {
   }
 };
 
-//handles adding new task from student account or admin account
 const addnewTask = (event) => {
   console.log("Adding new task...");
   event.preventDefault();

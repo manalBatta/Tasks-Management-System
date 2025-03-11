@@ -447,6 +447,7 @@ body {
   width: 220px;
   text-align: left;
   text-align-last: left;
+  height: fit-content;
 }
 .task-table {
   width: 100%;
