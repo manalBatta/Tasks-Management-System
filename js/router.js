@@ -27,11 +27,32 @@ const dashboardRout = async (page, event) => {
     else if (page === "homeStudentView") interval = homeStudentIntialize();
     else if (page == "chat") loadContacts();
     else if (page == "tasks") loadTasks();
-    highlightSelectedPageLink(event.target);
+    highlightSelectedPageLink(event?.target);
+
+    if (page === "projects") {addProjectEventListener();
+      showProjects();
+      populateStudentList();
+    }
+
+  if (page=="studentProject"){
+    studentProj();
+  }
+  
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
 };
+
+
+
+
+
+
+
+
+
+
+
 
 (function () {
   if (!localStorage.getItem("user")) {

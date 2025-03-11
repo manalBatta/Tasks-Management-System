@@ -92,6 +92,18 @@ const loadChart = () => {
   });
 };
 
+
+
+
+
+
+
+
+
+// Call the function to attach the event listener
+
+
+
 let chatContact;
 const loadContacts = () => {
   const userID = JSON.parse(localStorage.getItem("user")).id;
@@ -498,6 +510,7 @@ const addnewTask = (event) => {
   document.querySelector(".close-btn").click();
 };
 
+
 //intialization
 (function () {
   const mockData = {
@@ -583,21 +596,38 @@ const addnewTask = (event) => {
     projects: [
       {
         id: 1,
-        title: "AI Research",
-        description: "Developing an AI model for predicting weather patterns.",
+        title: "Website Redesign",
+        description: " Redesign the company website to improve user experience.",
         createdBy: 1,
-        createdAt: "2024-02-01T10:00:00Z",
-        deadline: "2024-03-01T23:59:59Z",
-        status: "In Progress",
+        startDate: "2024-01-01",
+        endDate: "2024-06-21",
+        status: "InProgress",
+        students:[ "SalahSalah , IsaacNasi" ],
+        category:"Mobile Development",
+              
       },
       {
         id: 2,
-        title: "Web App Development",
-        description: "Building a task management system.",
+        title: "Mobile App Development",
+        description: "Develop a mobile application for our services.",
         createdBy: 1,
-        createdAt: "2024-01-15T11:00:00Z",
-        deadline: "2024-02-15T23:59:59Z",
+        startDate: "2024-02-15",
+        endDate: "2024-08-15",
         status: "Completed",
+        students:["IsaacNasir"],
+        category:"Mobile Development",
+      },
+
+      {
+        id: 3,
+        title: "Data Analysis Project",
+        description: "Analyze data from the last quarter to find insights.",
+        createdBy: 1,
+        startDate: "2024-03-01",
+        endDate: "2024-05-01",
+        status: "Pending",
+        students:["SaeedSalam, YahyaLeader"],
+        category:"Data Science",
       },
     ],
     tasks: [
@@ -621,6 +651,8 @@ const addnewTask = (event) => {
         projectId: 2,
         createdAt: "2024-02-26T12:30:00Z",
       },
+
+      
     ],
     chat: [
       {
@@ -665,3 +697,450 @@ const addnewTask = (event) => {
     localStorage.setItem("data", JSON.stringify(mockData));
   }
 })();
+
+
+
+
+
+function addProjectEventListener() {
+ 
+
+    const openModalButtons = document.querySelectorAll('[data-modal-target]')
+    const closeModalButtons = document.querySelectorAll('[data-close-button]')
+    const overlay = document.getElementById('overlay')
+    
+    openModalButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const modal = document.querySelector(button.dataset.modalTarget)
+        openModal(modal)
+      })
+    })
+    
+    overlay.addEventListener('click', () => {
+      const modals = document.querySelectorAll('.modal.active')
+      modals.forEach(modal => {
+        closeModal(modal)
+      })
+    })
+    
+    closeModalButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const modal = button.closest('.modal')
+        closeModal(modal)
+      })
+    })
+    
+    function openModal(modal) {
+      if (modal == null) return
+      modal.classList.add('active')
+      overlay.classList.add('active')
+    }
+    
+    function closeModal(modal) {
+      if (modal == null) return
+      modal.classList.remove('active')
+      overlay.classList.remove('active')
+    }
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function search(){
+  document.getElementById("searchProject").addEventListener("input", function() {
+    const searchQuery = this.value.toLowerCase(); // Get the search query and convert it to lowercase
+
+    const localData = JSON.parse(localStorage.getItem("data"));
+
+    // Get data from the database using the sub() function
+    const dbData = JSON.parse(localStorage.getItem("projects")) || { projects: [] }; // You may need to replace this with an actual DB fetch if it's not stored in localStorage
+  
+    // Merge the projects from localStorage and database
+    const allProjects = [...(localData ? localData.projects : []), ...dbData.projects];
+  
+    // Check if there are projects to display
+    if (allProjects.length === 0) {
+      console.error("No project data found.");
+      return;
+    }
+  
+
+    // Filter the projects by both title and description based on the search query
+    const filteredProjects = allProjects.filter(project => {
+      const matchesTitle = project.title.toLowerCase().includes(searchQuery);
+      const matchesDescription = project.description.toLowerCase().includes(searchQuery);
+      return matchesTitle || matchesDescription; // Return true if either title or description matches
+    });
+
+    // Call a function to display the filtered projects
+    displayFilteredProjects(filteredProjects);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+function selectStatus() {
+
+
+
+  const selectedStatus = document.getElementById("status").value;  // Get the selected status from the dropdown
+  const searchQuery = document.getElementById("searchProject").value.toLowerCase();  // Get the current search query
+
+
+
+
+
+  const localData = JSON.parse(localStorage.getItem("data"));
+
+  // Get data from the database using the sub() function
+  const dbData = JSON.parse(localStorage.getItem("projects")) || { projects: [] }; // You may need to replace this with an actual DB fetch if it's not stored in localStorage
+
+  // Merge the projects from localStorage and database
+  const allProjects = [...(localData ? localData.projects : []), ...dbData.projects];
+
+  // Check if there are projects to display
+  if (allProjects.length === 0) {
+    console.error("No project data found.");
+    return;
+  }
+
+  // Filter the projects based on status and search query
+  const filteredProjects = allProjects.filter(project => {
+    const matchesStatus = selectedStatus === "AllStatuses" || project.status === selectedStatus;
+
+    const matchesSearchQuery = project.title.toLowerCase().includes(searchQuery) ||
+                               project.description.toLowerCase().includes(searchQuery) ||
+                               project.students.some(student => student.toLowerCase().includes(searchQuery));
+                      
+    return matchesStatus && matchesSearchQuery;
+  });
+
+  // Call a function to display the filtered projects
+  displayFilteredProjects(filteredProjects);
+}
+
+
+
+ 
+
+
+function populateStudentList() {
+  const studentContainer = document.getElementById("studentListContainer");
+
+  // Retrieve students from localStorage
+  let data = JSON.parse(localStorage.getItem("data")) || { users: [] };
+
+  // Clear existing items
+  studentContainer.innerHTML = "";
+
+  if (data.users && data.users.length > 0) {
+      data.users.forEach(user => {
+          if (user.username === "adminUser") return; // Skip admin user
+
+          // Create student item (styled like a select option)
+          let studentItem = document.createElement("div");
+          studentItem.classList.add("student-item");
+          studentItem.textContent = user.username;
+          studentItem.dataset.value = user.username; // Store value for retrieval
+
+          // Handle click for selection
+          studentItem.addEventListener("click", function () {
+              studentItem.classList.toggle("selected");
+          });
+
+          studentContainer.appendChild(studentItem);
+      });
+  } else {
+      studentContainer.innerHTML = "<p>No students available</p>";
+  }
+}
+
+
+
+// Define closeModal globally
+function closeModal(modal) {
+  if (modal == null) return;
+  modal.classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+
+
+
+
+
+function sub() {     
+  // Get form values
+  const title = document.querySelector("input[name='title']").value;
+  const description = document.querySelector("textarea[name='description']").value;
+
+  // Get selected students from highlighted items
+  const students = Array.from(document.querySelectorAll(".student-item.selected"))
+      .map(item => item.dataset.value);
+
+  const category = document.getElementById("category").value;
+  const startDate = document.getElementById("startDate").value;
+  const endDate = document.getElementById("endDate").value;
+  const status = document.querySelector("select[name='status']").value;
+
+  // Create project object
+  const project = {
+      title,
+      description,
+      students,
+      category,
+      startDate,
+      endDate,
+      status,
+      createdAt: new Date().toLocaleString()
+  };
+
+  // Get existing projects or create new empty array
+  let projects = JSON.parse(localStorage.getItem("projects")) || { projects: [] };
+
+  console.log("Existing projects:", projects.projects);
+
+  // Add new project to the projects array
+  projects.projects.push(project);
+
+  // Save the updated projects array back to localStorage under "projects"
+  localStorage.setItem("projects", JSON.stringify(projects));
+
+  // Clear form after submission
+  document.getElementById("myForm").reset();
+
+  // Remove selection from student list
+  document.querySelectorAll(".student-item.selected").forEach(item => {
+      item.classList.remove("selected");
+  });
+
+  // Close modal using closeModal function
+  const modal = document.getElementById("projectModal");
+  closeModal(modal); 
+
+  console.log("Project added successfully.");
+
+  // Optionally, call a function to display projects on the UI (if necessary)
+  // appendProjectToUI(project);
+
+  // Show updated list of projects
+  showProjects();
+}
+
+
+
+
+
+
+
+function showProjects() {
+  // Get data from localStorage
+  const localData = JSON.parse(localStorage.getItem("data"));
+
+  // Get data from the database using the sub() function
+  const dbData = JSON.parse(localStorage.getItem("projects")) || { projects: [] }; // You may need to replace this with an actual DB fetch if it's not stored in localStorage
+
+  // Merge the projects from localStorage and database
+  const allProjects = [...(localData ? localData.projects : []), ...dbData.projects];
+
+  // Check if there are projects to display
+  if (allProjects.length === 0) {
+    console.error("No project data found.");
+    return;
+  }
+
+  const maindivContainer = document.querySelector(".maindiv");
+  maindivContainer.innerHTML = "";
+
+  allProjects.forEach((project, index) => {
+    // Parse the start and end dates
+    const startDate = new Date(project.startDate);
+    const endDate = new Date(project.endDate);
+    const today = new Date();
+
+    // Ensure time is ignored (only date comparison)
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    today.setHours(0, 0, 0, 0);
+
+    // Calculate total project duration in days
+    const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1); // Avoid division by zero
+
+    // Calculate elapsed duration in days
+    const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0);
+
+    let progressPercentage = Math.round((elapsedDuration / totalDuration) * 100);
+    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100); // Keep within range [0,100]
+
+    const projectDiv = document.createElement("div");
+    projectDiv.className = `projectSec2 status-${project.status}`;
+
+    projectDiv.innerHTML = `
+      <h3 id="projectTitle_${index}">${project.title}</h3>
+      <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
+      <p><strong>Students:</strong> <span id="projectStudents_${index}">${project.students.join(", ")}</span></p>
+      <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
+      <div class="progress-container">
+        <div class="progress-bar">${progressPercentage}%</div>
+      </div>
+      <div class="dates">
+        <p id="projectCreatedAt_${index}">${project.startDate}</p>
+        <p id="projectDeadline_${index}">${project.endDate}</p>
+      </div> 
+    `;
+
+    maindivContainer.appendChild(projectDiv);
+  });
+
+  console.log("Projects loaded successfully.");
+}
+
+
+
+
+
+
+function displayFilteredProjects(projects) {
+
+
+  const maindivContainer = document.querySelector(".maindiv");
+
+  maindivContainer.innerHTML = "";
+
+  if (projects.length === 0) {
+    const noResultsMessage = document.createElement("div");
+    noResultsMessage.textContent = "No projects found!";
+    maindivContainer.appendChild(noResultsMessage);
+    return;
+  }
+
+  projects.forEach((project, index) => {
+    const startDate = new Date(project.startDate);
+    const endDate = new Date(project.endDate);
+    const today = new Date();
+
+    // Ensure time is ignored (only date comparison)
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    today.setHours(0, 0, 0, 0);
+
+    // Calculate total project duration in days
+    const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1); // Avoid division by zero
+
+    // Calculate elapsed duration in days
+    const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0);
+
+    // Calculate progress percentage
+    let progressPercentage = Math.round((elapsedDuration / totalDuration) * 100);
+    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100); // Keep within range [0,100]
+
+    const projectDiv = document.createElement("div");
+    projectDiv.className = `projectSec2 status-${project.status}`; // Add status class to each project div
+
+    projectDiv.innerHTML = `
+      <h3 id="projectTitle_${index}">${project.title}</h3>
+      <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
+      <p><strong>Students:</strong> <span id="projectStudents_${index}">${project.students.join(", ")}</span></p>
+      <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
+      <div class="progress-container">
+          <div class="progress-bar"  >
+              ${progressPercentage}%
+          </div>
+      </div>
+      <div class="dates">
+        <p id="projectCreatedAt_${index}">${project.startDate}</p>
+        <p id="projectDeadline_${index}">${project.endDate}</p>
+      </div> 
+    `;
+
+    maindivContainer.appendChild(projectDiv);
+  });
+}
+
+
+
+
+
+function studentProj() {
+  // Retrieve data from local storage
+  const data = JSON.parse(localStorage.getItem("data"));
+
+  if (!data || !data.projects) {
+      console.error("No project data found.");
+      return;
+  }
+
+  // Filter projects where YahyaLeader is a student
+  const yahyaProjects = data.projects.filter(project => 
+      project.students.some(student => student.includes("YahyaLeader"))
+  );
+
+  // Get the container where projects will be displayed
+  const container = document.getElementById("projectContainer");
+
+  // Clear previous content
+  container.innerHTML = "";
+
+  // Populate projects
+  yahyaProjects.forEach((project, index) => {
+      const startDate = new Date(project.startDate);
+      const endDate = new Date(project.endDate);
+      const today = new Date();
+
+      // Ensure time is ignored for correct date comparison
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      today.setHours(0, 0, 0, 0);
+
+      // Calculate total project duration in days
+      const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1); // Avoid division by zero
+
+      // Calculate elapsed duration in days
+      const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0);
+
+      // Calculate progress percentage
+      let progressPercentage = Math.round((elapsedDuration / totalDuration) * 100);
+      progressPercentage = Math.min(Math.max(progressPercentage, 0), 100); // Keep within [0,100]
+
+      const projectDiv = document.createElement("div");
+      projectDiv.classList.add("project-item");
+
+      projectDiv.innerHTML = `
+          <h3 id="projectTitle_${index}">${project.title}</h3>
+          <p><strong>Description:</strong> <span>${project.description}</span></p>
+          <p><strong>Students:</strong> <span>${project.students.join(", ")}</span></p>
+          <p><strong>Category:</strong> <span>${project.category}</span></p>
+          <div class="progress-container">
+              <div class="progress-bar" style="width: ${progressPercentage}%;">
+                  ${progressPercentage}%
+              </div>
+          </div>
+          <div class="dates">
+              <p><strong></strong> ${project.startDate}</p>
+              <p><strong></strong> ${project.endDate}</p>
+          </div> 
+      `;
+
+      container.appendChild(projectDiv);
+  });
+}
