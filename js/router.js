@@ -1,5 +1,6 @@
 let interval; //a global variable to store the interval for the home page real time clock
 
+
 const mainRoute = async (page) => {
   const index = document.getElementById("app");
   try {
@@ -27,32 +28,19 @@ const dashboardRout = async (page, event) => {
     else if (page === "homeStudentView") interval = homeStudentIntialize();
     else if (page == "chat") loadContacts();
     else if (page == "tasks") loadTasks();
-    highlightSelectedPageLink(event?.target);
-
-    if (page === "projects") {addProjectEventListener();
+    else if (page === "projects") {
+      addProjectEventListener();
       showProjects();
       populateStudentList();
+    } else if (page == "studentProject") {
+      studentProj();
     }
 
-  if (page=="studentProject"){
-    studentProj();
-  }
-  
+    highlightSelectedPageLink(page);
   } catch (error) {
     console.error("Error fetching the page:", error);
   }
 };
-
-
-
-
-
-
-
-
-
-
-
 
 (function () {
   if (!localStorage.getItem("user")) {

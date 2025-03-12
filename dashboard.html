@@ -1,25 +1,38 @@
 <main class="dashboard">
   <header class="header">
     <h1 id="userName"></h1>
-    <button
-      class="log-out-btn"
-      onclick="()=>{
-      localStorage.removeItem('user');
-      mainRoute('pages/signin');}"
-    >
-      Logout
-    </button>
+    <button class="log-out-btn" onclick="logout()">Logout</button>
   </header>
   <aside class="sidebar">
     <ul class="sidebar-list">
-      <li class="sidebar-item selected" onclick="dashboardRout('home',event)">
+      <li
+        class="sidebar-item selected"
+        onclick="dashboardRout('home',event)"
+        data-value="home"
+      >
         Home
       </li>
-      <li class="sidebar-item" onclick="dashboardRout('projects',event)">
+      <li
+        class="sidebar-item"
+        onclick="dashboardRout('projects',event)"
+        data-value="projects"
+      >
         Projects
       </li>
-      <li class="sidebar-item" onclick="dashboardRout('tasks',event)">Tasks</li>
-      <li class="sidebar-item" onclick="dashboardRout('chat',event)">Chat</li>
+      <li
+        class="sidebar-item"
+        onclick="dashboardRout('tasks',event)"
+        data-value="tasks"
+      >
+        Tasks
+      </li>
+      <li
+        class="sidebar-item"
+        onclick="dashboardRout('chat',event)"
+        data-value="chat"
+      >
+        Chat
+      </li>
     </ul>
   </aside>
   <section id="content"></section>

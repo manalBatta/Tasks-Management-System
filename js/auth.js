@@ -48,3 +48,9 @@ function signUpNewUser() {
     userTypeDashboard();
   }
 }
+
+function logout() {
+  console.log("logout");
+  localStorage.removeItem("user");
+  mainRoute("pages/signin");
+}
