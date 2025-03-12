@@ -407,17 +407,10 @@ const sortTable = (event) => {
     let table = document.getElementById("tasksTable");
     let rows = Array.from(table.querySelectorAll("tbody tr"));
 
-    console.log("Selected value:", this.value);
-
     if (this.value === "Due Date") {
       rows.sort((a, b) => {
         let dateA = parseDate(a.cells[6].textContent.trim());
         let dateB = parseDate(b.cells[6].textContent.trim());
-        console.log(
-          "Raw text dates:",
-          a.cells[6].textContent.trim(),
-          b.cells[6].textContent.trim()
-        );
 
         return dateB - dateA;
       });
@@ -436,7 +429,6 @@ const sortTable = (event) => {
       });
 
       rows.forEach((row) => table.querySelector("tbody").appendChild(row));
-      //console.log("Sorting completed by Project Name!");
     } else if (this.value === "Task Status") {
       const statusOrder = {
         Completed: 1,
@@ -493,15 +485,15 @@ const sortState = (event, taskId) => {
   }
 
   cell.textContent = nextStatus;
-  cell.setAttribute("data-status", nextStatus);
-  cell.classList.remove(
+  cell.parentElement.setAttribute("data-status", nextStatus);
+  cell.parentElement.classList.remove(
     "status-pending",
     "status-inprogress",
     "status-completed",
     "status-onHold",
     "status-cancled"
   );
-  cell.classList.add(getStatusClass(nextStatus));
+  cell.parentElement.classList.add(getStatusClass(nextStatus));
 
   const data = JSON.parse(localStorage.getItem("data"));
   let tasks = data.tasks;
@@ -635,7 +627,6 @@ const getStatusClass = (status) => {
 };
 
 const addnewTask = (event) => {
-  console.log("Adding new task...");
   event.preventDefault();
 
   const projectTitle1 = document.getElementById("project-title").value;
@@ -679,7 +670,6 @@ const addnewTask = (event) => {
     })
   );
 
-  console.log("New Task:", newTask);
   loadTasks();
   alert("Done!");
 
@@ -746,7 +736,6 @@ function search() {
 
       // Check if there are projects to display
       if (allProjects.length === 0) {
-        console.error("No project data found.");
         return;
       }
 
@@ -765,31 +754,26 @@ function search() {
 }
 
 function selectStatus() {
-  const selectedStatus = document.getElementById("status").value; // Get the selected status from the dropdown
+  const selectedStatus = document.getElementById("status").value;
   const searchQuery = document
     .getElementById("searchProject")
-    .value.toLowerCase(); // Get the current search query
+    .value.toLowerCase();
 
   const localData = JSON.parse(localStorage.getItem("data"));
 
-  // Get data from the database using the sub() function
   const dbData = JSON.parse(localStorage.getItem("projects")) || {
     projects: [],
-  }; // You may need to replace this with an actual DB fetch if it's not stored in localStorage
+  };
 
-  // Merge the projects from localStorage and database
   const allProjects = [
     ...(localData ? localData.projects : []),
     ...dbData.projects,
   ];
 
-  // Check if there are projects to display
   if (allProjects.length === 0) {
-    console.error("No project data found.");
     return;
   }
 
-  // Filter the projects based on status and search query
   const filteredProjects = allProjects.filter((project) => {
     const matchesStatus =
       selectedStatus === "AllStatuses" || project.status === selectedStatus;
@@ -804,17 +788,15 @@ function selectStatus() {
     return matchesStatus && matchesSearchQuery;
   });
 
-  // Call a function to display the filtered projects
+  /* TO DO: I think displaying the projects function is repeated and must be extracted into a function*/
   displayFilteredProjects(filteredProjects);
 }
 
 function populateStudentList() {
   const studentContainer = document.getElementById("studentListContainer");
 
-  // Retrieve students from localStorage
   let data = JSON.parse(localStorage.getItem("data")) || { users: [] };
 
-  // Clear existing items
   studentContainer.innerHTML = "";
 
   if (data.users && data.users.length > 0) {
@@ -844,6 +826,7 @@ function closeModal(modal) {
 }
 
 function sub() {
+  //submit new project
   const title = document.querySelector("input[name='title']").value;
   const description = document.querySelector(
     "textarea[name='description']"
@@ -909,7 +892,6 @@ function showProjects() {
   const allProjects = localData.projects;
 
   if (allProjects.length === 0) {
-    console.error("No project data found.");
     return;
   }
 
@@ -963,10 +945,10 @@ function showProjects() {
 
     maindivContainer.appendChild(projectDiv);
   });
-
-  console.log("Projects loaded successfully.");
 }
 
+/* Yes these two functions are redundunt */
+/* TO DO: show students list */
 function displayFilteredProjects(projects) {
   const maindivContainer = document.querySelector(".maindiv");
 
@@ -995,6 +977,7 @@ function displayFilteredProjects(projects) {
       1
     ); // Avoid division by zero
 
+    /* TO DO: fix the progress bar logic */
     // Calculate elapsed duration in days
     const elapsedDuration = Math.max(
       (today - startDate) / (1000 * 60 * 60 * 24),
@@ -1013,7 +996,7 @@ function displayFilteredProjects(projects) {
     projectDiv.innerHTML = `
       <h3 id="projectTitle_${index}">${project.title}</h3>
       <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
-      <p><strong>Students:</strong> <span id="projectStudents_${index}"></span></p>
+      <p><strong>Students:</strong><span id="projectStudents_${index}"></span></p>
       <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
       <div class="progress-container">
           <div class="progress-bar"  >
@@ -1036,7 +1019,6 @@ function studentProj() {
   );
   const user = JSON.parse(localStorage.getItem("user"));
   if (!projects || !student_projects) {
-    console.error("No data found.");
     return;
   }
 
@@ -1047,7 +1029,6 @@ function studentProj() {
       studentProjects.push(proj);
     }
   });
-  console.log("Student projects loaded successfully.", studentProjects);
 
   // Get the container where projects will be displayed
   const container = document.getElementById("projectContainer");

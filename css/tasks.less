@@ -6,6 +6,8 @@
 @border-color: #444;
 @pending: orange;
 @completed: rgba(0, 85, 255, 0.832);
+@onHold: #fff243;
+@cancled: #ff0000;
 @in-progress: #2ad51ed5;
 @header-bg: #3d3b3be2;
 @table-bg: #1e1e1e;
@@ -128,6 +130,12 @@ body {
 
     &[data-status="Pending"] {
       color: @pending;
+    }
+    &[data-status="On Hold"] {
+      color: @onHold;
+    }
+    &[data-status="Cancled"] {
+      color: @cancled;
     }
   }
 }

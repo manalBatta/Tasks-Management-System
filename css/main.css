@@ -343,11 +343,12 @@ body {
   padding-left: 2%;
   overflow-y: scroll;
   scrollbar-width: none;
+  height: 70%;
 }
 .maindiv .projectSec2 {
   padding-left: 1%;
   width: 27%;
-  height: auto;
+  height: fit-content;
   min-height: 30vh;
   margin: 1%;
   background-color: #393939;
@@ -691,6 +692,12 @@ body {
 }
 .task-table .status[data-status="Pending"] {
   color: orange;
+}
+.task-table .status[data-status="On Hold"] {
+  color: #fff243;
+}
+.task-table .status[data-status="Cancled"] {
+  color: #ff0000;
 }
 .overlay {
   position: fixed;
