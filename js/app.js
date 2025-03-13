@@ -788,7 +788,6 @@ function selectStatus() {
     return matchesStatus && matchesSearchQuery;
   });
 
-  /* TO DO: I think displaying the projects function is repeated and must be extracted into a function*/
   displayFilteredProjects(filteredProjects);
 }
 
@@ -897,6 +896,7 @@ function showProjects() {
 
   const maindivContainer = document.querySelector(".maindiv");
   maindivContainer.innerHTML = "";
+  const { student_projects, users } = JSON.parse(localStorage.getItem("data"));
 
   allProjects.forEach((project, index) => {
     // Parse the start and end dates
@@ -929,11 +929,25 @@ function showProjects() {
     const projectDiv = document.createElement("div");
     projectDiv.className = `projectSec2 status-${project.status}`;
 
+    const studentsIds = student_projects.filter(
+      (stuProj) => stuProj.projectId === project.id
+    );
+    const studentsNames = [];
+    studentsIds.forEach((stuProj) => {
+      const student = users.find((user) => user.id === stuProj.studentId);
+      studentsNames.push(student.username);
+    });
     projectDiv.innerHTML = `
       <h3 id="projectTitle_${index}">${project.title}</h3>
-      <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
-      <p><strong>Students:</strong> <span id="projectStudents_${index}"></span></p>
-      <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
+      <p><strong>Description:</strong> <span id="projectDescription_${index}">${
+      project.description
+    }</span></p>
+      <p><strong>Students:</strong> <span id="projectStudents_${index}">${studentsNames.join(
+      ", "
+    )}</span></p>
+      <p><strong>Category:</strong> <span id="projectCategory_${index}">${
+      project.category
+    }</span></p>
       <div class="progress-container">
         <div class="progress-bar">${progressPercentage}%</div>
       </div>
@@ -947,8 +961,6 @@ function showProjects() {
   });
 }
 
-/* Yes these two functions are redundunt */
-/* TO DO: show students list */
 function displayFilteredProjects(projects) {
   const maindivContainer = document.querySelector(".maindiv");
 
@@ -961,43 +973,54 @@ function displayFilteredProjects(projects) {
     return;
   }
 
+  const { student_projects, users } = JSON.parse(localStorage.getItem("data"));
   projects.forEach((project, index) => {
     const startDate = new Date(project.startDate);
     const endDate = new Date(project.endDate);
     const today = new Date();
 
-    // Ensure time is ignored (only date comparison)
     startDate.setHours(0, 0, 0, 0);
     endDate.setHours(23, 59, 59, 999);
     today.setHours(0, 0, 0, 0);
 
-    // Calculate total project duration in days
     const totalDuration = Math.max(
       (endDate - startDate) / (1000 * 60 * 60 * 24),
       1
-    ); // Avoid division by zero
-
-    /* TO DO: fix the progress bar logic */
-    // Calculate elapsed duration in days
+    );
     const elapsedDuration = Math.max(
       (today - startDate) / (1000 * 60 * 60 * 24),
       0
     );
 
-    // Calculate progress percentage
     let progressPercentage = Math.round(
       (elapsedDuration / totalDuration) * 100
     );
     progressPercentage = Math.min(Math.max(progressPercentage, 0), 100); // Keep within range [0,100]
+
+    const studentsIds = student_projects.filter(
+      (stuProj) => stuProj.projectId === project.id
+    );
+    const studentsNames = [];
+    studentsIds.forEach((stuProj) => {
+      const student = users.find((user) => user.id === stuProj.studentId);
+      studentsNames.push(student.username);
+    });
+    console.log(studentsNames);
 
     const projectDiv = document.createElement("div");
     projectDiv.className = `projectSec2 status-${project.status}`; // Add status class to each project div
 
     projectDiv.innerHTML = `
       <h3 id="projectTitle_${index}">${project.title}</h3>
-      <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
-      <p><strong>Students:</strong><span id="projectStudents_${index}"></span></p>
-      <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
+      <p><strong>Description:</strong> <span id="projectDescription_${index}">${
+      project.description
+    }</span></p>
+      <p><strong>Students:</strong><span id="projectStudents_${index}">${studentsNames.join(
+      ", "
+    )}</span></p>
+      <p><strong>Category:</strong> <span id="projectCategory_${index}">${
+      project.category
+    }</span></p>
       <div class="progress-container">
           <div class="progress-bar"  >
               ${progressPercentage}%
