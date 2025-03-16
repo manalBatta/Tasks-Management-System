@@ -300,10 +300,10 @@ sendMessage = () => {
         title: "Data Collection",
         description: "Gather historical weather data.",
         status: "Pending",
-        assignedTo: 2,
+        assignedTo: 7,
         assignedBy: 1,
         projectId: 1,
-        projectTitle: "AI Research",
+        projectTitle: "Website Redesign",
         createdAt: "2024-02-26T12:00:00Z",
       },
       {
@@ -311,13 +311,23 @@ sendMessage = () => {
         title: "UI Design",
         description: "Create a responsive UI for the web app.",
         status: "In Progress",
-        assignedTo: 3,
+        assignedTo: 10,
+        assignedBy: 1,
+        projectId: 1,
+        projectTitle: "Web App Development",
+        createdAt: "2024-02-26T12:30:00Z",
+      },
+      {
+        id: 3,
+        title: "UI Design",
+        description: "Create a responsive UI for the web app.",
+        status: "In Progress",
+        assignedTo: 10,
         assignedBy: 1,
         projectId: 2,
         projectTitle: "Web App Development",
         createdAt: "2024-02-26T12:30:00Z",
       },
-
       
     ],
     chat: [
@@ -609,8 +619,7 @@ function sub() {
   // appendProjectToUI(project);
 
   // Show updated list of projects
-  showProjects();
-}
+  showProjects();}
 
 
 
@@ -618,68 +627,21 @@ function sub() {
 
 
 
-function showProjects() {
-  // Get data from localStorage
-  const localData = JSON.parse(localStorage.getItem("data"));
 
-  // Get data from the database using the sub() function
-  const dbData = JSON.parse(localStorage.getItem("projects")) || { projects: [] }; // You may need to replace this with an actual DB fetch if it's not stored in localStorage
 
-  // Merge the projects from localStorage and database
-  const allProjects = [...(localData ? localData.projects : []), ...dbData.projects];
 
-  // Check if there are projects to display
-  if (allProjects.length === 0) {
-    console.error("No project data found.");
-    return;
+
+
+
+
+
+// Function to close the sidebar
+function closeSidebar() {
+  const sidebar = document.getElementById("task-sidebar");
+  if (sidebar) {
+    document.body.removeChild(sidebar);
   }
-
-  const maindivContainer = document.querySelector(".maindiv");
-  maindivContainer.innerHTML = "";
-
-  allProjects.forEach((project, index) => {
-    // Parse the start and end dates
-    const startDate = new Date(project.startDate);
-    const endDate = new Date(project.endDate);
-    const today = new Date();
-
-    // Ensure time is ignored (only date comparison)
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
-    today.setHours(0, 0, 0, 0);
-
-    // Calculate total project duration in days
-    const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1); // Avoid division by zero
-
-    // Calculate elapsed duration in days
-    const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0);
-
-    let progressPercentage = Math.round((elapsedDuration / totalDuration) * 100);
-    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100); // Keep within range [0,100]
-
-    const projectDiv = document.createElement("div");
-    projectDiv.className = `projectSec2 status-${project.status}`;
-
-    projectDiv.innerHTML = `
-      <h3 id="projectTitle_${index}">${project.title}</h3>
-      <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
-      <p><strong>Students:</strong> <span id="projectStudents_${index}">${project.students.join(", ")}</span></p>
-      <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
-      <div class="progress-container">
-        <div class="progress-bar">${progressPercentage}%</div>
-      </div>
-      <div class="dates">
-        <p id="projectCreatedAt_${index}">${project.startDate}</p>
-        <p id="projectDeadline_${index}">${project.endDate}</p>
-      </div> 
-    `;
-
-    maindivContainer.appendChild(projectDiv);
-  });
-
-  console.log("Projects loaded successfully.");
 }
-
 
 
 
@@ -808,4 +770,210 @@ function studentProj() {
 
       container.appendChild(projectDiv);
   });
+}
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////
+
+
+function taskproj(projectId) {
+  const data = JSON.parse(localStorage.getItem("data"));
+
+  if (!data || !data.projects) {
+      console.error("No project data found.");
+      return;
+  }
+
+  // Find project by ID
+  const project = data.projects.find(p => p.id === projectId);
+
+  if (!project) {
+      alert("Project not found!");
+      return;
+  }
+
+  // Display Project Info
+  document.getElementById("project-title").textContent = project.title;
+  document.getElementById("project-desc").textContent = project.description;
+  document.getElementById("project-category").textContent = project.category;
+  document.getElementById("project-students").textContent = project.students.join(", ");
+  document.getElementById("project-start").textContent = project.startDate;
+  document.getElementById("project-end").textContent = project.endDate;
+
+  // Retrieve tasks from localStorage
+  const tasksData = data.tasks || [];
+
+  // Get related tasks for this project
+  const projectTasks = tasksData.filter(task => task.projectId === project.id);
+
+  // Display Tasks
+  const tasksContainer = document.getElementById("tasks-container");
+  tasksContainer.innerHTML = ""; // Clear previous data
+
+  if (projectTasks.length === 0) {
+      tasksContainer.innerHTML = "<p>No tasks found for this project.</p>";
+      return;
+  }
+
+  projectTasks.forEach(task => {
+      const taskDiv = document.createElement("div");
+      taskDiv.classList.add("task-item");
+
+      // Retrieve assigned student name
+      const assignedUser = data.users.find(user => user.id === task.assignedTo);
+
+      taskDiv.innerHTML = `
+         <p> <strong >Task ID:</strong> ${task.id} </p>
+         <p> <strong >Task Name:</strong> ${task.title} </p>
+         <p> <strong >Description:</strong> ${task.description} </p>
+         <p> <strong>Assigned Student:</strong> ${assignedUser ? assignedUser.username : "Unknown"}
+         <p> <strong>Status:</strong> ${task.status}</p>
+      `;
+
+      tasksContainer.appendChild(taskDiv);
+  });
+}
+
+
+
+
+
+
+let activeProjectId = null; // Store the currently active project ID
+
+function openTaskSidebar(projectId) {
+    let sidebar = document.getElementById("task-sidebar");
+
+    // If sidebar exists and the same project is clicked, close it
+    if (sidebar && sidebar.style.display === "block" && activeProjectId === projectId) {
+        closeSidebar();
+        activeProjectId = null;
+        return;
+    }
+
+    // Update the active project ID
+    activeProjectId = projectId;
+
+    if (!sidebar) {
+        sidebar = document.createElement("div");
+        sidebar.id = "task-sidebar";
+        sidebar.style.cssText = `
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom:0;
+            width: 25%;
+            height: 100%;
+           // background: white;
+          //  box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
+              background-color:  #1e1e1e;
+         border: 0.1px solid  gray;
+          font-size:15px;
+            top:10%;
+            overflow-y: auto;
+         //   padding: 15px;
+            display: block;
+        `;
+        document.body.appendChild(sidebar);
+    } else {
+        sidebar.style.display = "block";
+    }
+
+    // Add a close button
+    sidebar.innerHTML = `
+        <div id="sidebar-content">Loading...</div>
+    `;
+
+    // Load the content dynamically
+    fetch("pages/taskProject.html")
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("sidebar-content").innerHTML = html;
+
+            // Call taskproj with the correct project ID
+            taskproj(projectId);
+        })
+        .catch(error => {
+            console.error("Error loading taskProject.html:", error);
+            document.getElementById("sidebar-content").innerHTML = "<p>Error loading content.</p>";
+        });
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById("task-sidebar");
+    if (sidebar) {
+        sidebar.style.display = "none";
+    }
+    activeProjectId = null; // Reset the active project ID
+}
+
+function showProjects() {
+    // Get data from localStorage
+    const localData = JSON.parse(localStorage.getItem("data"));
+
+    // Get data from the database using the sub() function
+    const dbData = JSON.parse(localStorage.getItem("projects")) || { projects: [] }; 
+
+    // Merge the projects from localStorage and database
+    const allProjects = [...(localData ? localData.projects : []), ...dbData.projects];
+
+    // Check if there are projects to display
+    if (allProjects.length === 0) {
+        console.error("No project data found.");
+        return;
+    }
+
+    const maindivContainer = document.querySelector(".maindiv");
+    maindivContainer.innerHTML = "";
+
+    allProjects.forEach((project, index) => {
+        // Parse the start and end dates
+        const startDate = new Date(project.startDate);
+        const endDate = new Date(project.endDate);
+        const today = new Date();
+
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        today.setHours(0, 0, 0, 0);
+
+        const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1);
+        const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0);
+
+        let progressPercentage = Math.round((elapsedDuration / totalDuration) * 100);
+        progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
+
+        const projectDiv = document.createElement("div");
+        projectDiv.className = `projectSec2 status-${project.status}`;
+        projectDiv.setAttribute("data-project-id", project.id); // Store project ID
+
+        projectDiv.innerHTML = `
+            <h3 id="projectTitle_${index}">${project.title}</h3>
+            <p><strong>Description:</strong> <span id="projectDescription_${index}">${project.description}</span></p>
+            <p><strong>Students:</strong> <span id="projectStudents_${index}">${project.students.join(", ")}</span></p>
+            <p><strong>Category:</strong> <span id="projectCategory_${index}">${project.category}</span></p>
+            <div class="progress-container">
+                <div class="progress-bar">${progressPercentage}%</div>
+            </div>
+            <div class="dates">
+                <p id="projectCreatedAt_${index}">${project.startDate}</p>
+                <p id="projectDeadline_${index}">${project.endDate}</p>
+            </div> 
+        `;
+
+        // Add event listener to open/close the sidebar
+        projectDiv.addEventListener("click", function () {
+            openTaskSidebar(project.id);
+        });
+
+        maindivContainer.appendChild(projectDiv);
+    });
+
+    console.log("Projects loaded successfully.");
 }
