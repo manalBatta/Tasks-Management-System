@@ -1,21 +1,46 @@
-<main class="chat-contianer">
-  <aside class="contacts-container">
-    <h1>List of Students</h1>
-    <ul id="contacts-list"></ul>
+<main class="w-full h-full flex">
+  <aside class="w-1/4 p-4">
+    <h1 class="mt-0 text-xl font-bold">List of Students</h1>
+    <ul
+      id="contacts-list"
+      class="list-none p-4 overflow-y-scroll max-h-[67vh]"
+      style="scrollbar-width: none"
+    >
+      <!-- here goes Contact Item -->
+    </ul>
   </aside>
-  <section class="chat-area">
-    <h2 id="chat-header">chatting with Ali Yaseen...</h2>
-    <ul id="messages-list"></ul>
 
-    <div class="message-input-contianer">
+  <section
+    class="bg-[#2a2a2a] border w-3/4 h-full rounded p-6 relative"
+    style="border-color: #2a2a2a"
+  >
+    <h2 id="chat-header" class="text-base font-light">
+      chatting with Ali Yaseen...
+    </h2>
+
+    <ul
+      id="messages-list"
+      class="list-none p-4 overflow-y-scroll max-h-[55vh] absolute bottom-24 w-[96%] left-[2%]"
+      style="scrollbar-width: none"
+    >
+      <!--   here goes Message -->
+    </ul>
+
+    <div class="absolute bottom-0 left-[2%] w-[96%] p-4 flex items-center">
       <input
         type="text"
         id="message-input"
+        class="w-11/12 p-3 bg-[#444444] text-white border rounded text-sm placeholder-gray-400"
+        style="border-color: #9b9b9bb2"
         placeholder="Type your message ..."
-        onkeydown="if (event.key === 'Enter') sendMessage();
-        "
+        onkeydown="if (event.key === 'Enter') sendMessage();"
       />
-      <button class="send-btn" onclick="sendMessage()">send</button>
+      <button
+        class="ml-2 px-4 py-3 bg-[#4caf50] text-white rounded text-base cursor-pointer"
+        onclick="sendMessage()"
+      >
+        Send
+      </button>
     </div>
   </section>
 </main>

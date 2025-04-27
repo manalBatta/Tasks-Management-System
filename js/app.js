@@ -296,7 +296,7 @@ const loadContacts = () => {
 
   const list = document.getElementById("contacts-list");
   contacts.forEach((contact) => {
-    const li = `<li class="contact-item" onclick="loadChat(${contact.id})">${contact.username}</li>`;
+    const li = `<li class="mb-2 py-3 pl-4 text-base rounded bg-[#444444] hover:bg-[#027bff] cursor-pointer" onclick="loadChat(${contact.id})">${contact.username}</li>`;
     list.innerHTML += li;
   });
 
@@ -324,11 +324,16 @@ const loadChat = (contactId) => {
   const messagesList = document.getElementById("messages-list");
   messagesList.innerHTML = "";
   messages.forEach((message) => {
-    const li = `<li class="message">
-        <p class="message-content ${
-          message.senderId === userId ? "myMessage" : ""
-        }">${message.message}</p>
-      </li>`;
+    const li = `<li class="w-full my-2 h-12">
+          <p class="h-full w-fit px-6 py-3 text-base rounded ml-1 ${
+            message.senderId === userId
+              ? "bg-[#027bff] float-right"
+              : "bg-[#1e1e1e]"
+          }">
+            ${message.message}
+          </p>
+        </li>
+            `;
     messagesList.innerHTML += li;
   });
   if (messagesList.lastElementChild)
@@ -340,7 +345,6 @@ sendMessage = () => {
     const input = document.getElementById("message-input");
     const text = input.value;
     const data = JSON.parse(localStorage.getItem("data"));
-    /* const messagesList = document.getElementById("messages-list"); */
 
     input.value = "";
     localStorage.setItem(

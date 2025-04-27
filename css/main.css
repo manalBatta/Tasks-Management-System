@@ -876,7 +876,10 @@ body {
   width: 90%;
   font-size: 0.9rem;
 }
-.chat-contianer .chat-area .message-input-contianer .message-input::placeholder {
+.chat-contianer
+  .chat-area
+  .message-input-contianer
+  .message-input::placeholder {
   color: #9b9b9bb2;
 }
 .chat-contianer .chat-area .message-input-contianer .send-btn {
