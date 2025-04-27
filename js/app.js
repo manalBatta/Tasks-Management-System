@@ -218,8 +218,12 @@ const highlightSelectedPageLink = (page) => {
   const linksListElements = document.getElementsByClassName("sidebar-item");
   for (let i = 0; i < linksListElements.length; i++) {
     if (linksListElements.item(i).dataset.value === page) {
-      linksListElements.item(i).classList.add("selected");
-    } else linksListElements.item(i).classList.remove("selected");
+      linksListElements.item(i).style.backgroundColor = "#027bff";
+      /* linksListElements.item(i).classList.add("selected"); */
+    } else {
+      linksListElements.item(i).style.backgroundColor = "#444444";
+      // linksListElements.item(i).classList.remove("selected");
+    }
   }
 };
 

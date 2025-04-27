@@ -1,44 +1,58 @@
-<main class="dashboard">
-  <header class="header">
+<main
+  class="h-full w-full bg-[#1e1e1e] text-white"
+  style="
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 0.5fr 5fr;
+    grid-template-areas: 'header header' 'sidebar content';
+  "
+>
+  <header
+    class="flex justify-end items-center pr-2 gap-2 text-lg border-b-2 border-[#9b9b9bb2]"
+    style="grid-area: header"
+  >
     <h1 id="userName"></h1>
     <button
-      class="log-out-btn"
+      class="bg-red-600 text-white rounded-lg py-1 px-2 border-none w-[92px] cursor-pointer hover:bg-red-500 text-xl"
       onclick="logout()"
     >
       Logout
     </button>
   </header>
-  <aside class="sidebar">
-    <ul class="sidebar-list">
+  <aside
+    class="bg-[#2a2a2a] border-r-2 border-[#9b9b9bb2]"
+    style="grid-area: sidebar"
+  >
+    <ul class="list-none p-4">
       <li
-        class="sidebar-item selected"
-        onclick="dashboardRout('homeStudentView',event)"
+        class="mb-2 sidebar-item py-3 pl-5 text-xl rounded-md bg-[#444444] cursor-pointer text-left w-auto max-w-full"
+        onclick="dashboardRout('homeStudentView', event)"
         data-value="homeStudentView"
       >
         Home
       </li>
       <li
-        class="sidebar-item"
-        onclick="dashboardRout('studentProject',event)"
+        class="mb-2 sidebar-item py-3 pl-5 text-xl rounded-md bg-[#444444] cursor-pointer text-left w-auto max-w-full"
+        onclick="dashboardRout('studentProject', event)"
         data-value="studentProject"
       >
         Projects
       </li>
       <li
-        class="sidebar-item"
-        onclick="dashboardRout('tasks',event)"
+        class="mb-2 sidebar-item py-3 pl-5 text-xl rounded-md bg-[#444444] cursor-pointer text-left w-auto max-w-full"
+        onclick="dashboardRout('tasks', event)"
         data-value="tasks"
       >
         Tasks
       </li>
       <li
-        class="sidebar-item"
-        onclick="dashboardRout('chat',event)"
+        class="mb-2 sidebar-item py-3 pl-5 text-xl rounded-md bg-[#444444] cursor-pointer text-left w-auto max-w-full"
+        onclick="dashboardRout('chat', event)"
         data-value="chat"
       >
         Chat
       </li>
     </ul>
   </aside>
-  <section id="content"></section>
+  <section id="content" class="p-1" style="grid-area: content"></section>
 </main>
