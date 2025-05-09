@@ -191,29 +191,6 @@
   }
 })();
 
-const updateTime = () => {
-  const now = new Date();
-  const formattedTime = now.toLocaleString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  try {
-    document.querySelector(".real-time-display").textContent = formattedTime;
-  } catch (err) {
-    console.log(
-      "It's ok the document is not loaded yet to write real time",
-      err
-    );
-  }
-};
-
 const highlightSelectedPageLink = (page) => {
   const linksListElements = document.getElementsByClassName("sidebar-item");
   for (let i = 0; i < linksListElements.length; i++) {
@@ -290,7 +267,54 @@ const loadChart = () => {
     },
   });
 };
+const updateTime = () => {
+  const now = new Date();
+  const formattedTime = now.toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
 
+  try {
+    document.querySelector(".real-time-display").textContent = formattedTime;
+  } catch (err) {
+    console.log(
+      "It's ok the document is not loaded yet to write real time",
+      err
+    );
+  }
+};
+
+const homeStudentIntialize = () => {
+  const data = JSON.parse(localStorage.getItem("data"));
+  const userId = JSON.parse(localStorage.getItem("user")).id;
+  const tasksCount = data.tasks.filter(
+    (task) => task.assignedTo === userId
+  ).length;
+  document.getElementById("StudentTasksCount").textContent = tasksCount;
+
+  updateTime();
+  return setInterval(updateTime, 1000);
+};
+
+const userTypeDashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role === "admin") {
+    mainRoute("dashboard");
+  } else {
+    mainRoute("dashboardStudentView");
+  }
+};
+const homeIntialize = () => {
+  loadChart();
+  updateTime();
+  return setInterval(updateTime, 1000);
+};
 let chatContact;
 const loadContacts = () => {
   const userID = JSON.parse(localStorage.getItem("user")).id;
@@ -315,7 +339,7 @@ const loadChat = (contactId) => {
 
   const contacts = data.users;
   const contact = contacts.find((contact) => contact.id === contactId);
-  chatHeader.innerHTML = `chatting width ${contact.username}...`;
+  chatHeader.innerHTML = `chatting with ${contact.username}...`;
   chatContact = contact;
 
   const userId = JSON.parse(localStorage.getItem("user")).id;
@@ -372,6 +396,8 @@ sendMessage = () => {
   }
 };
 
+///DONE TRANSFERING
+
 const isStudent = (event) => {
   const universityIdContainer = document.getElementById(
     "university-id-container"
@@ -383,32 +409,6 @@ const isStudent = (event) => {
   } else {
     universityIdContainer.style.display = "none";
   }
-};
-
-const userTypeDashboard = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user.role === "admin") {
-    mainRoute("dashboard");
-  } else {
-    mainRoute("dashboardStudentView");
-  }
-};
-const homeIntialize = () => {
-  loadChart();
-  updateTime();
-  return setInterval(updateTime, 1000);
-};
-
-const homeStudentIntialize = () => {
-  const data = JSON.parse(localStorage.getItem("data"));
-  const userId = JSON.parse(localStorage.getItem("user")).id;
-  const tasksCount = data.tasks.filter(
-    (task) => task.assignedTo === userId
-  ).length;
-  document.getElementById("StudentTasksCount").textContent = tasksCount;
-
-  updateTime();
-  return setInterval(updateTime, 1000);
 };
 
 const sortTable = (event) => {
@@ -1041,8 +1041,6 @@ function studentProj() {
     container.appendChild(projectDiv);
   });
 }
-
-/////////////////////////////////////////
 
 function taskproj(projectId) {
   const data = JSON.parse(localStorage.getItem("data"));
