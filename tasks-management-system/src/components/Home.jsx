@@ -1,11 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import RealTimeClock from "./RealTimeClock";
+import HomeChart from "./HomeChart";
 
 const Home = () => {
-  let chartInstance = null;
+  const [stats, setStats] = useState({
+    projectsCount: 0,
+    studentsCount: 0,
+    tasksCount: 0,
+    finishedProjectsCount: 0,
+  });
 
-  const loadChart = () => {
-    const ctx = document.getElementById("myChart");
+  useEffect(() => {
     const data = JSON.parse(localStorage.getItem("data"));
     const projectsCount = data.projects.length;
     const studentsCount = data.users.filter(
@@ -13,70 +18,19 @@ const Home = () => {
     ).length;
     const tasksCount = data.tasks.length;
     const finishedProjectsCount = data.projects.filter(
-      (project) => project.status === "Completed"
+      (p) => p.status === "Completed"
     ).length;
 
-    document.getElementById("projectsCount").innerHTML = projectsCount;
-    document.getElementById("studentsCount").textContent = studentsCount;
-    document.getElementById("tasksCount").textContent = tasksCount;
-    document.getElementById("finishedProjectsCount").textContent =
-      finishedProjectsCount;
-
-    // Destroy the existing chart instance if it exists
-    if (chartInstance) {
-      chartInstance.destroy();
-    }
-
-    // Create a new chart instance
-    chartInstance = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["Projects", "Students", "Tasks", "Finished Projects"],
-        datasets: [
-          {
-            label: "count",
-            data: [
-              projectsCount,
-              studentsCount,
-              tasksCount,
-              finishedProjectsCount,
-            ],
-            backgroundColor: [
-              "rgba(255, 99, 133, 0.18)",
-              "rgba(54, 163, 235, 0.2)",
-              "rgba(255, 207, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-            ],
-            borderColor: [
-              "rgba(255, 99, 132, 1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-            ],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: "Admin Dashboard Overview",
-          },
-        },
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
+    setStats({
+      projectsCount,
+      studentsCount,
+      tasksCount,
+      finishedProjectsCount,
     });
-  };
+  }, []);
+  let chartInstance = null;
 
   useEffect(() => {
-    loadChart();
-
     return () => {
       if (chartInstance) {
         chartInstance.destroy();
@@ -112,7 +66,9 @@ const Home = () => {
       </section>
 
       <div className="w-full min-h-[66%] h-auto">
-        <canvas id="myChart" className="!w-full h-full"></canvas>
+        <div className="h-full w-full">
+          <HomeChart data={stats} />
+        </div>
       </div>
     </main>
   );
