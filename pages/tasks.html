@@ -3,161 +3,353 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Tasks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1e1e1e",
+              secondary: "#000000",
+              text: "#ffffff",
+              button: "#007bff",
+              "button-hover": "#0056b3",
+              pending: "orange",
+              completed: "rgba(0, 85, 255, 0.832)",
+              onHold: "#fff243",
+              cancelled: "#ff0000",
+              inProgress: "#2ad51ed5",
+              header: "#3d3b3be2",
+              table: "#1e1e1e",
+              rowHover: "#2a2a2a",
+              rowHoverLight: "#f5f5f5",
+            },
+            borderRadius: {
+              rounded: "12px",
+            },
+          },
+        },
+      };
+    </script>
   </head>
-  <body>
-    <div class="container">
-        <div class="task-header">
-           
-            <div class="sort">
-                <label for="sort">Sort By:</label>
-                <select id="sort"  class="list" onchange ="sortTable(event)"  >
-                    <option value="Task Status">Task Status </option>
-                    <option value="Project">Project </option>
-                    <option value="Due Date">Due Date</option>
-                    <option value="Assigned Student">Assigned Student</option>
-                    
-                </select>
-            </div>
-            <button class="btn create-task" onclick="AddTasks(event)">Create a New Task</button>
-        </div>
-    </div>
-        <table  id="tasksTable" class="task-table">
-          <thead>
-              <tr>
-                  <th>Task ID</th>
-                  <th>Project</th>
-                  <th>Task Name</th>
-                  <th>Description</th>
-                  <th>Assigned Student</th>
-                  <th>Status</th>
-                  <th>Due Date</th>
-              </tr>
-          </thead>
-          <tbody>
-           
-          </tbody>
-      </table>
 
-
-
-      <div class="overlay"></div>
-
-      <div class="task-container">
-          <div class="task-form">
-              <button class="close-btn">&times;</button>
-              <h2>Create New Task</h2>
-              <form>
-                  <div class="form-group">
-                      <label for="project-title">Project Title:</label>
-                      <select id="project-title" name="project-title">
-                          <option>Select a project</option>
-                          <option>Website Redesign</option>
-                          <option>Mobile App Development</option>
-                          <option>Data Analysis Project</option>
-                          <option>Machine Learning Model/option>
-                          <option>Machine Learning Model/option>
-
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="task-name">Task Name:</label>
-                      <input type="text" id="task-name" name="task-name" >
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="description">Description:</label>
-                      <textarea id="description" name="description" ></textarea>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="assigned-student">Assigned Student:</label>
-                      <select id="assigned-student" name="assigned-student" >
-                          <option>Select a student</option>
-                          <option>Ali Yaseen</option>
-                          <option>Braa Aeesh</option>
-                          <option>Ibn Al-Jawzee</option>
-                          <option>Ibn Malik</option>
-                          <option>Ayman Outom</option>
-                          <option>Salah Salah</option>
-                          <option>Yahya Leader</option>
-                          <option>Salam Kareem</option>
-                          <option>Issac Nasir</option>
-                          <option>Saeed Salam</option>
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="status">Status:</label>
-                      <select id="status" name="status">
-                          <option>Select a status</option>
-                          <option>In Progress</option>
-                          <option>Completed</option>
-                          <option>Pending</option>
-                          <option>On Hold</option>
-                          <option>Cancelled</option>
-
-                      </select>
-                  </div>
-  
-                  <div class="form-group">
-                      <label for="due-date">Due Date:</label>
-                      <input type="date" id="due-date" name="due-date" placeholder="dd/mm/yyyy">
-                  </div>
-  
-                  <button type="submit" onclick="AddnewTasks(event)">Add Task</button>
-              </form>
-          </div>
+  <body class="bg-primary text-text min-h-screen p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6 mt-6 flex-wrap gap-4">
+      <div class="flex items-center space-x-4 flex-shrink-0">
+        <label for="sort" class="font-bold text-white">Sort By:</label>
+        <select id="sort" class="bg-[#3d3b3be2] text-white p-2 rounded">
+          <option>Task Status</option>
+          <option>Project</option>
+          <option>Due Date</option>
+          <option>Assigned Student</option>
+        </select>
       </div>
 
+      <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold">
+        Create a New Task
+      </button>
+    </div>
+
+    <!-- Table -->
+    <table id="tasksTable" class="w-full border-collapse  bg-table rounded-lg overflow-hidden shadow-lg text-left border border-gray-600">
+      <thead class="bg-primary text-text">
+        <tr class="border-b border-white  transition-colors duration-200 cursor-pointer">
+          <th class="p-4">Task ID</th>
+          <th class="p-4">Project</th>
+          <th class="p-4">Task Name</th>
+          <th class="p-4">Description</th>
+          <th class="p-4">Assigned Student</th>
+          <th class="p-4">Status</th>
+          <th class="p-4">Due Date</th>
+        </tr>
+      </thead>
+     <tbody id="taskTable">
       
-<!-- <tr>
-                <td>1</td>
-                <td>Website Development</td>
-                <td>Design Homepage</td>
-                <td>Design the homepage layout</td>
-                <td>Fatima Nasser</td>
-                <td class="status" onclick="sortState(event)">In Progress</td>
-                <td>4/3/2025</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>App Development</td>
-                <td>Build Login Screen</td>
-                <td>Develop the login screen of the app</td>
-                <td>Lama Dwikat</td>
-                <td class="status" onclick="sortState(event)" >Completed</td>
-                <td>5/3/2025</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Marketing</td>
-                <td>Launch Campaign</td>
-                <td>Prepare materials for the marketing campaign</td>
-                <td>Manal Batta</td>
-                <td>Pending</td>
-                <td>20/3/2025</td>
-            </tr>  
-            <tr>
-                <td>4</td>
-                <td>Marketing</td>
-                <td>Launch Campaign</td>
-                <td>Prepare materials for the marketing campaign</td>
-                <td>Manal Batta2</td>
-                <td>Pending</td>
-                <td>21/3/2025</td>
-            </tr>  
-            <tr>
-                <td>5</td>
-                <td>Website Development</td>
-                <td>Design Homepage</td>
-                <td>Design the homepage layout</td>
-                <td>Fatima Nasser</td>
-                <td>In Progress</td>
-                <td>14/3/2025</td>
-            </tr>-->
+     </tbody>
+
+    </table>
+  </div>
+ <div class="overlay fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 hidden z-10 "></div>
+  <!-- Modal -->
+  <div id="modalOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 z-40" onclick="closeModal()"></div>
+  <div id="taskModal" class="hidden fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 bg-[#2a2a2a] p-6 rounded w-full max-w-md shadow-xl">
+    <button onclick="closeModal()" class="absolute top-2 right-3 text-white text-2xl">&times;</button>
+    <h2 class="text-blue-500 mb-4 text-xl font-bold">Create New Task</h2>
+    <form id="taskForm" class="space-y-4" onsubmit="addTask(event)">
+      <div>
+        <label class="block font-bold mb-1">Project Title:</label>
+        <select class="w-full bg-[#444] p-2 rounded text-white" required>
+          <option value="">Select a project</option>
+          <option value="Website Redesign">Website Redesign</option>
+          <option value="Mobile App Development">Mobile App Development</option>
+          <option value="Data Analysis Project">Data Analysis Project</option>
+          <option value="Machine Learning Model">Machine Learning Model</option>
+          <option value="Machine Learning Model">Machine Learning Model</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-bold mb-1">Task Name:</label>
+        <input type="text" class="w-full bg-[#444] p-2 rounded text-white" required />
+      </div>
+      <div>
+        <label class="block font-bold mb-1">Description:</label>
+        <textarea class="w-full bg-[#444] p-2 rounded text-white" required></textarea>
+      </div>
+      <div>
+        <label class="block font-bold mb-1">Assigned Student:</label>
+        <select class="w-full bg-[#444] p-2 rounded text-white" required>
+         <option value="">Select a student</option>
+         <option value="Ali Yaseen">Ali Yaseen</option>
+         <option value="Braa Aeesh">Braa Aeesh</option>
+         <option value="Ibn Al-Jawzee">Ibn Al-Jawzee</option>
+         <option value="Ibn Malik">Ibn Malik</option>
+         <option value="Ayman Outom">Ayman Outom</option>
+         <option value="Salah Salah">Salah Salah</option>
+         <option value="Yahya Leader">Yahya Leader</option>
+         <option value="Salam Kareem">Salam Kareem</option>
+         <option value="Issac Nasir">Issac Nasir</option>
+         <option value="Saeed Salam">Saeed Salam</option>
+         </select>
+      </div>
+    
+      <div>
+        <label class="block font-bold mb-1">Status:</label>
+        <select class="w-full bg-[#444] p-2 rounded text-white" required>
+          <option value="">Select a status</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+          <option>Pending</option>
+          <option>On Hold</option>
+          <option>Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-bold mb-1">Due Date:</label>
+        <input type="date"  placeholder="yyyy/mm/dd" class="w-full bg-[#444] p-2 rounded text-white placeholder-white"  required  />   
+      </div>
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
+        Add Task
+      </button>
+    </form>
+  </div>
+
+  <!-- Script -->
+ <script>
+  function openModal() {
+    document.getElementById('modalOverlay').classList.remove('hidden');
+    document.getElementById('taskModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.add('hidden');
+    document.getElementById('taskModal').classList.add('hidden');
+  }
+
+  function addTask(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('taskForm');
+    const values = Array.from(form.elements)
+      .filter(el => el.tagName !== 'BUTTON')
+      .map(el => el.value);
+
+    const statuses = ['pending', 'in progress', 'completed', 'on hold', 'cancelled'];
+
+    function getStatusClass(status) {
+      switch (status) {
+        case 'pending': return 'text-orange-400';
+        case 'in progress': return 'text-green-400';
+        case 'completed': return 'text-blue-500';
+        case 'on hold': return 'text-yellow-300';
+        case 'cancelled': return 'text-red-500';
+        default: return 'text-white';
+      }
+    }
+
+    let currentStatus = values[4].trim().toLowerCase();
+    let statusIndex = statuses.indexOf(currentStatus);
+    if (statusIndex === -1) statusIndex = 0;
+
+    const newRow = document.createElement('tr');
+    newRow.className = 'border-b border-white hover:bg-[#444444d3] transition-colors duration-200 cursor-pointer';
+
+    const cellValues = [
+      document.querySelectorAll('#taskTable tr').length + 1,
+      values[0],
+      values[1],
+      values[2],
+      values[3]
+    ];
+
+    for (let val of cellValues) {
+      const td = document.createElement('td');
+      td.className = 'p-3 text-white';
+      td.textContent = val;
+      newRow.appendChild(td);
+    }
+
+    const statusCell = document.createElement('td');
+    statusCell.className = `p-3 font-bold ${getStatusClass(currentStatus)}`;
+    statusCell.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+
+    statusCell.onclick = function () {
+      statusIndex = (statusIndex + 1) % statuses.length;
+      currentStatus = statuses[statusIndex];
+      statusCell.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+      statusCell.className = `p-3 font-bold ${getStatusClass(currentStatus)}`;
+      updateLocalStorageStatus(task.id, currentStatus);
+    };
+
+    newRow.appendChild(statusCell);
+
+    const dateCell = document.createElement('td');
+    dateCell.className = 'p-3 text-white';
+    dateCell.textContent = values[5];
+    newRow.appendChild(dateCell);
+
+    document.getElementById('taskTable').appendChild(newRow);
+
+    // حفظ في localStorage
+    const task = {
+      id: document.querySelectorAll('#taskTable tr').length,
+      project: values[0],
+      name: values[1],
+      description: values[2],
+      assignedTo: values[3],
+      status: currentStatus,
+      dueDate: values[5]
+    };
+    saveTaskToLocalStorage(task);
+
+    form.reset();
+    closeModal();
+  }
+
+  function saveTaskToLocalStorage(task) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.push(task);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    for (let task of tasks) {
+      renderTaskRow(task);
+    }
+  });
+
+  function renderTaskRow(task) {
+    const statuses = ['pending', 'in progress', 'completed', 'on hold', 'cancelled'];
+
+    function getStatusClass(status) {
+      switch (status) {
+        case 'pending': return 'text-orange-400';
+        case 'in progress': return 'text-green-400';
+        case 'completed': return 'text-blue-500';
+        case 'on hold': return 'text-yellow-300';
+        case 'cancelled': return 'text-red-500';
+        default: return 'text-white';
+      }
+    }
+
+    let currentStatus = task.status;
+    let statusIndex = statuses.indexOf(currentStatus);
+
+    const newRow = document.createElement('tr');
+    newRow.className = 'border-b border-white hover:bg-[#444444d3] transition-colors duration-200 cursor-pointer';
+
+    const fields = [task.id, task.project, task.name, task.description, task.assignedTo];
+    for (let val of fields) {
+      const td = document.createElement('td');
+      td.className = 'p-3 text-white';
+      td.textContent = val;
+      newRow.appendChild(td);
+    }
+
+    const statusCell = document.createElement('td');
+    statusCell.className = `p-3 font-bold ${getStatusClass(currentStatus)}`;
+    statusCell.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+
+    statusCell.onclick = function () {
+      statusIndex = (statusIndex + 1) % statuses.length;
+      currentStatus = statuses[statusIndex];
+      statusCell.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+      statusCell.className = `p-3 font-bold ${getStatusClass(currentStatus)}`;
+      task.status = currentStatus;
+      updateLocalStorageStatus(task.id, currentStatus);
+    };
+
+    newRow.appendChild(statusCell);
+
+    const dateCell = document.createElement('td');
+    dateCell.className = 'p-3 text-white';
+    dateCell.textContent = task.dueDate;
+    newRow.appendChild(dateCell);
+
+    document.getElementById('taskTable').appendChild(newRow);
+  }
+
+  function updateLocalStorageStatus(taskId, newStatus) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const index = tasks.findIndex(t => t.id === taskId);
+    if (index !== -1) {
+      tasks[index].status = newStatus;
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }
+document.getElementById("sort").addEventListener("change", function () {
+  let table = document.getElementById("taskTable");
+  let rows = Array.from(table.querySelectorAll("tbody tr"));
+
+  if (this.value === "Due Date") {
+    rows.sort((a, b) => {
+      let dateA = parseDate(a.cells[6].textContent.trim());
+      let dateB = parseDate(b.cells[6].textContent.trim());
+      return dateA - dateB; // ترتيب تصاعدي بناءً على تاريخ الاستحقاق
+    });
+  } else if (this.value === "Project") {
+    rows.sort((a, b) => {
+      let projectA = a.cells[1].textContent.trim();
+      let projectB = b.cells[1].textContent.trim();
+      return projectA.localeCompare(projectB); // ترتيب أبجدي للمشاريع
+    });
+  } else if (this.value === "Task Status") {
+    const statusOrder = {
+      Completed: 1,
+      "In Progress": 2,
+      Pending: 3,
+      "On Hold": 4,
+      Cancelled: 5,
+    };
+
+    rows.sort((a, b) => {
+      let statusA = a.cells[5].textContent.trim();
+      let statusB = b.cells[5].textContent.trim();
+      return statusOrder[statusA] - statusOrder[statusB];
+    });
+  } else if (this.value === "Assigned Student") {
+    rows.sort((a, b) => {
+      let studentA = a.cells[4].textContent.trim();
+      let studentB = b.cells[4].textContent.trim();
+      return studentA.localeCompare(studentB); // ترتيب أبجدي للطلاب
+    });
+  }
+
+  // إعادة ترتيب الصفوف في الجدول
+  rows.forEach(row => table.querySelector("tbody").appendChild(row));
+});
+
+// دالة لتحويل النص إلى تاريخ يمكن مقارنته
+function parseDate(dateStr)   {
+  const [day, month, year] = dateStr.split("/");
+  return new Date(`${month}/${day}/${year}`);
+}
+
+  
+</script>
 
 
-      
-     
+</body>
+</html>
