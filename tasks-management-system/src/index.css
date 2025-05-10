@@ -12,3 +12,28 @@ body {
     height: 100vh;
   }
 }
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  &[data-status="Completed"] {
+    color: rgba(0, 85, 255, 0.832);
+  }
+
+  &[data-status="In Progress"] {
+    color: #2ad51ed5;
+  }
+
+  &[data-status="Pending"] {
+    color: orange;
+  }
+  &[data-status="On Hold"] {
+    color: #fff243;
+  }
+  &[data-status="Cancled"] {
+    color: #ff0000;
+  }
+}

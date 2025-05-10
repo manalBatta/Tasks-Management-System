@@ -7,7 +7,7 @@ const AuthForm = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault(); // Prevent the default form submission behavior
-          login("adminUser", "hashedpassword1"); // Call login when the form is submitted
+          login("AliYaseen", "hashedpassword2"); // Call login when the form is submitted
         }}
       >
         <button type="submit">Login</button>

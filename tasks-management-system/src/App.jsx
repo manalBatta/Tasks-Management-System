@@ -134,7 +134,7 @@ function App() {
       ],
       tasks: [
         {
-          id: 10,
+          id: 1,
           title: "Data Collection",
           description: "Gather historical weather data.",
           status: "Pending",
@@ -142,9 +142,10 @@ function App() {
           assignedBy: 1,
           projectId: 1,
           createdAt: "2024-02-26T12:00:00Z",
+          dueDate: "2025-05-30",
         },
         {
-          id: 11,
+          id: 2,
           title: "UI Design",
           description: "Create a responsive UI for the web app.",
           status: "In Progress",
@@ -153,6 +154,7 @@ function App() {
           projectId: 1,
           projectTitle: "Web App Development",
           createdAt: "2024-02-26T12:30:00Z",
+          dueDate: "2025-05-30",
         },
       ],
       chat: [

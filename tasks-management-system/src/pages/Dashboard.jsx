@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import Home from "../components/Home";
 import HomeStudent from "../components/HomeStudent";
 import Chat from "../components/Chat";
+import Tasks from "../components/Tasks";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -27,7 +28,7 @@ const Dashboard = () => {
           return <div>Student projects</div>;
         }
       case "tasks":
-        return <div>Tasks Page</div>;
+        return <Tasks></Tasks>;
       case "chat":
         return <Chat></Chat>;
       default:

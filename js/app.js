@@ -396,21 +396,6 @@ sendMessage = () => {
   }
 };
 
-///DONE TRANSFERING
-
-const isStudent = (event) => {
-  const universityIdContainer = document.getElementById(
-    "university-id-container"
-  );
-
-  const studentCheckbox = event.target;
-  if (studentCheckbox.checked) {
-    universityIdContainer.style.display = "block";
-  } else {
-    universityIdContainer.style.display = "none";
-  }
-};
-
 const sortTable = (event) => {
   document.getElementById("sort").addEventListener("change", function () {
     let table = document.getElementById("tasksTable");
@@ -465,16 +450,17 @@ const sortTable = (event) => {
   });
 };
 
-function parseDate(dateStr) {
-  let parts = dateStr.split("/");
-  if (parts.length === 3) {
-    let [month, day, year] = parts.map(Number);
-    return new Date(year, month - 1, day);
-  }
-  return new Date(0);
-}
 
-const sortState = (event, taskId) => {
+ function parseDate(dateStr) {
+    let parts = dateStr.split("/");
+    if (parts.length === 3) {
+      let [month, day, year] = parts.map(Number);
+      return new Date(year, month - 1, day);
+    }
+    return new Date(0);
+  }
+
+  const sortState = (event, taskId) => {
   let cell = event.target;
   let currentStatus = cell.textContent.trim();
 
@@ -617,6 +603,7 @@ const populateTaskForm = () => {
   }
 };
 
+
 const getStatusClass = (status) => {
   switch (status) {
     case "Pending":
@@ -635,55 +622,23 @@ const getStatusClass = (status) => {
   }
 };
 
-const addnewTask = (event) => {
-  event.preventDefault();
+///DONE TRANSFERING
 
-  const projectTitle1 = document.getElementById("project-title").value;
-  const taskName1 = document.getElementById("task-name").value;
-  const description1 = document.getElementById("description").value;
-  const assignedStudent1 = document.getElementById("assigned-student").value;
-  const status1 = document.getElementById("status").value;
-  const dueDate1 = document.getElementById("due-date").value;
-  const projectId = document.getElementById("project-title").value;
-  if (
-    projectTitle1 === "Select a project" ||
-    assignedStudent1 === "Select a student" ||
-    status1 === "Select a status" ||
-    taskName1.trim() === "" ||
-    dueDate1.trim() === ""
-  ) {
-    alert("Enter Information Please");
-    return;
-  }
-
-  let storedData = JSON.parse(localStorage.getItem("data"));
-  let data = storedData.tasks;
-
-  const newTask = {
-    id: data.length + 1,
-    description: description1,
-    status: status1,
-    assignedTo: +assignedStudent1,
-    assignedBy: 1,
-    projectId: +projectId,
-    projectTitle: projectTitle1,
-    createdAt: new Date().toISOString(),
-    title: taskName1,
-  };
-
-  localStorage.setItem(
-    "data",
-    JSON.stringify({
-      ...storedData,
-      tasks: [...data, newTask],
-    })
+const isStudent = (event) => {
+  const universityIdContainer = document.getElementById(
+    "university-id-container"
   );
 
-  loadTasks();
-  alert("Done!");
-
-  document.querySelector(".close-btn").click();
+  const studentCheckbox = event.target;
+  if (studentCheckbox.checked) {
+    universityIdContainer.style.display = "block";
+  } else {
+    universityIdContainer.style.display = "none";
+  }
 };
+
+
+
 
 function addProjectEventListener() {
   const openModalButtons = document.querySelectorAll("[data-modal-target]");
