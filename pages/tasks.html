@@ -326,7 +326,7 @@ document.getElementById("sort").addEventListener("change", function () {
 
     rows.sort((a, b) => {
       let statusA = a.cells[5].textContent.trim();
-      let statusB =  b.cells[5].textContent.trim();
+      let statusB = b.cells[5].textContent.trim();
       return statusOrder[statusA] - statusOrder[statusB];
     });
   } else if (this.value === "Assigned Student") {

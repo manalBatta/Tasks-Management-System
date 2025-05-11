@@ -39,3 +39,27 @@ mainRoute(true );
 /* document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM is fully loaded and parsed.");
 }); */
+// function loadPage(url) {
+//   fetch(url)
+//     .then(res => res.text())
+//     .then(html => {
+//       const parser = new DOMParser();
+//       const doc = parser.parseFromString(html, 'text/html');
+
+//       // استخراج السكريبتات
+//       const scripts = doc.querySelectorAll('script');
+//       const content = doc.body.innerHTML;
+
+//       document.getElementById('app').innerHTML = content;
+
+//       scripts.forEach(script => {
+//         const newScript = document.createElement('script');
+//         if (script.src) {
+//           newScript.src = script.src;
+//         } else {
+//           newScript.innerHTML = script.innerHTML;
+//         }
+//         document.body.appendChild(newScript);
+//       });
+//     });
+// }

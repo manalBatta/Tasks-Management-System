@@ -1,26 +1,55 @@
-<!-- signup.html -->
-<div id="signupPage" class="page">
-  <div class="signup-container">
-    <h2>Sign up</h2>
+<!-- signup-tailwind.html -->
+<div id="signupPage" class="flex justify-center items-center h-screen bg-[#181818]">
+  <div class="bg-[#181818] p-8 w-[350px] rounded-[10px] shadow-lg text-white">
+    <h2 class="text-2xl font-bold mb-5">Sign up</h2>
     <form>
-      <label for="signup-username">Username</label>
-      <input type="text" id="signup-username" />
-      <label for="signup-password">Password</label>
-      <input type="password" id="signup-password" />
-      <label>
+      <label for="signup-username" class="block text-sm mt-2">Username</label>
+      <input
+        type="text"
+        id="signup-username"
+        class="w-full p-2 mt-1 rounded bg-[#2b2b2bcd] text-white outline-none"
+      />
+
+      <label for="signup-password" class="block text-sm mt-4">Password</label>
+      <input
+        type="password"
+        id="signup-password"
+        class="w-full p-2 mt-1 rounded bg-[#2b2b2bcd] text-white outline-none"
+      />
+
+      <label class="flex items-center mt-4">
         <input
           type="checkbox"
           id="studentCheckbox"
-          onchange=" isStudent(event)"
+          onchange="isStudent(event)"
+          class="mr-2"
         />
         I am a Student
       </label>
-      <div id="university-id-container" style="display: none">
-        <label for="university-id">University ID</label>
-        <input type="number" id="university-id" />
+
+      <div id="university-id-container" class="hidden mt-4">
+        <label for="university-id" class="block text-sm">University ID</label>
+        <input
+          type="number"
+          id="university-id"
+          class="w-full p-2 mt-1 rounded bg-[#2b2b2bcd] text-white outline-none"
+        />
       </div>
-      <button id="signup-btn" type="button">Sign up</button>
-      <button id="gotoSignin" type="button" onclick="mainRoute('pages/signin')">
+
+      <button
+        id="signup-btn"
+        type="button"
+        class="w-full p-2 mt-6 rounded bg-[#4caf50] text-white text-lg hover:bg-[#45a049]"
+      >
+        Sign up
+      </button>
+
+      <button
+        id="gotoSignin"
+        type="button"
+        onclick="mainRoute('pages/signin')"
+        class="w-full p-2 mt-3 rounded border-2 border-[#4caf50] text-[#4caf50] text-lg hover:bg-[#4caf50] hover:text-white"
+      >
         Sign In
       </button>
     </form>
