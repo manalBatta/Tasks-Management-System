@@ -340,7 +340,7 @@ const Tasks = () => {
                       )
                     )
                   ) : (
-                    <option value="user.username" selected>
+                    <option value={user.username} selected>
                       {user.username}
                     </option>
                   )}

@@ -4,6 +4,7 @@ import Home from "../components/Home";
 import HomeStudent from "../components/HomeStudent";
 import Chat from "../components/Chat";
 import Tasks from "../components/Tasks";
+import Projects from "../components/Projects";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -25,7 +26,7 @@ const Dashboard = () => {
         if (user?.role === "admin") {
           return <div>Admin projects</div>;
         } else {
-          return <div>Student projects</div>;
+          return <Projects></Projects>;
         }
       case "tasks":
         return <Tasks></Tasks>;
