@@ -6,85 +6,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // null = not logged in
 
   const login = (username, password) => {
-    const users = [
-      {
-        id: 1,
-        username: "adminUser",
-        password: "hashedpassword1",
-        role: "admin",
-        universityID: null,
-      },
-      {
-        id: 2,
-        username: "AliYaseen",
-        password: "hashedpassword2",
-        role: "student",
-        universityID: "UNI12345",
-      },
-      {
-        id: 3,
-        username: "BraaAeesh",
-        password: "hashedpassword3",
-        role: "student",
-        universityID: "UNI67890",
-      },
-      {
-        id: 4,
-        username: "IbnAlJawzee",
-        password: "hashedpassword4",
-        role: "student",
-        universityID: "UNI11111",
-      },
-      {
-        id: 5,
-        username: "IbnMalik",
-        password: "hashedpassword5",
-        role: "student",
-        universityID: "UNI22222",
-      },
-      {
-        id: 6,
-        username: "AymanOutom",
-        password: "hashedpassword6",
-        role: "student",
-        universityID: "UNI33333",
-      },
-      {
-        id: 7,
-        username: "SalahSalah",
-        password: "hashedpassword7",
-        role: "student",
-        universityID: "UNI44444",
-      },
-      {
-        id: 8,
-        username: "YahyaLeader",
-        password: "hashedpassword8",
-        role: "student",
-        universityID: "UNI55555",
-      },
-      {
-        id: 9,
-        username: "SalamKareem",
-        password: "hashedpassword9",
-        role: "student",
-        universityID: "UNI66666",
-      },
-      {
-        id: 10,
-        username: "IsaacNasir",
-        password: "hashedpassword10",
-        role: "student",
-        universityID: "UNI77777",
-      },
-      {
-        id: 11,
-        username: "SaeedSalam",
-        password: "hashedpassword11",
-        role: "student",
-        universityID: "UNI88888",
-      },
-    ];
+    const data = JSON.parse(localStorage.getItem("data"));
+    const users = data.users;
     const isAuthenticatedUser = users.find(
       (u) => u.username === username && u.password === password
     );
@@ -98,13 +21,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const signup = (username, password, universityID) => {
+    if (username === "" || password === "") {
+      alert("Please fill in all fields.");
+      return;
+    }
+    const data = JSON.parse(localStorage.getItem("data"));
+    const users = data.users;
+    const isUserAlreadyRegistered = users.find((u) => u.username === username);
+
+    if (isUserAlreadyRegistered) {
+      alert("User already exists. Please try a different username.");
+    } else {
+      const newUser = {
+        id: users.length + 1,
+        username: username,
+        password: password,
+        role: universityID ? "student" : "admin",
+        universityID: universityID,
+      };
+
+      setUser(newUser);
+      users.push(newUser);
+      localStorage.setItem("data", JSON.stringify({ ...data, users: users }));
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

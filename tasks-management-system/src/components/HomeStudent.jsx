@@ -1,9 +1,11 @@
 import { useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const HomeStudent = () => {
+  const { user } = useAuth();
   const homeStudentIntialize = () => {
     const data = JSON.parse(localStorage.getItem("data"));
-    const userId = JSON.parse(localStorage.getItem("user")).id;
+    const userId = user.id;
     const tasksCount = data.tasks.filter(
       (task) => task.assignedTo === userId
     ).length;
