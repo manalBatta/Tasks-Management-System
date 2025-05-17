@@ -24,7 +24,7 @@ const Dashboard = () => {
         }
       case "projects":
         if (user?.role === "admin") {
-          return <div>Admin projects</div>;
+          return <Projects></Projects>;
         } else {
           return <Projects></Projects>;
         }

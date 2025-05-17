@@ -37,8 +37,16 @@ const projectSchema = new mongoose.Schema({
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
+const messageSchema = new mongoose.Schema({
+  senderId: { type: String, required: true },
+  receiverId: { type: String, required: true },
+  message: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+});
+
 const User = mongoose.model("User", userSchema);
 const Task = mongoose.model("Task", taskSchema);
 const Project = mongoose.model("Project", projectSchema);
+const Message = mongoose.model("Message", messageSchema);
 
-module.exports = { User, Task, Project };
+module.exports = { User, Task, Project, Message };

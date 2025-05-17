@@ -23,14 +23,14 @@ function App() {
         {
           id: 1,
           username: "adminUser",
-          password: "hashedpassword1",
+          password: "123",
           role: "admin",
           universityID: null,
         },
         {
           id: 2,
           username: "AliYaseen",
-          password: "hashedpassword2",
+          password: "123",
           role: "student",
           universityID: "UNI12345",
         },

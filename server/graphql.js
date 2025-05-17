@@ -6,7 +6,7 @@ const {
   GraphQLID,
   GraphQLNonNull,
 } = require("graphql");
-const { User, Task, Project } = require("./models");
+const { User, Task, Project, Message } = require("./models"); // <-- Add Message
 
 // UserType
 const UserType = new GraphQLObjectType({
@@ -71,6 +71,18 @@ const TaskType = new GraphQLObjectType({
   }),
 });
 
+// MessageType
+const MessageType = new GraphQLObjectType({
+  name: "Message",
+  fields: () => ({
+    id: { type: GraphQLID },
+    senderId: { type: GraphQLString },
+    receiverId: { type: GraphQLString },
+    message: { type: GraphQLString },
+    timestamp: { type: GraphQLString },
+  }),
+});
+
 // Root Query
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
@@ -91,6 +103,25 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(ProjectType),
       resolve() {
         return Project.find();
+      },
+    },
+    messages: {
+      type: new GraphQLList(MessageType),
+      args: {
+        senderId: { type: GraphQLString },
+        receiverId: { type: GraphQLString },
+      },
+      async resolve(_, args) {
+        // Fetch messages between two users (both directions)
+        if (args.senderId && args.receiverId) {
+          return Message.find({
+            $or: [
+              { senderId: args.senderId, receiverId: args.receiverId },
+              { senderId: args.receiverId, receiverId: args.senderId },
+            ],
+          }).sort({ timestamp: 1 });
+        }
+        return Message.find().sort({ timestamp: 1 });
       },
     },
     task: {
