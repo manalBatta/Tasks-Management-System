@@ -1,31 +1,7 @@
-
-
 "use client"
 
 import { useEffect, useState } from "react"
- import { useAuth } from "../context/AuthContext";
-
-
-import { useNavigate } from 'react-router-dom';
-
-const AddProjectComponent = () => {
-  const navigate = useNavigate();
-
-  const handleSubmit = async () => {
-    try {
-      // Your logic for adding a project (e.g., API call)
-      await addProject();
-
-      // Navigate back to /project after success
-      navigate('/project');
-    } catch (error) {
-      console.error('Failed to add project', error);
-    }
-  };
-
-
-};
-
+import { useAuth } from "../context/AuthContext"
 
 const Projects = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -133,14 +109,13 @@ const Projects = () => {
   }
 
   // Fetch tasks for a specific project
-// Fetch tasks for a specific project
-async function fetchProjectTasks(projectId) {
-  try {
-    const response = await fetch("http://localhost:3000/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `
+  async function fetchProjectTasks(projectId) {
+    try {
+      const response = await fetch("http://localhost:3000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
           query GetTasksByProject($projectId: ID!) {
             tasksByProject(projectId: $projectId) {
               id
@@ -160,24 +135,24 @@ async function fetchProjectTasks(projectId) {
             }
           }
         `,
-        variables: {
-          projectId: projectId
-        }
-      }),
-    })
+          variables: {
+            projectId: projectId,
+          },
+        }),
+      })
 
-    if (!response.ok) throw new Error("Failed to fetch tasks")
+      if (!response.ok) throw new Error("Failed to fetch tasks")
 
-    const { data, errors } = await response.json()
+      const { data, errors } = await response.json()
 
-    if (errors) throw new Error(errors.map((e) => e.message).join(", "))
+      if (errors) throw new Error(errors.map((e) => e.message).join(", "))
 
-    return data.tasksByProject
-  } catch (err) {
-    console.error("Error fetching tasks:", err)
-    throw err
+      return data.tasksByProject
+    } catch (err) {
+      console.error("Error fetching tasks:", err)
+      throw err
+    }
   }
-}
 
   // Add a new project
   async function addProject(projectData) {
@@ -231,7 +206,7 @@ async function fetchProjectTasks(projectId) {
           variables: {
             title: projectData.title,
             description: projectData.description,
-            createdBy: user ? user.id : null,
+            createdBy: user ? user.id || user._id : null,
             startDate: projectData.startDate,
             endDate: projectData.endDate,
             status: projectData.status,
@@ -261,11 +236,54 @@ async function fetchProjectTasks(projectId) {
       try {
         const [projectsData, studentsData] = await Promise.all([fetchProjects(), fetchStudents()])
 
-        setProjects(projectsData)
-        setFilteredProjects(projectsData)
+        // Debug: Log the complete user object
+        console.log("Current user object:", user)
+
+        // Debug: Log all projects data
+        console.log("All projects:", projectsData)
+
+        // Filter projects for students to only show assigned ones
+        if (user && user.role === "student") {
+          // Try to get user ID from different possible properties
+          const userId = user.id || user._id
+          const username = user.username
+
+          console.log("Current user ID:", userId)
+          console.log("Current username:", username)
+
+          const assignedProjects = projectsData.filter((project) => {
+            // Debug: Log each project's students
+            console.log(`Project "${project.title}" students:`, project.students)
+
+            // Try to match by ID first (checking different ID formats)
+            const matchById = project.students.some((student) => {
+              const studentId = student.id || student._id
+              return String(studentId) === String(userId)
+            })
+
+            // If ID match fails, try to match by username
+            const matchByUsername = project.students.some((student) => student.username === username)
+
+            console.log(`Project "${project.title}" - Match by ID: ${matchById}, Match by username: ${matchByUsername}`)
+
+            return matchById || matchByUsername
+          })
+
+          console.log("Assigned projects found:", assignedProjects.length)
+          console.log("Assigned projects:", assignedProjects)
+
+          setProjects(assignedProjects)
+          setFilteredProjects(assignedProjects)
+        } else {
+          // For admin users, show all projects
+          setProjects(projectsData)
+          setFilteredProjects(projectsData)
+        }
+
         setStudents(studentsData)
         setError(null)
       } catch (err) {
+        console.error("Error loading data:", err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -273,7 +291,7 @@ async function fetchProjectTasks(projectId) {
     }
 
     loadData()
-  }, [])
+  }, [user])
 
   // Filter projects based on search query and status filter
   useEffect(() => {
@@ -312,8 +330,6 @@ async function fetchProjectTasks(projectId) {
     setIsModalOpen(true)
   }
 
-
-  
   const closeModal = () => {
     setIsModalOpen(false)
     setNewProject({})
@@ -325,49 +341,49 @@ async function fetchProjectTasks(projectId) {
     setActiveProject(null)
   }
 
- 
-
-
   const openSidebar = async (projectId) => {
-  try {
-    // If clicking the same project that's already open, toggle sidebar closed
-    if (isSidebarOpen && activeProject?.id === projectId) {
-      setIsSidebarOpen(false)
-      setActiveProject(null)
-      return
+    try {
+      // If clicking the same project that's already open, toggle sidebar closed
+      if (isSidebarOpen && activeProject?.id === projectId) {
+        setIsSidebarOpen(false)
+        setActiveProject(null)
+        return
+      }
+
+      // Find the project in current state
+      const project = projects.find((p) => p.id === projectId)
+
+      if (!project) {
+        alert("Project not found!")
+        return
+      }
+
+      // Fetch tasks for this project
+      const projectTasks = await fetchProjectTasks(projectId)
+
+      // Set the active project with its tasks
+      setActiveProject({
+        ...project,
+        tasks: projectTasks,
+      })
+
+      // Show the sidebar
+      setIsSidebarOpen(true)
+    } catch (err) {
+      alert(`Error loading project details: ${err.message}`)
     }
-
-    // Find the project in current state
-    const project = projects.find((p) => p.id === projectId)
-
-    if (!project) {
-      alert("Project not found!")
-      return
-    }
-
-    // Fetch tasks for this project
-    const projectTasks = await fetchProjectTasks(projectId)
-
-    // Set the active project with its tasks
-    setActiveProject({
-      ...project,
-      tasks: projectTasks,
-    })
-
-    // Show the sidebar
-    setIsSidebarOpen(true)
-  } catch (err) {
-    alert(`Error loading project details: ${err.message}`)
   }
-}
 
   if (loading) return <div className="text-white text-center p-4">Loading projects...</div>
   if (error) return <div className="text-red-500 text-center p-4">Error: {error}</div>
 
+  // Show a message when no projects are found for students
+  const noProjectsMessage = (
+    <div className="w-full text-center p-8">
+      <p className="text-gray-400 text-lg">No projects assigned to you yet.</p>
+    </div>
+  )
 
-
-
-  
   return (
     <>
       {/* Overlay */}
@@ -455,46 +471,39 @@ async function fetchProjectTasks(projectId) {
               required
             ></textarea>
 
-            
-            
-            
-            
-      <label htmlFor="studentList" className="text-white font-bold m-0">
-  Students List:
-</label>
-<div
-  id="studentListContainer"
-  className="w-full max-h-25 overflow-y-auto bg-[#393939] text-white border border-gray-400 rounded-lg p-2 flex flex-col"
->
-{students.map((student) => {
-  const isSelected = selectedStudents.some((s) => s.id === student.id);
+            <label htmlFor="studentList" className="text-white font-bold m-0">
+              Students List:
+            </label>
+            <div
+              id="studentListContainer"
+              className="w-full max-h-25 overflow-y-auto bg-[#393939] text-white border border-gray-400 rounded-lg p-2 flex flex-col"
+            >
+              {students.map((student) => {
+                const isSelected = selectedStudents.some((s) => s.id === student.id)
 
-  return (
-    <label
-      key={student.id}
-      htmlFor={`student_${student.id}`}
-      className={`flex items-center px-3 py-2 rounded cursor-pointer transition-all duration-200 ${
-        isSelected ? 'bg-gray-600 text-gray-300' : 'bg-transparent text-white'
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={`student_${student.id}`}
-        value={student.id}
-        onChange={(e) => handleStudentSelection(e, student)}
-        className="hidden"
-        checked={isSelected}
-        readOnly
-      />
-      <span className="text-sm">{student.username}</span>
-    </label>
-  );
-})}
+                return (
+                  <label
+                    key={student.id}
+                    htmlFor={`student_${student.id}`}
+                    className={`flex items-center px-3 py-2 rounded cursor-pointer transition-all duration-200 ${
+                      isSelected ? "bg-gray-600 text-gray-300" : "bg-transparent text-white"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      id={`student_${student.id}`}
+                      value={student.id}
+                      onChange={(e) => handleStudentSelection(e, student)}
+                      className="hidden"
+                      checked={isSelected}
+                      readOnly
+                    />
+                    <span className="text-sm">{student.username}</span>
+                  </label>
+                )
+              })}
+            </div>
 
-</div>
-
-            
-            
             <label htmlFor="category" className="text-white font-bold m-0">
               Project Category:
             </label>
@@ -581,127 +590,147 @@ async function fetchProjectTasks(projectId) {
         </div>
       )}
 
-      <h2 className="text-blue-500 text-xl font-bold">Projects Overview</h2>
-      <section className="flex items-center justify-between mb-4 mt-6 gap-4" id="content">
-        <button id="addProj" onClick={openModal} className="w-1/5 h-10 bg-blue-500 text-white rounded-lg text-sm">
-          Add Project
-        </button>
-        <input
-          id="searchProject"
-          type="text"
-          placeholder="Search Projects By Title Or Description..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="w-4/5 h-10 mr-3 rounded-lg placeholder:text-sm bg-white border border-gray-400 text-black p-2"
-        />
+      {user && user.role !== "student" ? (
+        <>
+          <h2 className="text-blue-500 text-xl font-bold">Projects Overview</h2>
+          <section className="flex items-center justify-between mb-4 mt-6 gap-4" id="content">
+            <button id="addProj" onClick={openModal} className="w-1/5 h-10 bg-blue-500 text-white rounded-lg text-sm">
+              Add Project
+            </button>
+            <input
+              id="searchProject"
+              type="text"
+              placeholder="Search Projects By Title Or Description..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-4/5 h-10 mr-3 rounded-lg placeholder:text-sm bg-white border border-gray-400 text-black p-2"
+            />
 
-        <div className="relative flex w-1/5">
-          <select
-            id="status"
-            name="status"
-            className="w-full h-10 rounded-lg text-center text-sm appearance-none cursor-pointer bg-white border border-gray-400 text-black"
-            onChange={(e) => setStatusFilter(e.target.value)}
-            value={statusFilter}
-          >
-            <option value="AllStatuses">All Statuses</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-            <option value="On Hold">On Hold</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <i className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-700 font-bold text-xs fa fa-chevron-down"></i>
-        </div>
-      </section>
+            <div className="relative flex w-1/5">
+              <select
+                id="status"
+                name="status"
+                className="w-full h-10 rounded-lg text-center text-sm appearance-none cursor-pointer bg-white border border-gray-400 text-black"
+                onChange={(e) => setStatusFilter(e.target.value)}
+                value={statusFilter}
+              >
+                <option value="AllStatuses">All Statuses</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Pending">Pending</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+              <i className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-700 font-bold text-xs fa fa-chevron-down"></i>
+            </div>
+          </section>
+        </>
+      ) : (
+        <>
+          <h2 className="text-blue-500 text-xl font-bold">My Assigned Projects</h2>
+          <section className="flex items-center justify-between mb-4 mt-6 gap-4" id="content">
+            <input
+              id="searchProject"
+              type="text"
+              placeholder="Search Projects By Title Or Description..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full h-10 mr-3 rounded-lg placeholder:text-sm bg-white border border-gray-400 text-black p-2"
+            />
+          </section>
+        </>
+      )}
 
       <div
         id="projectContainer"
         style={{ scrollbarWidth: "none" }}
         className="maindiv flex flex-wrap overflow-y-scroll h-auto"
       >
-        {filteredProjects.map((project, index) => {
-          // Calculate progress percentage
-          let startDate, endDate, today
-          let progressPercentage
+        {filteredProjects.length > 0
+          ? filteredProjects.map((project, index) => {
+              // Calculate progress percentage
+              let startDate, endDate, today
+              let progressPercentage
 
-          try {
-            // Handle different date formats (string, timestamp, etc.)
-            startDate = new Date(isNaN(project.startDate) ? project.startDate : Number.parseInt(project.startDate))
-            endDate = new Date(isNaN(project.endDate) ? project.endDate : Number.parseInt(project.endDate))
-            today = new Date()
+              try {
+                // Handle different date formats (string, timestamp, etc.)
+                startDate = new Date(isNaN(project.startDate) ? project.startDate : Number.parseInt(project.startDate))
+                endDate = new Date(isNaN(project.endDate) ? project.endDate : Number.parseInt(project.endDate))
+                today = new Date()
 
-            // Check if dates are valid
-            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-              throw new Error("Invalid date")
-            }
+                // Check if dates are valid
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                  throw new Error("Invalid date")
+                }
 
-            startDate.setHours(0, 0, 0, 0)
-            endDate.setHours(23, 59, 59, 999)
-            today.setHours(0, 0, 0, 0)
+                startDate.setHours(0, 0, 0, 0)
+                endDate.setHours(23, 59, 59, 999)
+                today.setHours(0, 0, 0, 0)
 
-            const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1)
-            const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0)
-            progressPercentage = Math.round((elapsedDuration / totalDuration) * 100)
-            progressPercentage = Math.min(Math.max(progressPercentage, 0), 100)
-          } catch (e) {
-            console.error("Error calculating progress:", e)
-            progressPercentage = 0
-          }
+                const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1)
+                const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0)
+                progressPercentage = Math.round((elapsedDuration / totalDuration) * 100)
+                progressPercentage = Math.min(Math.max(progressPercentage, 0), 100)
+              } catch (e) {
+                console.error("Error calculating progress:", e)
+                progressPercentage = 0
+              }
 
-          // Determine border color based on status
-          const borderColor =
-            {
-              "In Progress": "border-green-500",
-              Completed: "border-blue-500",
-              Pending: "border-orange-500",
-              "On Hold": "border-yellow-500",
-              Cancelled: "border-red-500",
-            }[project.status] || "border-gray-500"
+              // Determine border color based on status
+              const borderColor =
+                {
+                  "In Progress": "border-green-500",
+                  Completed: "border-blue-500",
+                  Pending: "border-orange-500",
+                  "On Hold": "border-yellow-500",
+                  Cancelled: "border-red-500",
+                }[project.status] || "border-gray-500"
 
-          // Get student names
-          const studentsNames = project.students.map((student) => student.username)
+              // Get student names
+              const studentsNames = project.students.map((student) => student.username)
 
-          return (
-            <div
-              key={project.id}
-              data-project-id={project.id}
-              className={`flex flex-col bg-[#393939] text-white rounded-lg border ${borderColor} p-4 m-2 w-full md:w-1/3 lg:w-1/4 h-auto cursor-pointer`}
-              onClick={() => openSidebar(project.id)}
-            >
-              <h3 id={`projectTitle_${index}`} className="text-lg font-bold text-blue-400 mb-2">
-                {project.title}
-              </h3>
-              <p className="mb-2">
-                <strong>Description:</strong> <span id={`projectDescription_${index}`}>{project.description}</span>
-              </p>
-              <p className="mb-2">
-                <strong>Students:</strong> <span id={`projectStudents_${index}`}>{studentsNames.join(", ")}</span>
-              </p>
-              <p className="mb-2">
-                <strong>Category:</strong> <span id={`projectCategory_${index}`}>{project.category}</span>
-              </p>
-              <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden mb-2">
+              return (
                 <div
-                  className="bg-blue-500 h-full text-center text-xs text-white font-bold"
-                  style={{ width: `${progressPercentage}%` }}
+                  key={project.id}
+                  data-project-id={project.id}
+                  className={`flex flex-col bg-[#393939] text-white rounded-lg border ${borderColor} p-4 m-2 w-full md:w-1/3 lg:w-1/4 h-auto cursor-pointer`}
+                  onClick={() => openSidebar(project.id)}
                 >
-                  {progressPercentage}%
+                  <h3 id={`projectTitle_${index}`} className="text-lg font-bold text-blue-400 mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="mb-2">
+                    <strong>Description:</strong> <span id={`projectDescription_${index}`}>{project.description}</span>
+                  </p>
+                  <p className="mb-2">
+                    <strong>Students:</strong> <span id={`projectStudents_${index}`}>{studentsNames.join(", ")}</span>
+                  </p>
+                  <p className="mb-2">
+                    <strong>Category:</strong> <span id={`projectCategory_${index}`}>{project.category}</span>
+                  </p>
+                  <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden mb-2">
+                    <div
+                      className="bg-blue-500 h-full text-center text-xs text-white font-bold"
+                      style={{ width: `${progressPercentage}%` }}
+                    >
+                      {progressPercentage}%
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <p id={`projectCreatedAt_${index}`}>{formatDate(project.startDate)}</p>
+                    <p id={`projectDeadline_${index}`}>{formatDate(project.endDate)}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between text-sm text-gray-400">
-                <p id={`projectCreatedAt_${index}`}>{formatDate(project.startDate)}</p>
-                <p id={`projectDeadline_${index}`}>{formatDate(project.endDate)}</p>
-              </div>
-            </div>
-          )
-        })}
+              )
+            })
+          : // Show message when no projects are found
+            noProjectsMessage}
       </div>
 
       {/* Sidebar */}
       {isSidebarOpen && activeProject && (
         <div className="fixed top-0 right-0 bottom-0 w-1/4 h-full bg-[#1e1e1e] border border-gray-500 text-sm overflow-y-auto z-50">
           <div className="p-4 text-white">
-         
             <h2 className="text-xl font-bold text-blue-500">{activeProject.title}</h2>
             <p>
               <strong className="text-gray-400">Description:</strong>{" "}
