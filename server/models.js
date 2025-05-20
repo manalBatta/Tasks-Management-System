@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+
 const taskSchema = new mongoose.Schema({
 
   title: String,
