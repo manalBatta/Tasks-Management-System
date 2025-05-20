@@ -10,6 +10,152 @@ const {
 } = require("graphql");
 const { User, Task, Project, Message } = require("./models"); // <-- Add Message
 const mongoose = require("mongoose");
+
+// graphql.js - أضف هذا إلى الملف الموجود
+
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+// مفتاح سري للتوقيع JWT
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+// أضف هذه الأنواع إلى مخطط GraphQL الخاص بك
+const authTypeDefs = `
+  type User {
+    id: ID!
+    username: String!
+    role: String!
+    universityID: String
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
+
+  extend type Query {
+    me: User
+  }
+
+  extend type Mutation {
+    login(username: String!, password: String!): AuthPayload
+    signup(username: String!, password: String!, universityID: String): AuthPayload
+  }
+`;
+
+// أضف هذه الحلالات إلى حلالات GraphQL الخاصة بك
+const authResolvers = {
+  Query: {
+    me: async (_, __, { req }) => {
+      // تحقق من وجود المستخدم في الطلب (يتم إضافته بواسطة middleware)
+      if (!req.user) {
+        return null;
+      }
+
+      // ابحث عن المستخدم في قاعدة البيانات
+      const user = await User.findById(req.user.id).select('-password');
+      return {
+        id: user._id,
+        username: user.username,
+        role: user.role,
+        universityID: user.universityID
+      };
+    }
+  },
+  Mutation: {
+    signup: async (_, { username, password, universityID }) => {
+      // التحقق من وجود المستخدم
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        throw new Error('Username already exists');
+      }
+
+      // تشفير كلمة المرور
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // إنشاء مستخدم جديد
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        role: universityID ? 'student' : 'admin',
+        universityID: universityID || null,
+      });
+
+      await newUser.save();
+
+      // إنشاء توكن JWT
+      const token = jwt.sign(
+        { id: newUser._id, username: newUser.username, role: newUser.role },
+        JWT_SECRET,
+        { expiresIn: '1d' }
+      );
+
+      return {
+        token,
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          role: newUser.role,
+          universityID: newUser.universityID,
+        },
+      };
+    },
+    login: async (_, { username, password }) => {
+      // التحقق من وجود المستخدم
+      const user = await User.findOne({ username });
+      if (!user) {
+        throw new Error('Invalid credentials');
+      }
+
+      // التحقق من كلمة المرور
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        throw new Error('Invalid credentials');
+      }
+
+      // إنشاء توكن JWT
+      const token = jwt.sign(
+        { id: user._id, username: user.username, role: user.role },
+        JWT_SECRET,
+        { expiresIn: '1d' }
+      );
+
+      return {
+        token,
+        user: {
+          id: user._id,
+          username: user.username,
+          role: user.role,
+          universityID: user.universityID,
+        },
+      };
+    }
+  }
+};
+
+// دمج مخططات وحلالات المصادقة مع المخططات والحلالات الموجودة
+// تأكد من تعديل هذا الجزء بناءً على كيفية تعريف المخططات والحلالات في ملفك
+const typeDefs = [
+  // المخططات الموجودة
+  // ...
+  authTypeDefs
+];
+
+const resolvers = {
+  Query: {
+    // الحلالات الموجودة
+    // ...
+    ...authResolvers.Query
+  },
+  Mutation: {
+    // الحلالات الموجودة
+    // ...
+    ...authResolvers.Mutation
+  }
+};
+
+
 // UserType
 const UserType = new GraphQLObjectType({
   name: "User",
