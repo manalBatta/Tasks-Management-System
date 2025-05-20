@@ -426,15 +426,11 @@ const Tasks = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
-      </div>
-    );
+    return <div className="flex justify-center items-center ">Loading...</div>;
   }
 
   return (
-    <div className="bg-primary text-text min-h-screen p-6">
+    <div className="bg-primary text-text  p-6">
       <div className="flex justify-between items-center mb-6 mt-6 flex-wrap gap-4">
         <div className="flex items-center space-x-4 flex-shrink-0">
           <label htmlFor="sort" className="font-bold text-white">
