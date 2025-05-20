@@ -5,6 +5,9 @@ import "../index.css";
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tasks, setTasks] = useState([]); // State to store tasks
+  const [users, setUsers] = useState([]); // State to store users
+  const [projects, setProjects] = useState([]); // State to store projects
+  const [loading, setLoading] = useState(true); // Loading state
   const { user } = useAuth();
   const tableRef = useRef(null); // Create a ref for the table
 
@@ -16,7 +19,167 @@ const Tasks = () => {
     setIsModalOpen(false);
   };
 
-  const addTask = (event) => {
+  // Fetch users from backend
+  async function fetchUsers() {
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            query {
+              users {
+                id
+                username
+                role
+                universityID
+              }
+            }
+          `,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const { data } = await response.json();
+      setUsers(data.users);
+      return data.users;
+    } catch (err) {
+      alert("Error fetching users: " + err.message);
+      console.error("Error fetching users:", err);
+      return [];
+    }
+  }
+
+  // Fetch projects from backend
+  async function fetchProjects() {
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            query {
+              projects {
+                id
+                title
+                description
+                status
+                category
+              }
+            }
+          `,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch projects");
+      const { data } = await response.json();
+      setProjects(data.projects);
+      return data.projects;
+    } catch (err) {
+      alert("Error fetching projects: " + err.message);
+      console.error("Error fetching projects:", err);
+      return [];
+    }
+  }
+
+  // Fetch tasks from backend
+  async function fetchTasks() {
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            query {
+              tasks {
+                id
+                title
+                description
+                status
+                projectId
+                projectName
+                createdAt
+                dueDate
+                assignedTo {
+                  id
+                  username
+                }
+                assignedBy {
+                  id
+                  username
+                }
+              }
+            }
+          `,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      const { data } = await response.json();
+      // طباعة البيانات الأصلية للتشخيص
+    console.log("Original tasks data:", data.tasks);
+      // معالجة التواريخ بطريقة آمنة
+    const processedTasks = data.tasks.map(task => {
+      // نسخة من المهمة
+      const processedTask = { ...task };
+      
+      // معالجة تاريخ الاستحقاق
+      try {
+        if (task.dueDate) {
+          // محاولة تحويل التاريخ إلى كائن Date
+          const dueDate = new Date(task.dueDate);
+          // التحقق من صحة التاريخ
+          if (!isNaN(dueDate.getTime())) {
+            processedTask.dueDate = dueDate.toISOString().split('T')[0]; // تنسيق YYYY-MM-DD
+          } else {
+            processedTask.dueDate = null;
+          }
+        } else {
+          processedTask.dueDate = null;
+        }
+      } catch (e) {
+        console.error("Error processing dueDate:", e);
+        processedTask.dueDate = null;
+      }
+      
+      // معالجة تاريخ الإنشاء
+      try {
+        if (task.createdAt) {
+          // محاولة تحويل التاريخ إلى كائن Date
+          const createdAt = new Date(task.createdAt);
+          // التحقق من صحة التاريخ
+          if (!isNaN(createdAt.getTime())) {
+            processedTask.createdAt = createdAt.toISOString();
+          } else {
+            processedTask.createdAt = new Date().toISOString();
+          }
+        } else {
+          processedTask.createdAt = new Date().toISOString();
+        }
+      } catch (e) {
+        console.error("Error processing createdAt:", e);
+        processedTask.createdAt = new Date().toISOString();
+      }
+      
+      return processedTask;
+    });
+    
+    // تصفية المهام إذا كان المستخدم طالبًا
+    let filteredTasks = processedTasks;
+    if (user.role === "student") {
+      filteredTasks = filteredTasks.filter(task => 
+        task.assignedTo && task.assignedTo.id === user.id
+      );
+    }
+    
+    setTasks(filteredTasks);
+      return filteredTasks;
+    } catch (err) {
+      alert("Error fetching tasks: " + err.message);
+      console.error("Error fetching tasks:", err);
+      return [];
+    }
+  }
+
+  // Add a new task
+  const addTask = async (event) => {
     event.preventDefault();
 
     // Get form values
@@ -27,14 +190,8 @@ const Tasks = () => {
     const status = event.target.elements["status"].value;
     const dueDate = event.target.elements["due-date"].value;
 
-    if (
-      !projectTitle ||
-      !taskName ||
-      !description ||
-      !assignedStudent ||
-      !status ||
-      !dueDate
-    ) {
+    // Validation
+    if (!projectTitle || !taskName || !description || !assignedStudent || !status || !dueDate) {
       alert("Please fill in all fields.");
       return;
     }
@@ -43,77 +200,155 @@ const Tasks = () => {
       alert("Due date cannot be in the past.");
       return;
     }
-    // Find the project ID based on the selected project title
-    const data = JSON.parse(localStorage.getItem("data"));
-    const project = data.projects.find((proj) => proj.title === projectTitle);
+
+    // Find project and user IDs
+    const project = projects.find(proj => proj.title === projectTitle);
     const projectId = project ? project.id : null;
 
-    const assignedUser = data.users.find((user) => {
-      return user.username === assignedStudent;
-    });
-    const assignedTo = assignedUser ? assignedUser.id : null;
+    const assignedUser = users.find(u => u.username === assignedStudent);
+    const assignedToId = assignedUser ? assignedUser.id : null;
 
-    const newTask = {
-      id: tasks.length + 1, // Generate a new ID
-      projectId: projectId,
-      projectName: projectTitle,
-      title: taskName,
-      description,
-      assignedTo: assignedTo,
-      assignedToName: assignedStudent, // Assuming the student's name is passed
-      status,
-      createdAt: new Date().toISOString(),
-      dueDate,
-    };
+    if (!projectId || !assignedToId) {
+      alert("Project or assigned user not found.");
+      return;
+    }
 
-    // Update tasks state
-    const updatedTasks = [...tasks, newTask];
-    setTasks(updatedTasks);
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            mutation AddTask(
+              $title: String!
+              $description: String
+              $status: String
+              $dueDate: String
+              $assignedTo: ID
+              $assignedBy: ID
+              $projectId: ID
+              $projectName: String
+            ) {
+              addTask(
+                title: $title
+                description: $description
+                status: $status
+                dueDate: $dueDate
+                assignedTo: $assignedTo
+                assignedBy: $assignedBy
+                projectId: $projectId
+                projectName: $projectName
+              ) {
+                id
+                title
+                description
+                status
+                projectId
+                projectName
+                createdAt
+                dueDate
+                assignedTo {
+                  id
+                  username
+                }
+                assignedBy {
+                  id
+                  username
+                }
+              }
+            }
+          `,
+          variables: {
+            title: taskName,
+            description,
+            status,
+            dueDate,
+            assignedTo: assignedToId,
+            assignedBy: user.id,
+            projectId: projectId,
+            projectName: projectTitle
+          },
+        }),
+      });
 
-    // Update localStorage
-    data.tasks = updatedTasks;
-    localStorage.setItem("data", JSON.stringify(data));
+      const { data, errors } = await response.json();
 
-    // Close the modal
-    closeModal();
-    alert("Task added successfully!");
+      if (errors) {
+        throw new Error(errors[0].message);
+      }
+
+      // Add the new task to the state
+      setTasks(prevTasks => [...prevTasks, data.addTask]);
+
+      // Close the modal
+      closeModal();
+      alert("Task added successfully!");
+    } catch (err) {
+      console.error("Error adding task:", err);
+      alert("Failed to add task: " + err.message);
+    }
   };
 
-  const sortState = (taskId) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        let nextStatus;
-        switch (task.status) {
-          case "Pending":
-            nextStatus = "In Progress";
-            break;
-          case "In Progress":
-            nextStatus = "Completed";
-            break;
-          case "Completed":
-            nextStatus = "On Hold";
-            break;
-          case "On Hold":
-            nextStatus = "Cancelled";
-            break;
-          case "Cancelled":
-            nextStatus = "Pending";
-            break;
-          default:
-            nextStatus = "Pending";
-        }
+  // Update task status
+  const sortState = async (taskId) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
 
-        return { ...task, status: nextStatus };
+    let nextStatus;
+    switch (task.status) {
+      case "Pending":
+        nextStatus = "In Progress";
+        break;
+      case "In Progress":
+        nextStatus = "Completed";
+        break;
+      case "Completed":
+        nextStatus = "On Hold";
+        break;
+      case "On Hold":
+        nextStatus = "Cancelled";
+        break;
+      case "Cancelled":
+        nextStatus = "Pending";
+        break;
+      default:
+        nextStatus = "Pending";
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            mutation UpdateTaskStatus($id: ID!, $status: String!) {
+              updateTaskStatus(id: $id, status: $status) {
+                id
+                status
+              }
+            }
+          `,
+          variables: {
+            id: taskId,
+            status: nextStatus,
+          },
+        }),
+      });
+
+      const { data, errors } = await response.json();
+
+      if (errors) {
+        throw new Error(errors[0].message);
       }
-      return task;
-    });
 
-    setTasks(updatedTasks);
-
-    // Update localStorage
-    const data = JSON.parse(localStorage.getItem("data"));
-    data.tasks = updatedTasks;
-    localStorage.setItem("data", JSON.stringify(data));
+      // Update the task in the state
+      setTasks(prevTasks => prevTasks.map(t => 
+        t.id === taskId ? { ...t, status: nextStatus } : t
+      ));
+    } catch (err) {
+      console.error("Error updating task status:", err);
+      alert("Failed to update task status: " + err.message);
+    }
   };
 
   const parseDate = (dateStr) => {
@@ -168,39 +403,26 @@ const Tasks = () => {
     rows.forEach((row) => tbody.appendChild(row));
   };
 
-  const loadTasks = () => {
-    const data = JSON.parse(localStorage.getItem("data"));
-    let storedTasks = data.tasks;
-
-    if (user.role === "student") {
-      storedTasks = storedTasks.filter((task) => task.assignedTo === user.id);
-    }
-
-    const users = data.users; // Assuming users are stored in the same localStorage data object
-    storedTasks = storedTasks.map((task) => {
-      const assignedUser = users.find((user) => user.id === task.assignedTo);
-      return {
-        ...task,
-        assignedToName: assignedUser ? assignedUser.username : "Unknown",
-      };
-    });
-
-    storedTasks = storedTasks.map((task) => {
-      const project = data.projects.find(
-        (project) => project.id === task.projectId
-      );
-      return {
-        ...task,
-        projectName: project ? project.title : "Unknown",
-      };
-    });
-
-    setTasks(storedTasks);
-  };
-
+  // Load data on component mount
   useEffect(() => {
-    loadTasks();
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchUsers(), fetchProjects()]);
+        await fetchTasks();
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  }
 
   return (
     <div className="bg-primary text-text min-h-screen p-6">
@@ -246,24 +468,41 @@ const Tasks = () => {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.id}</td>
-              <td>{task.projectName}</td>
-              <td>{task.title}</td>
-              <td>{task.description}</td>
-              <td>{task.assignedToName}</td>
-              <td
-                className="status"
-                onClick={() => sortState(task.id)}
-                data-status={task.status}
-              >
-                {task.status}
-              </td>
-              <td>{new Date(task.dueDate).toLocaleDateString()}</td>
-            </tr>
-          ))}
-        </tbody>
+  {tasks.map((task) => (
+    <tr key={task.id}>
+      <td>{`${task.id.substring(task.id.length - 1)}`}</td>
+      <td>{task.projectName || "Unknown"}</td>
+      <td>{task.title}</td>
+      <td>{task.description}</td>
+      <td>{task.assignedTo?.username || "Unknown"}</td>
+      <td
+        className="status"
+        onClick={() => sortState(task.id)}
+        data-status={task.status}
+      >
+        {task.status}
+      </td>
+      <td>
+        {task.dueDate ? 
+    (() => {
+      try {
+        // محاولة تنسيق التاريخ
+        const date = new Date(task.dueDate);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString();
+        }
+        return "Invalid date";
+      } catch (e) {
+        console.error("Error formatting date:", e);
+        return "Invalid date";
+      }
+    })() : 
+    "No date"
+  }
+      </td>
+    </tr>
+  ))}
+</tbody>
       </table>
 
       {/* Modal */}
@@ -292,14 +531,11 @@ const Tasks = () => {
                   required
                 >
                   <option value="">Select a project</option>
-                  <option value="Website Redesign">Website Redesign</option>
-                  {JSON.parse(localStorage.getItem("data")).projects.map(
-                    (project) => (
-                      <option key={project.id} value={project.title}>
-                        {project.title}
-                      </option>
-                    )
-                  )}
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.title}>
+                      {project.title}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -332,13 +568,13 @@ const Tasks = () => {
                     <option value="">Select a student</option>
                   )}
                   {user.role === "admin" ? (
-                    JSON.parse(localStorage.getItem("data")).users.map(
-                      (user) => (
-                        <option key={user.id} value={user.username}>
-                          {user.username}
+                    users
+                      .filter(u => u.role === "student")
+                      .map((u) => (
+                        <option key={u.id} value={u.username}>
+                          {u.username}
                         </option>
-                      )
-                    )
+                      ))
                   ) : (
                     <option value={user.username} selected>
                       {user.username}

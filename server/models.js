@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const taskSchema = new mongoose.Schema({
+
   title: String,
   description: String,
   status: {
@@ -15,12 +16,39 @@ const taskSchema = new mongoose.Schema({
     enum: ["Pending", "In Progress", "Completed", "On Hold", "Cancelled"],
     default: "Pending",
   },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  createdAt: { type: Date, default: Date.now },
-
-  dueDate: Date,
+  projectId: String,
+  projectName: String,
+  assignedTo:String ,
+  assignedBy: String ,
+  createdAt: { 
+    type: Date, 
+    default: Date.now,
+    get: function(date) {
+      return date ? date.toISOString() : null;
+    }
+  },
+  dueDate: { 
+    type: Date,
+    get: function(date) {
+      return date ? date.toISOString().split('T')[0] : null;
+    }
+  },
 });
+
+// تحويل التاريخ إلى كائن Date قبل الحفظ
+taskSchema.pre('save', function(next) {
+  if (this.dueDate && typeof this.dueDate === 'string') {
+    try {
+      this.dueDate = new Date(this.dueDate);
+    } catch (e) {
+      console.error("Error converting dueDate to Date:", e);
+    }
+  }
+  next();
+});
+// إضافة getters
+taskSchema.set('toJSON', { getters: true });
+taskSchema.set('toObject', { getters: true });
 
 const projectSchema = new mongoose.Schema({
   title: String,

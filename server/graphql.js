@@ -7,7 +7,7 @@ const {
   GraphQLNonNull,
 } = require("graphql");
 const { User, Task, Project, Message } = require("./models"); // <-- Add Message
-
+const mongoose = require("mongoose");
 // UserType
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -54,16 +54,39 @@ const TaskType = new GraphQLObjectType({
     title: { type: GraphQLString },
     description: { type: GraphQLString },
     status: { type: GraphQLString },
+    projectId: { type: GraphQLID },
+    projectName: { type: GraphQLString },
     assignedTo: {
       type: UserType,
       async resolve(parent) {
-        return await User.findById(parent.assignedTo);
+        try {
+          // محاولة تحويل المعرف إلى ObjectId إذا كان ممكنًا
+          if (mongoose.Types.ObjectId.isValid(parent.assignedTo)) {
+            return await User.findById(new mongoose.Types.ObjectId(parent.assignedTo));
+          }
+          // إذا لم يكن معرف صالح، ابحث عن المستخدم بطريقة أخرى
+          // مثلاً بالاسم أو أي حقل آخر
+          return null;
+        } catch (error) {
+          console.error("Error finding assignedTo user:", error);
+          return null;
+        }
       },
     },
     assignedBy: {
       type: UserType,
       async resolve(parent) {
-        return await User.findById(parent.assignedBy);
+        try {
+          // محاولة تحويل المعرف إلى ObjectId إذا كان ممكنًا
+          if (mongoose.Types.ObjectId.isValid(parent.assignedBy)) {
+            return await User.findById(new mongoose.Types.ObjectId(parent.assignedBy));
+          }
+          // إذا لم يكن معرف صالح، ابحث عن المستخدم بطريقة أخرى
+          return null;
+        } catch (error) {
+          console.error("Error finding assignedBy user:", error);
+          return null;
+        }
       },
     },
     createdAt: { type: GraphQLString },
@@ -162,10 +185,20 @@ module.exports = new GraphQLSchema({
           dueDate: { type: GraphQLString },
           assignedTo: { type: GraphQLID },
           assignedBy: { type: GraphQLID },
+          projectId: { type: GraphQLID },
+          projectName: { type: GraphQLString },
         },
-        resolve(_, args) {
-          const task = new Task(args);
-          return task.save();
+        async resolve(_, args) {
+         // استخدام المعرفات كما هي بدون تحويل
+          //console.log("Task data:", args);
+           const taskData = { ...args };
+    
+            // تحويل التاريخ إلى كائن Date
+            if (args.dueDate) {
+              taskData.dueDate = new Date(args.dueDate);
+            }
+           const task = new Task(args);
+           return task.save();
         },
       },
       addUser: {
@@ -194,9 +227,59 @@ module.exports = new GraphQLSchema({
           students: { type: new GraphQLList(GraphQLID) },
         },
         resolve(_, args) {
-          const project = new Project(args);
+          // Convertir IDs de string a ObjectId
+          const projectData = { ...args };
+          
+          if (args.createdBy && mongoose.Types.ObjectId.isValid(args.createdBy)) {
+            projectData.createdBy = new mongoose.Types.ObjectId(args.createdBy);
+          }
+          
+          if (args.students && args.students.length > 0) {
+            projectData.students = args.students
+              .filter(id => mongoose.Types.ObjectId.isValid(id))
+              .map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          const project = new Project(projectData);
           return project.save();
         },
+      },
+      updateTask: {
+        type: TaskType,
+        args: {
+         id: { type: new GraphQLNonNull(GraphQLID) },
+         title: { type: GraphQLString },
+         description: { type: GraphQLString },
+         status: { type: GraphQLString },
+         dueDate: { type: GraphQLString },
+         assignedTo: { type: GraphQLID },
+        assignedBy: { type: GraphQLID },
+        },
+       async resolve(_, args) {
+          // Convertir IDs de string a ObjectId
+          const updateData = { ...args };
+          delete updateData.id; // Eliminar el ID del objeto de actualización
+          
+          if (args.assignedTo && mongoose.Types.ObjectId.isValid(args.assignedTo)) {
+            updateData.assignedTo = new mongoose.Types.ObjectId(args.assignedTo);
+          }
+          
+          if (args.assignedBy && mongoose.Types.ObjectId.isValid(args.assignedBy)) {
+            updateData.assignedBy = new mongoose.Types.ObjectId(args.assignedBy);
+          }
+          
+          return Task.findByIdAndUpdate(args.id, updateData, { new: true });
+          },
+      },
+       updateTaskStatus: {
+       type: TaskType,
+       args: {
+       id: { type: new GraphQLNonNull(GraphQLID) },
+       status: { type: new GraphQLNonNull(GraphQLString) },
+       },
+        async resolve(_, { id, status }) {
+        return Task.findByIdAndUpdate(id, { status }, { new: true });
+       },
       },
     },
   }),

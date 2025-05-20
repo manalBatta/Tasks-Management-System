@@ -33,7 +33,7 @@ body {
   &[data-status="On Hold"] {
     color: #fff243;
   }
-  &[data-status="Cancled"] {
+  &[data-status="Cancelled"] {
     color: #ff0000;
   }
 }
