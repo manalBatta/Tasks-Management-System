@@ -48,7 +48,6 @@ const Chat = () => {
     try {
       const userID = user.id;
       const users = await fetchUsers();
-      console.log("Fetched users:", users);
       const filteredContacts = users.filter((u) => u.id !== userID);
       setContacts(filteredContacts);
 
@@ -67,10 +66,8 @@ const Chat = () => {
       setChatContact(contact);
 
       const userId = user.id;
-      console.log("Fetching messages for:", userId, contactId);
       const fetchedMessages = await fetchMessages(userId, contactId);
       setMessages(fetchedMessages);
-      console.log("Fetched messages:", fetchedMessages);
     } catch (err) {
       alert("Error loading chat: " + err.message);
     }

@@ -402,8 +402,7 @@ const Mutation = new GraphQLObjectType({
         projectName: { type: GraphQLString },
       },
       async resolve(_, args) {
-        // استخدام المعرفات كما هي بدون تحويل
-        //console.log("Task data:", args);
+       
         const taskData = { ...args };
 
         // تحويل التاريخ إلى كائن Date
@@ -469,7 +468,6 @@ const Mutation = new GraphQLObjectType({
             projectData.students = [];
           }
 
-          console.log("Creating project with data:", projectData);
 
           // Create and save the project
           const project = new Project(projectData);

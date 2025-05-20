@@ -4,12 +4,12 @@ import "../index.css";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState([]); // State to store tasks
-  const [users, setUsers] = useState([]); // State to store users
-  const [projects, setProjects] = useState([]); // State to store projects
-  const [loading, setLoading] = useState(true); // Loading state
+  const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const tableRef = useRef(null); // Create a ref for the table
+  const tableRef = useRef(null);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -19,7 +19,6 @@ const Tasks = () => {
     setIsModalOpen(false);
   };
 
-  // Fetch users from backend
   async function fetchUsers() {
     try {
       const response = await fetch("http://localhost:3000/graphql", {
@@ -49,7 +48,6 @@ const Tasks = () => {
     }
   }
 
-  // Fetch projects from backend
   async function fetchProjects() {
     try {
       const response = await fetch("http://localhost:3000/graphql", {
@@ -80,7 +78,6 @@ const Tasks = () => {
     }
   }
 
-  // Fetch tasks from backend
   async function fetchTasks() {
     try {
       const response = await fetch("http://localhost:3000/graphql", {
@@ -113,21 +110,14 @@ const Tasks = () => {
       });
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const { data } = await response.json();
-      // طباعة البيانات الأصلية للتشخيص
-      console.log("Original tasks data:", data.tasks);
-      // معالجة التواريخ بطريقة آمنة
-      const processedTasks = data.tasks.map((task) => {
-        // نسخة من المهمة
-        const processedTask = { ...task };
 
-        // معالجة تاريخ الاستحقاق
+      const processedTasks = data.tasks.map((task) => {
+        const processedTask = { ...task };
         try {
           if (task.dueDate) {
-            // محاولة تحويل التاريخ إلى كائن Date
             const dueDate = new Date(task.dueDate);
-            // التحقق من صحة التاريخ
             if (!isNaN(dueDate.getTime())) {
-              processedTask.dueDate = dueDate.toISOString().split("T")[0]; // تنسيق YYYY-MM-DD
+              processedTask.dueDate = dueDate.toISOString().split("T")[0];
             } else {
               processedTask.dueDate = null;
             }
@@ -138,13 +128,9 @@ const Tasks = () => {
           console.error("Error processing dueDate:", e);
           processedTask.dueDate = null;
         }
-
-        // معالجة تاريخ الإنشاء
         try {
           if (task.createdAt) {
-            // محاولة تحويل التاريخ إلى كائن Date
             const createdAt = new Date(task.createdAt);
-            // التحقق من صحة التاريخ
             if (!isNaN(createdAt.getTime())) {
               processedTask.createdAt = createdAt.toISOString();
             } else {
@@ -157,11 +143,9 @@ const Tasks = () => {
           console.error("Error processing createdAt:", e);
           processedTask.createdAt = new Date().toISOString();
         }
-
         return processedTask;
       });
 
-      // تصفية المهام إذا كان المستخدم طالبًا
       let filteredTasks = processedTasks;
       if (user.role === "student") {
         filteredTasks = filteredTasks.filter(
@@ -178,11 +162,8 @@ const Tasks = () => {
     }
   }
 
-  // Add a new task
   const addTask = async (event) => {
     event.preventDefault();
-
-    // Get form values
     const projectTitle = event.target.elements["project-title"].value;
     const taskName = event.target.elements["task-name"].value;
     const description = event.target.elements["description"].value;
@@ -190,7 +171,6 @@ const Tasks = () => {
     const status = event.target.elements["status"].value;
     const dueDate = event.target.elements["due-date"].value;
 
-    // Validation
     if (
       !projectTitle ||
       !taskName ||
@@ -208,7 +188,6 @@ const Tasks = () => {
       return;
     }
 
-    // Find project and user IDs
     const project = projects.find((proj) => proj.title === projectTitle);
     const projectId = project ? project.id : null;
 
@@ -284,10 +263,7 @@ const Tasks = () => {
         throw new Error(errors[0].message);
       }
 
-      // Add the new task to the state
       setTasks((prevTasks) => [...prevTasks, data.addTask]);
-
-      // Close the modal
       closeModal();
       alert("Task added successfully!");
     } catch (err) {
@@ -296,7 +272,6 @@ const Tasks = () => {
     }
   };
 
-  // Update task status
   const sortState = async (taskId) => {
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
@@ -344,7 +319,6 @@ const Tasks = () => {
         throw new Error(errors[0].message);
       }
 
-      // Update the task in the state
       setTasks((prevTasks) =>
         prevTasks.map((t) =>
           t.id === taskId ? { ...t, status: nextStatus } : t
@@ -366,10 +340,10 @@ const Tasks = () => {
   };
 
   const sortTable = (event) => {
-    const table = tableRef.current; // Access the table using the ref
+    const table = tableRef.current;
     if (!table) return;
 
-    const rows = Array.from(table.querySelectorAll("tbody tr")); // Get all rows in the table body
+    const rows = Array.from(table.querySelectorAll("tbody tr"));
 
     if (event.target.value === "Due Date") {
       rows.sort((a, b) => {
@@ -403,12 +377,10 @@ const Tasks = () => {
       });
     }
 
-    // Append sorted rows back to the table body
     const tbody = table.querySelector("tbody");
     rows.forEach((row) => tbody.appendChild(row));
   };
 
-  // Load data on component mount
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -457,7 +429,7 @@ const Tasks = () => {
       </div>
 
       <table
-        ref={tableRef} // Attach the ref to the table
+        ref={tableRef}
         id="tasksTable"
         className="w-full border-collapse bg-table rounded-lg overflow-hidden shadow-lg text-left border border-gray-600"
       >
@@ -491,7 +463,6 @@ const Tasks = () => {
                 {task.dueDate
                   ? (() => {
                       try {
-                        // محاولة تنسيق التاريخ
                         const date = new Date(task.dueDate);
                         if (!isNaN(date.getTime())) {
                           return date.toLocaleDateString();
@@ -509,7 +480,6 @@ const Tasks = () => {
         </tbody>
       </table>
 
-      {/* Modal */}
       {isModalOpen && (
         <div>
           <div

@@ -202,7 +202,6 @@ function App() {
     }
   }, []);
 
-  console.log("user", user);
   return <>{user ? <Dashboard /> : <AuthForm />}</>;
 }
 

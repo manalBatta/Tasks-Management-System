@@ -1,40 +1,40 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useAuth } from "../context/AuthContext"
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Projects = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [activeProject, setActiveProject] = useState(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filteredProjects, setFilteredProjects] = useState([])
-  const [projects, setProjects] = useState([])
-  const [statusFilter, setStatusFilter] = useState("AllStatuses")
-  const [newProject, setNewProject] = useState({})
-  const [selectedStudents, setSelectedStudents] = useState([])
-  const [students, setStudents] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { user } = useAuth()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("AllStatuses");
+  const [newProject, setNewProject] = useState({});
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
 
   // Helper function to format dates
   const formatDate = (dateString) => {
-    if (!dateString) return ""
+    if (!dateString) return "";
 
     // Check if it's a timestamp (number)
     if (!isNaN(dateString)) {
-      return new Date(Number.parseInt(dateString)).toLocaleDateString()
+      return new Date(Number.parseInt(dateString)).toLocaleDateString();
     }
 
     // Otherwise try to parse the date string
     try {
-      return new Date(dateString).toLocaleDateString()
+      return new Date(dateString).toLocaleDateString();
     } catch (e) {
-      console.error("Invalid date format:", dateString)
-      return dateString // Return original if parsing fails
+      console.error("Invalid date format:", dateString);
+      return dateString; // Return original if parsing fails
     }
-  }
+  };
 
   // Fetch all projects
   async function fetchProjects() {
@@ -59,18 +59,18 @@ const Projects = () => {
             }
           `,
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error("Failed to fetch projects")
+      if (!response.ok) throw new Error("Failed to fetch projects");
 
-      const { data, errors } = await response.json()
+      const { data, errors } = await response.json();
 
-      if (errors) throw new Error(errors.map((e) => e.message).join(", "))
+      if (errors) throw new Error(errors.map((e) => e.message).join(", "));
 
-      return data.projects
+      return data.projects;
     } catch (err) {
-      console.error("Error fetching projects:", err)
-      throw err
+      console.error("Error fetching projects:", err);
+      throw err;
     }
   }
 
@@ -92,19 +92,19 @@ const Projects = () => {
             }
           `,
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error("Failed to fetch users")
+      if (!response.ok) throw new Error("Failed to fetch users");
 
-      const { data, errors } = await response.json()
+      const { data, errors } = await response.json();
 
-      if (errors) throw new Error(errors.map((e) => e.message).join(", "))
+      if (errors) throw new Error(errors.map((e) => e.message).join(", "));
 
       // Filter only students
-      return data.users.filter((user) => user.role === "student")
+      return data.users.filter((user) => user.role === "student");
     } catch (err) {
-      console.error("Error fetching students:", err)
-      throw err
+      console.error("Error fetching students:", err);
+      throw err;
     }
   }
 
@@ -139,18 +139,18 @@ const Projects = () => {
             projectId: projectId,
           },
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error("Failed to fetch tasks")
+      if (!response.ok) throw new Error("Failed to fetch tasks");
 
-      const { data, errors } = await response.json()
+      const { data, errors } = await response.json();
 
-      if (errors) throw new Error(errors.map((e) => e.message).join(", "))
+      if (errors) throw new Error(errors.map((e) => e.message).join(", "));
 
-      return data.tasksByProject
+      return data.tasksByProject;
     } catch (err) {
-      console.error("Error fetching tasks:", err)
-      throw err
+      console.error("Error fetching tasks:", err);
+      throw err;
     }
   }
 
@@ -158,7 +158,7 @@ const Projects = () => {
   async function addProject(projectData) {
     try {
       // Format the students array for the GraphQL mutation
-      const studentsArray = selectedStudents.map((student) => student.id)
+      const studentsArray = selectedStudents.map((student) => student.id);
 
       const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
@@ -214,175 +214,175 @@ const Projects = () => {
             students: studentsArray,
           },
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error("Failed to add project")
+      if (!response.ok) throw new Error("Failed to add project");
 
-      const { data, errors } = await response.json()
+      const { data, errors } = await response.json();
 
-      if (errors) throw new Error(errors.map((e) => e.message).join(", "))
+      if (errors) throw new Error(errors.map((e) => e.message).join(", "));
 
-      return data.addProject
+      return data.addProject;
     } catch (err) {
-      console.error("Error adding project:", err)
-      throw err
+      console.error("Error adding project:", err);
+      throw err;
     }
   }
 
   // Load projects and students when component mounts
   useEffect(() => {
     async function loadData() {
-      setLoading(true)
+      setLoading(true);
       try {
-        const [projectsData, studentsData] = await Promise.all([fetchProjects(), fetchStudents()])
+        const [projectsData, studentsData] = await Promise.all([
+          fetchProjects(),
+          fetchStudents(),
+        ]);
 
-        // Debug: Log the complete user object
-        console.log("Current user object:", user)
-
-        // Debug: Log all projects data
-        console.log("All projects:", projectsData)
-
+     
         // Filter projects for students to only show assigned ones
         if (user && user.role === "student") {
           // Try to get user ID from different possible properties
-          const userId = user.id || user._id
-          const username = user.username
-
-          console.log("Current user ID:", userId)
-          console.log("Current username:", username)
+          const userId = user.id || user._id;
+          const username = user.username;
 
           const assignedProjects = projectsData.filter((project) => {
-            // Debug: Log each project's students
-            console.log(`Project "${project.title}" students:`, project.students)
+           
 
             // Try to match by ID first (checking different ID formats)
             const matchById = project.students.some((student) => {
-              const studentId = student.id || student._id
-              return String(studentId) === String(userId)
-            })
+              const studentId = student.id || student._id;
+              return String(studentId) === String(userId);
+            });
 
             // If ID match fails, try to match by username
-            const matchByUsername = project.students.some((student) => student.username === username)
+            const matchByUsername = project.students.some(
+              (student) => student.username === username
+            );
 
-            console.log(`Project "${project.title}" - Match by ID: ${matchById}, Match by username: ${matchByUsername}`)
+            return matchById || matchByUsername;
+          });
 
-            return matchById || matchByUsername
-          })
-
-          console.log("Assigned projects found:", assignedProjects.length)
-          console.log("Assigned projects:", assignedProjects)
-
-          setProjects(assignedProjects)
-          setFilteredProjects(assignedProjects)
+       
+          setProjects(assignedProjects);
+          setFilteredProjects(assignedProjects);
         } else {
           // For admin users, show all projects
-          setProjects(projectsData)
-          setFilteredProjects(projectsData)
+          setProjects(projectsData);
+          setFilteredProjects(projectsData);
         }
 
-        setStudents(studentsData)
-        setError(null)
+        setStudents(studentsData);
+        setError(null);
       } catch (err) {
-        console.error("Error loading data:", err)
-        setError(err.message)
+        console.error("Error loading data:", err);
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadData()
-  }, [user])
+    loadData();
+  }, [user]);
 
   // Filter projects based on search query and status filter
   useEffect(() => {
-    let filtered = projects
+    let filtered = projects;
 
     // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter((project) => {
-        const matchesTitle = project.title.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesDescription = project.description.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesTitle || matchesDescription
-      })
+        const matchesTitle = project.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const matchesDescription = project.description
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        return matchesTitle || matchesDescription;
+      });
     }
 
     // Apply status filter
     if (statusFilter !== "AllStatuses") {
-      filtered = filtered.filter((project) => project.status === statusFilter)
+      filtered = filtered.filter((project) => project.status === statusFilter);
     }
 
-    setFilteredProjects(filtered)
-  }, [searchQuery, statusFilter, projects])
+    setFilteredProjects(filtered);
+  }, [searchQuery, statusFilter, projects]);
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value)
-  }
+    setSearchQuery(event.target.value);
+  };
 
   const handleStudentSelection = (event, student) => {
     if (event.target.checked) {
-      setSelectedStudents((prev) => [...prev, student])
+      setSelectedStudents((prev) => [...prev, student]);
     } else {
-      setSelectedStudents((prev) => prev.filter((s) => s.id !== student.id))
+      setSelectedStudents((prev) => prev.filter((s) => s.id !== student.id));
     }
-  }
+  };
 
   const openModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    setNewProject({})
-    setSelectedStudents([])
-  }
+    setIsModalOpen(false);
+    setNewProject({});
+    setSelectedStudents([]);
+  };
 
   const closeSidebar = () => {
-    setIsSidebarOpen(false)
-    setActiveProject(null)
-  }
+    setIsSidebarOpen(false);
+    setActiveProject(null);
+  };
 
   const openSidebar = async (projectId) => {
     try {
       // If clicking the same project that's already open, toggle sidebar closed
       if (isSidebarOpen && activeProject?.id === projectId) {
-        setIsSidebarOpen(false)
-        setActiveProject(null)
-        return
+        setIsSidebarOpen(false);
+        setActiveProject(null);
+        return;
       }
 
       // Find the project in current state
-      const project = projects.find((p) => p.id === projectId)
+      const project = projects.find((p) => p.id === projectId);
 
       if (!project) {
-        alert("Project not found!")
-        return
+        alert("Project not found!");
+        return;
       }
 
       // Fetch tasks for this project
-      const projectTasks = await fetchProjectTasks(projectId)
+      const projectTasks = await fetchProjectTasks(projectId);
 
       // Set the active project with its tasks
       setActiveProject({
         ...project,
         tasks: projectTasks,
-      })
+      });
 
       // Show the sidebar
-      setIsSidebarOpen(true)
+      setIsSidebarOpen(true);
     } catch (err) {
-      alert(`Error loading project details: ${err.message}`)
+      alert(`Error loading project details: ${err.message}`);
     }
-  }
+  };
 
-  if (loading) return <div className="text-white text-center p-4">Loading projects...</div>
-  if (error) return <div className="text-red-500 text-center p-4">Error: {error}</div>
+  if (loading)
+    return (
+      <div className="text-white text-center p-4">Loading projects...</div>
+    );
+  if (error)
+    return <div className="text-red-500 text-center p-4">Error: {error}</div>;
 
   // Show a message when no projects are found for students
   const noProjectsMessage = (
     <div className="w-full text-center p-8">
       <p className="text-gray-400 text-lg">No projects assigned to you yet.</p>
     </div>
-  )
+  );
 
   return (
     <>
@@ -420,30 +420,30 @@ const Projects = () => {
             id="myForm"
             className="flex flex-col space-y-4"
             onSubmit={(e) => {
-              e.preventDefault()
+              e.preventDefault();
 
               // Validate dates
               if (newProject.startDate > newProject.endDate) {
-                alert("Start date cannot be greater than end date")
-                return
+                alert("Start date cannot be greater than end date");
+                return;
               }
 
               // Add the project to the database
               addProject(newProject)
                 .then((addedProject) => {
                   // Update the local state with the new project
-                  setProjects((prev) => [...prev, addedProject])
+                  setProjects((prev) => [...prev, addedProject]);
 
                   // Reset form and close modal
-                  setNewProject({})
-                  setSelectedStudents([])
-                  closeModal()
+                  setNewProject({});
+                  setSelectedStudents([]);
+                  closeModal();
 
-                  alert("Project added successfully!")
+                  alert("Project added successfully!");
                 })
                 .catch((err) => {
-                  alert(`Error adding project: ${err.message}`)
-                })
+                  alert(`Error adding project: ${err.message}`);
+                });
             }}
           >
             <label htmlFor="title" className="text-white font-bold m-0">
@@ -453,7 +453,9 @@ const Projects = () => {
               name="title"
               type="text"
               className="w-full h-10 bg-[#393939] text-white border border-gray-400 rounded-lg p-2"
-              onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+              onChange={(e) =>
+                setNewProject({ ...newProject, title: e.target.value })
+              }
               value={newProject.title || ""}
               placeholder="Enter project title"
               required
@@ -465,7 +467,9 @@ const Projects = () => {
             <textarea
               name="description"
               className="w-full h-20 bg-[#393939] text-white border border-gray-400 rounded-lg p-2"
-              onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+              onChange={(e) =>
+                setNewProject({ ...newProject, description: e.target.value })
+              }
               value={newProject.description || ""}
               placeholder="Enter project description"
               required
@@ -479,14 +483,18 @@ const Projects = () => {
               className="w-full max-h-25 overflow-y-auto bg-[#393939] text-white border border-gray-400 rounded-lg p-2 flex flex-col"
             >
               {students.map((student) => {
-                const isSelected = selectedStudents.some((s) => s.id === student.id)
+                const isSelected = selectedStudents.some(
+                  (s) => s.id === student.id
+                );
 
                 return (
                   <label
                     key={student.id}
                     htmlFor={`student_${student.id}`}
                     className={`flex items-center px-3 py-2 rounded cursor-pointer transition-all duration-200 ${
-                      isSelected ? "bg-gray-600 text-gray-300" : "bg-transparent text-white"
+                      isSelected
+                        ? "bg-gray-600 text-gray-300"
+                        : "bg-transparent text-white"
                     }`}
                   >
                     <input
@@ -500,7 +508,7 @@ const Projects = () => {
                     />
                     <span className="text-sm">{student.username}</span>
                   </label>
-                )
+                );
               })}
             </div>
 
@@ -512,7 +520,9 @@ const Projects = () => {
                 name="category"
                 id="category"
                 className="w-full h-10 bg-[#393939] text-white border border-gray-400 rounded-lg p-2 appearance-none"
-                onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
+                onChange={(e) =>
+                  setNewProject({ ...newProject, category: e.target.value })
+                }
                 value={newProject.category || ""}
                 required
               >
@@ -535,7 +545,9 @@ const Projects = () => {
                 id="startDate"
                 type="date"
                 className="w-full h-10 bg-[#393939] text-white border border-gray-400 rounded-lg p-2"
-                onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
+                onChange={(e) =>
+                  setNewProject({ ...newProject, startDate: e.target.value })
+                }
                 value={newProject.startDate || ""}
                 required
               />
@@ -551,7 +563,9 @@ const Projects = () => {
                 id="endDate"
                 type="date"
                 className="w-full h-10 bg-[#393939] text-white border border-gray-400 rounded-lg p-2"
-                onChange={(e) => setNewProject({ ...newProject, endDate: e.target.value })}
+                onChange={(e) =>
+                  setNewProject({ ...newProject, endDate: e.target.value })
+                }
                 value={newProject.endDate || ""}
                 required
               />
@@ -565,7 +579,9 @@ const Projects = () => {
               <select
                 name="status"
                 className="w-full h-10 bg-[#393939] text-white border border-gray-400 rounded-lg p-2 appearance-none"
-                onChange={(e) => setNewProject({ ...newProject, status: e.target.value })}
+                onChange={(e) =>
+                  setNewProject({ ...newProject, status: e.target.value })
+                }
                 value={newProject.status || ""}
                 required
               >
@@ -593,8 +609,15 @@ const Projects = () => {
       {user && user.role !== "student" ? (
         <>
           <h2 className="text-blue-500 text-xl font-bold">Projects Overview</h2>
-          <section className="flex items-center justify-between mb-4 mt-6 gap-4" id="content">
-            <button id="addProj" onClick={openModal} className="w-1/5 h-10 bg-blue-500 text-white rounded-lg text-sm">
+          <section
+            className="flex items-center justify-between mb-4 mt-6 gap-4"
+            id="content"
+          >
+            <button
+              id="addProj"
+              onClick={openModal}
+              className="w-1/5 h-10 bg-blue-500 text-white rounded-lg text-sm"
+            >
               Add Project
             </button>
             <input
@@ -627,8 +650,13 @@ const Projects = () => {
         </>
       ) : (
         <>
-          <h2 className="text-blue-500 text-xl font-bold">My Assigned Projects</h2>
-          <section className="flex items-center justify-between mb-4 mt-6 gap-4" id="content">
+          <h2 className="text-blue-500 text-xl font-bold">
+            My Assigned Projects
+          </h2>
+          <section
+            className="flex items-center justify-between mb-4 mt-6 gap-4"
+            id="content"
+          >
             <input
               id="searchProject"
               type="text"
@@ -649,31 +677,50 @@ const Projects = () => {
         {filteredProjects.length > 0
           ? filteredProjects.map((project, index) => {
               // Calculate progress percentage
-              let startDate, endDate, today
-              let progressPercentage
+              let startDate, endDate, today;
+              let progressPercentage;
 
               try {
                 // Handle different date formats (string, timestamp, etc.)
-                startDate = new Date(isNaN(project.startDate) ? project.startDate : Number.parseInt(project.startDate))
-                endDate = new Date(isNaN(project.endDate) ? project.endDate : Number.parseInt(project.endDate))
-                today = new Date()
+                startDate = new Date(
+                  isNaN(project.startDate)
+                    ? project.startDate
+                    : Number.parseInt(project.startDate)
+                );
+                endDate = new Date(
+                  isNaN(project.endDate)
+                    ? project.endDate
+                    : Number.parseInt(project.endDate)
+                );
+                today = new Date();
 
                 // Check if dates are valid
                 if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                  throw new Error("Invalid date")
+                  throw new Error("Invalid date");
                 }
 
-                startDate.setHours(0, 0, 0, 0)
-                endDate.setHours(23, 59, 59, 999)
-                today.setHours(0, 0, 0, 0)
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+                today.setHours(0, 0, 0, 0);
 
-                const totalDuration = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 1)
-                const elapsedDuration = Math.max((today - startDate) / (1000 * 60 * 60 * 24), 0)
-                progressPercentage = Math.round((elapsedDuration / totalDuration) * 100)
-                progressPercentage = Math.min(Math.max(progressPercentage, 0), 100)
+                const totalDuration = Math.max(
+                  (endDate - startDate) / (1000 * 60 * 60 * 24),
+                  1
+                );
+                const elapsedDuration = Math.max(
+                  (today - startDate) / (1000 * 60 * 60 * 24),
+                  0
+                );
+                progressPercentage = Math.round(
+                  (elapsedDuration / totalDuration) * 100
+                );
+                progressPercentage = Math.min(
+                  Math.max(progressPercentage, 0),
+                  100
+                );
               } catch (e) {
-                console.error("Error calculating progress:", e)
-                progressPercentage = 0
+                console.error("Error calculating progress:", e);
+                progressPercentage = 0;
               }
 
               // Determine border color based on status
@@ -684,10 +731,12 @@ const Projects = () => {
                   Pending: "border-orange-500",
                   "On Hold": "border-yellow-500",
                   Cancelled: "border-red-500",
-                }[project.status] || "border-gray-500"
+                }[project.status] || "border-gray-500";
 
               // Get student names
-              const studentsNames = project.students.map((student) => student.username)
+              const studentsNames = project.students.map(
+                (student) => student.username
+              );
 
               return (
                 <div
@@ -696,17 +745,29 @@ const Projects = () => {
                   className={`flex flex-col bg-[#393939] text-white rounded-lg border ${borderColor} p-4 m-2 w-full md:w-1/3 lg:w-1/4 h-auto cursor-pointer`}
                   onClick={() => openSidebar(project.id)}
                 >
-                  <h3 id={`projectTitle_${index}`} className="text-lg font-bold text-blue-400 mb-2">
+                  <h3
+                    id={`projectTitle_${index}`}
+                    className="text-lg font-bold text-blue-400 mb-2"
+                  >
                     {project.title}
                   </h3>
                   <p className="mb-2">
-                    <strong>Description:</strong> <span id={`projectDescription_${index}`}>{project.description}</span>
+                    <strong>Description:</strong>{" "}
+                    <span id={`projectDescription_${index}`}>
+                      {project.description}
+                    </span>
                   </p>
                   <p className="mb-2">
-                    <strong>Students:</strong> <span id={`projectStudents_${index}`}>{studentsNames.join(", ")}</span>
+                    <strong>Students:</strong>{" "}
+                    <span id={`projectStudents_${index}`}>
+                      {studentsNames.join(", ")}
+                    </span>
                   </p>
                   <p className="mb-2">
-                    <strong>Category:</strong> <span id={`projectCategory_${index}`}>{project.category}</span>
+                    <strong>Category:</strong>{" "}
+                    <span id={`projectCategory_${index}`}>
+                      {project.category}
+                    </span>
                   </p>
                   <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden mb-2">
                     <div
@@ -717,11 +778,15 @@ const Projects = () => {
                     </div>
                   </div>
                   <div className="flex justify-between text-sm text-gray-400">
-                    <p id={`projectCreatedAt_${index}`}>{formatDate(project.startDate)}</p>
-                    <p id={`projectDeadline_${index}`}>{formatDate(project.endDate)}</p>
+                    <p id={`projectCreatedAt_${index}`}>
+                      {formatDate(project.startDate)}
+                    </p>
+                    <p id={`projectDeadline_${index}`}>
+                      {formatDate(project.endDate)}
+                    </p>
                   </div>
                 </div>
-              )
+              );
             })
           : // Show message when no projects are found
             noProjectsMessage}
@@ -731,7 +796,9 @@ const Projects = () => {
       {isSidebarOpen && activeProject && (
         <div className="fixed top-0 right-0 bottom-0 w-1/4 h-full bg-[#1e1e1e] border border-gray-500 text-sm overflow-y-auto z-50">
           <div className="p-4 text-white">
-            <h2 className="text-xl font-bold text-blue-500">{activeProject.title}</h2>
+            <h2 className="text-xl font-bold text-blue-500">
+              {activeProject.title}
+            </h2>
             <p>
               <strong className="text-gray-400">Description:</strong>{" "}
               <span className="text-gray-300">{activeProject.description}</span>
@@ -742,21 +809,30 @@ const Projects = () => {
             </p>
             <p>
               <strong className="text-gray-400">Students:</strong>{" "}
-              <span className="text-gray-300">{activeProject.students.map((s) => s.username).join(", ")}</span>
+              <span className="text-gray-300">
+                {activeProject.students.map((s) => s.username).join(", ")}
+              </span>
             </p>
             <p>
               <strong className="text-gray-400">Start Date:</strong>{" "}
-              <span className="text-gray-300">{formatDate(activeProject.startDate)}</span>
+              <span className="text-gray-300">
+                {formatDate(activeProject.startDate)}
+              </span>
             </p>
             <p>
               <strong className="text-gray-400">End Date:</strong>{" "}
-              <span className="text-gray-300">{formatDate(activeProject.endDate)}</span>
+              <span className="text-gray-300">
+                {formatDate(activeProject.endDate)}
+              </span>
             </p>
             <h3 className="text-lg font-bold text-gray-400 mt-4">Tasks</h3>
             <div className="space-y-4">
               {activeProject.tasks && activeProject.tasks.length > 0 ? (
                 activeProject.tasks.map((task) => (
-                  <div key={task.id} className="bg-[#393939] p-4 rounded-lg border border-gray-600">
+                  <div
+                    key={task.id}
+                    className="bg-[#393939] p-4 rounded-lg border border-gray-600"
+                  >
                     <p className="text-sm text-gray-300">
                       <strong>Task ID:</strong> {task.id}
                     </p>
@@ -767,7 +843,8 @@ const Projects = () => {
                       <strong>Description:</strong> {task.description}
                     </p>
                     <p className="text-sm text-gray-300">
-                      <strong>Assigned Student:</strong> {task.assignedTo ? task.assignedTo.username : "None"}
+                      <strong>Assigned Student:</strong>{" "}
+                      {task.assignedTo ? task.assignedTo.username : "None"}
                     </p>
                     <p className="text-sm text-gray-300">
                       <strong>Status:</strong> {task.status}
@@ -780,14 +857,16 @@ const Projects = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-400">No tasks found for this project.</p>
+                <p className="text-gray-400">
+                  No tasks found for this project.
+                </p>
               )}
             </div>
           </div>
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Projects
+export default Projects;

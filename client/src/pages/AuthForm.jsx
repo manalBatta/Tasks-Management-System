@@ -28,12 +28,7 @@ const AuthForm = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await signup(
-        formData.username,
-        formData.password,
-        formData.universityID
-      );
-      // بعد التسجيل الناجح، يمكنك إضافة التوجيه لاحقًا
+      await signup(formData.username, formData.password, formData.universityID);
     } catch (err) {
       setFormError("Signup failed. Please try again.");
     }
@@ -43,7 +38,6 @@ const AuthForm = () => {
     e.preventDefault();
     try {
       await login(formData.username, formData.password);
-      // بعد تسجيل الدخول الناجح، يمكنك إضافة التوجيه لاحقًا
     } catch (err) {
       setFormError("Login failed. Please try again.");
     }
@@ -52,8 +46,10 @@ const AuthForm = () => {
   return (
     <div className="auth-form">
       {isNewUser ? (
-        // Sign Up Form
-        <div id="signupPage" className="flex justify-center items-center h-screen bg-[#181818]">
+        <div
+          id="signupPage"
+          className="flex justify-center items-center h-screen bg-[#181818]"
+        >
           <div className="bg-[#181818] p-8 w-[350px] rounded-[10px] shadow-lg text-white">
             <h2 className="text-2xl font-bold mb-5">Sign up</h2>
             {formError && (
@@ -136,8 +132,10 @@ const AuthForm = () => {
           </div>
         </div>
       ) : (
-        // Sign In Form
-        <div id="signinPage" className="flex justify-center items-center h-screen bg-black">
+        <div
+          id="signinPage"
+          className="flex justify-center items-center h-screen bg-black"
+        >
           <div className="bg-black p-10 rounded-lg text-white w-[350px]">
             <h2 className="text-2xl font-bold mb-5">Sign In</h2>
             {formError && (

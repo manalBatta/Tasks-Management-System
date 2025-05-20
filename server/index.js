@@ -60,7 +60,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("MongoDB connected");
 
     const server = http.createServer(app);
 
@@ -68,7 +67,6 @@ mongoose
     const wss = new WebSocket.Server({ server });
 
     wss.on("connection", (ws) => {
-      console.log("WebSocket client connected");
       ws.on("message", async (message) => {
         let out;
         try {

@@ -3,11 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // null = not logged in
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // تحميل المستخدم من التوكن المخزن عند تحميل التطبيق
   useEffect(() => {
     const loadUser = async () => {
       setLoading(true);
@@ -17,7 +16,6 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           return;
         }
-        // GraphQL query to verify token and get user
         const res = await fetch("http://localhost:3000/graphql", {
           method: "POST",
           headers: {
@@ -56,7 +54,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     setError(null);
-    console.log("Logging in with:", username, password);
     try {
       const res = await fetch("http://localhost:3000/graphql", {
         method: "POST",
@@ -78,7 +75,6 @@ export const AuthProvider = ({ children }) => {
         }),
       });
       const { data, errors } = await res.json();
-      console.log("Login response:", data, errors);
       if (errors || !data.login)
         throw new Error(
           (errors && errors[0]?.message) ||
@@ -126,7 +122,6 @@ export const AuthProvider = ({ children }) => {
           (errors && errors[0]?.message) || "Signup failed. Please try again."
         );
 
-      // Optionally, you may want to auto-login after signup by calling login()
       setUser(data.signup);
       return data.signup;
     } catch (err) {
