@@ -16,7 +16,7 @@ const taskSchema = new mongoose.Schema({
     enum: ["Pending", "In Progress", "Completed", "On Hold", "Cancelled"],
     default: "Pending",
   },
-  projectId: String,
+  projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" }, // Add this line
   projectName: String,
   assignedTo:String ,
   assignedBy: String ,
@@ -49,6 +49,8 @@ taskSchema.pre('save', function(next) {
 // إضافة getters
 taskSchema.set('toJSON', { getters: true });
 taskSchema.set('toObject', { getters: true });
+
+
 
 const projectSchema = new mongoose.Schema({
   title: String,

@@ -132,32 +132,47 @@ const seed = async () => {
     const createdProjects = await Project.insertMany(projects);
 
     // Tasks
+     // Tasks
+     // Tasks
     const tasks = [
       {
         title: "Data Collection",
         description: "Gather historical weather data.",
         status: "Pending",
-        projectId :"682c31f5a98c36028c214981",
-        projectName:"Website Redesign",
         assignedTo: getUserId("SalahSalah"),
         assignedBy: getUserId("adminUser"),
         createdAt: "2024-02-26T12:00:00Z",
         dueDate: "2025-05-30",
+        projectId: getProjectId("Website Redesign"), 
+        projectName:"Website Redesign",
       },
       {
         title: "UI Design",
         description: "Create a responsive UI for the web app.",
         status: "In Progress",
-        projectId :"682c31f5a98c36028c214981",
-        projectName:"Website Redesign",
         assignedTo: getUserId("IsaacNasir"),
         assignedBy: getUserId("adminUser"),
         createdAt: "2024-02-26T12:30:00Z",
         dueDate: "2025-05-30",
+        projectId: getProjectId("Website Redesign"), 
+        projectName:"Website Redesign",
+
+      },
+          {
+        title: "Develo Mobiles",
+        description: "Think how mobiles can be develop",
+        status: "Pending",
+        assignedTo: getUserId("AliYaseen"),
+        assignedBy: getUserId("adminUser"),
+        createdAt: "2024-02-26T12:00:00Z",
+        dueDate: "2025-05-30",
+        projectId: getProjectId("Mobile App Development"), 
+        projectName:"Mobile App Development",
+
       },
     ];
     await Task.insertMany(tasks);
-
+    
     // Messages (chat)
     const messages = [
       {

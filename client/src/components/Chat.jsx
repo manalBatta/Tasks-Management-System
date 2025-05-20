@@ -10,7 +10,7 @@ const Chat = () => {
   const { user } = useAuth();
 
   // Use your local backend WebSocket server
-  const [socketUrl] = useState("ws://localhost:5000");
+  const [socketUrl] = useState("ws://localhost:3000");
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   const messagesEndRef = useRef(null);
@@ -18,7 +18,7 @@ const Chat = () => {
   // Fetch users from backend
   async function fetchUsers() {
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,7 +78,7 @@ const Chat = () => {
 
   async function fetchMessages(senderId, receiverId) {
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

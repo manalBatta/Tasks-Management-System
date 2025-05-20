@@ -5,6 +5,8 @@ const {
   GraphQLList,
   GraphQLID,
   GraphQLNonNull,
+  GraphQLInt,
+  GraphQLBoolean
 } = require("graphql");
 const { User, Task, Project, Message } = require("./models"); // <-- Add Message
 const mongoose = require("mongoose");
@@ -41,6 +43,12 @@ const ProjectType = new GraphQLObjectType({
       type: new GraphQLList(UserType),
       async resolve(parent) {
         return await User.find({ _id: { $in: parent.students } });
+      },
+    },
+    tasks: {  // Correct type: GraphQLList of TaskType
+      type: new GraphQLList(TaskType),
+      async resolve(parent) {
+        return await Task.find({ projectId: parent.id });
       },
     },
   }),
@@ -106,6 +114,17 @@ const MessageType = new GraphQLObjectType({
   }),
 });
 
+
+const DashboardStatsType = new GraphQLObjectType({
+  name: "DashboardStats",
+  fields: () => ({
+    projectsCount: { type: GraphQLInt },
+    studentsCount: { type: GraphQLInt },
+    tasksCount: { type: GraphQLInt },
+    finishedProjectsCount: { type: GraphQLInt },
+  }),
+});
+
 // Root Query
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
@@ -161,15 +180,39 @@ const RootQuery = new GraphQLObjectType({
         return User.findById(args.id);
       },
     },
-    project: {
+   project: {
       type: ProjectType,
       args: { id: { type: GraphQLID } },
       resolve(_, args) {
         return Project.findById(args.id);
       },
     },
+    tasksByProject: {
+      type: new GraphQLList(TaskType),
+      args: { projectId: { type: GraphQLID } },
+      resolve(_, args) {
+        return Task.find({ projectId: args.projectId });
+      },
+    },
+    dashboardStats: {
+      type: DashboardStatsType,
+      async resolve() {
+        const projectsCount = await Project.countDocuments();
+        const studentsCount = await User.countDocuments({ role: "student" });
+        const tasksCount = await Task.countDocuments();
+        const finishedProjectsCount = await Project.countDocuments({ status: "Completed" });
+
+        return {
+          projectsCount,
+          studentsCount,
+          tasksCount,
+          finishedProjectsCount,
+        };
+      },
+    },
   },
 });
+
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
@@ -226,24 +269,47 @@ module.exports = new GraphQLSchema({
           category: { type: GraphQLString },
           students: { type: new GraphQLList(GraphQLID) },
         },
-        resolve(_, args) {
-          // Convertir IDs de string a ObjectId
-          const projectData = { ...args };
-          
-          if (args.createdBy && mongoose.Types.ObjectId.isValid(args.createdBy)) {
-            projectData.createdBy = new mongoose.Types.ObjectId(args.createdBy);
+        async resolve(_, args) {
+          try {
+            // Create project data object
+            const projectData = {
+              title: args.title,
+              description: args.description || "",
+              // Don't include createdBy yet
+              startDate: args.startDate ? new Date(args.startDate) : new Date(),
+              endDate: args.endDate ? new Date(args.endDate) : null,
+              status: args.status || "Pending",
+              category: args.category || "Others",
+            };
+
+            // Only add createdBy if it's a valid ObjectId
+            if (args.createdBy && mongoose.Types.ObjectId.isValid(args.createdBy)) {
+              projectData.createdBy = new mongoose.Types.ObjectId(args.createdBy);
+            }
+
+            // Handle students array - filter out invalid ObjectIds
+            if (args.students && args.students.length > 0) {
+              projectData.students = args.students
+                .filter(id => mongoose.Types.ObjectId.isValid(id))
+                .map(id => new mongoose.Types.ObjectId(id));
+            } else {
+              projectData.students = [];
+            }
+
+            console.log("Creating project with data:", projectData);
+
+            // Create and save the project
+            const project = new Project(projectData);
+            const savedProject = await project.save();
+            
+            return savedProject;
+          } catch (error) {
+            console.error("Error adding project:", error);
+            throw new Error(`Failed to add project: ${error.message}`);
           }
-          
-          if (args.students && args.students.length > 0) {
-            projectData.students = args.students
-              .filter(id => mongoose.Types.ObjectId.isValid(id))
-              .map(id => new mongoose.Types.ObjectId(id));
-          }
-          
-          const project = new Project(projectData);
-          return project.save();
         },
       },
+    },
       updateTask: {
         type: TaskType,
         args: {
@@ -281,6 +347,5 @@ module.exports = new GraphQLSchema({
         return Task.findByIdAndUpdate(id, { status }, { new: true });
        },
       },
-    },
   }),
 });

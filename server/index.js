@@ -74,7 +74,7 @@ mongoose
     });
 
     // Start HTTP server
-    const PORT = process.env.PORT || 5000;
+    const PORT =3000;//process.env.PORT || 5000;
     server.listen(PORT, () => {
       console.log("Server running on port", PORT);
       console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);

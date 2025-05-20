@@ -22,7 +22,7 @@ const Tasks = () => {
   // Fetch users from backend
   async function fetchUsers() {
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,7 +52,7 @@ const Tasks = () => {
   // Fetch projects from backend
   async function fetchProjects() {
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ const Tasks = () => {
   // Fetch tasks from backend
   async function fetchTasks() {
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -214,7 +214,7 @@ const Tasks = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -316,7 +316,7 @@ const Tasks = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/graphql", {
+      const response = await fetch("http://localhost:3000/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
