@@ -1,59 +1,120 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // null = not logged in
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const login = (username, password) => {
-    const data = JSON.parse(localStorage.getItem("data"));
-    const users = data.users;
-    const isAuthenticatedUser = users.find(
-      (u) => u.username === username && u.password === password
-    );
+  // تحميل المستخدم من التوكن المخزن عند تحميل التطبيق
+  useEffect(() => {
+    const loadUser = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setLoading(false);
+          return;
+        }
 
-    if (isAuthenticatedUser) {
-      setUser({ ...isAuthenticatedUser });
+        // إعداد الهيدر للطلبات
+        axios.defaults.headers.common["x-auth-token"] = token;
 
-      localStorage.setItem("user", JSON.stringify(isAuthenticatedUser));
-    } else {
-      alert("Invalid username or password. Please try again.");
+        // التحقق من صحة التوكن
+        const res = await axios.get("http://localhost:5000/api/auth/verify");
+        setUser(res.data.user);
+      } catch (err) {
+        console.error("Authentication error:", err);
+        localStorage.removeItem("token");
+        delete axios.defaults.headers.common["x-auth-token"];
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  const login = async (username, password) => {
+    setError(null);
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        username,
+        password,
+      });
+
+      // حفظ التوكن في التخزين المحلي
+      localStorage.setItem("token", res.data.token);
+      
+      // إعداد الهيدر للطلبات المستقبلية
+      axios.defaults.headers.common["x-auth-token"] = res.data.token;
+      
+      setUser(res.data.user);
+      return res.data.user;
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid username or password. Please try again.");
+      alert(err.response?.data?.message || "Invalid username or password. Please try again.");
+      throw err;
     }
   };
 
-  const signup = (username, password, universityID) => {
+  const signup = async (username, password, universityID) => {
+    setError(null);
     if (username === "" || password === "") {
       alert("Please fill in all fields.");
       return;
     }
-    const data = JSON.parse(localStorage.getItem("data"));
-    const users = data.users;
-    const isUserAlreadyRegistered = users.find((u) => u.username === username);
+    
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+        username,
+        password,
+        universityID,
+      });
 
-    if (isUserAlreadyRegistered) {
-      alert("User already exists. Please try a different username.");
-    } else {
-      const newUser = {
-        id: users.length + 1,
-        username: username,
-        password: password,
-        role: universityID ? "student" : "admin",
-        universityID: universityID,
-      };
-
-      setUser(newUser);
-      users.push(newUser);
-      localStorage.setItem("data", JSON.stringify({ ...data, users: users }));
+      // حفظ التوكن في التخزين المحلي
+      localStorage.setItem("token", res.data.token);
+      
+      // إعداد الهيدر للطلبات المستقبلية
+      axios.defaults.headers.common["x-auth-token"] = res.data.token;
+      
+      setUser(res.data.user);
+      return res.data.user;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Signup failed. Please try again.";
+      setError(errorMessage);
+      alert(errorMessage);
+      throw err;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    // إزالة التوكن من التخزين المحلي
+    localStorage.removeItem("token");
+    
+    // إزالة الهيدر من الطلبات المستقبلية
+    delete axios.defaults.headers.common["x-auth-token"];
+    
     setUser(null);
   };
 
+  // التحقق مما إذا كان المستخدم مسجل الدخول
+  const isAuthenticated = () => !!user;
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        login, 
+        logout, 
+        signup, 
+        loading, 
+        error, 
+        isAuthenticated 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

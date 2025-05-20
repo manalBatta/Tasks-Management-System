@@ -1,10 +1,29 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  role: { type: String, enum: ["student", "admin"], default: "student" },
-  universityID: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ['student', 'admin'],
+    default: 'student',
+  },
+  universityID: {
+    type: String,
+    default: null,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const taskSchema = new mongoose.Schema({

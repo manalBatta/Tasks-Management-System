@@ -4,6 +4,7 @@ import { useState } from "react";
 const AuthForm = () => {
   const { login, signup } = useAuth();
   const [isNewUser, setIsNewUser] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [formData, setFormData] = useState({
     username: "",
@@ -19,29 +20,48 @@ const AuthForm = () => {
     }));
   };
 
+  const toggleForm = () => {
+    setIsNewUser(!isNewUser);
+    setFormError("");
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      await signup(
+        formData.username,
+        formData.password,
+        formData.universityID
+      );
+      // بعد التسجيل الناجح، يمكنك إضافة التوجيه لاحقًا
+    } catch (err) {
+      setFormError("Signup failed. Please try again.");
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await login(formData.username, formData.password);
+      // بعد تسجيل الدخول الناجح، يمكنك إضافة التوجيه لاحقًا
+    } catch (err) {
+      setFormError("Login failed. Please try again.");
+    }
+  };
+
   return (
     <div className="auth-form">
-      <div
-        id="signinPage"
-        className="flex justify-center items-center h-screen bg-black "
-      >
-        <div className="bg-black p-10 rounded-lg text-white w-[350px] border-2 border-[#4CAF50] rounded-lg">
-          <h2 className="text-2xl font-bold mb-5">
-            {isNewUser ? "Sign Up" : "Sign In"}
-          </h2>
-
-          {isNewUser ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault(); // Prevent the default form submission behavior
-                console.log(formData);
-                signup(
-                  formData.username,
-                  formData.password,
-                  formData.universityID
-                ); // Call signup with form data
-              }}
-            >
+      {isNewUser ? (
+        // Sign Up Form
+        <div id="signupPage" className="flex justify-center items-center h-screen bg-[#181818]">
+          <div className="bg-[#181818] p-8 w-[350px] rounded-[10px] shadow-lg text-white">
+            <h2 className="text-2xl font-bold mb-5">Sign up</h2>
+            {formError && (
+              <div className="bg-red-500 text-white p-2 rounded mb-4">
+                {formError}
+              </div>
+            )}
+            <form onSubmit={handleSignup}>
               <label htmlFor="username" className="block text-sm mt-2">
                 Username
               </label>
@@ -80,7 +100,7 @@ const AuthForm = () => {
               </label>
 
               {formData.universityID != null && (
-                <div id="university-id-container" className={`mt-4 `}>
+                <div id="university-id-container" className="mt-4">
                   <label htmlFor="universityID" className="block text-sm">
                     University ID
                   </label>
@@ -102,25 +122,30 @@ const AuthForm = () => {
                 Sign up
               </button>
 
-              <button
-                id="gotoSignin"
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsNewUser(false);
-                }}
-                className="w-auto p-2 mt-3 rounded border-2 border-[#4caf50] text-[#4caf50] text-lg hover:bg-[#4caf50] hover:text-white"
-              >
-                Sign In
-              </button>
+              <p className="text-center mt-4 text-sm">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={toggleForm}
+                  className="text-[#4caf50] hover:underline"
+                >
+                  Sign In
+                </button>
+              </p>
             </form>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault(); // Prevent the default form submission behavior
-                login(formData.username, formData.password); // Call login with form data
-              }}
-            >
+          </div>
+        </div>
+      ) : (
+        // Sign In Form
+        <div id="signinPage" className="flex justify-center items-center h-screen bg-black">
+          <div className="bg-black p-10 rounded-lg text-white w-[350px]">
+            <h2 className="text-2xl font-bold mb-5">Sign In</h2>
+            {formError && (
+              <div className="bg-red-500 text-white p-2 rounded mb-4">
+                {formError}
+              </div>
+            )}
+            <form onSubmit={handleLogin}>
               <label htmlFor="username" className="block mb-2">
                 Username
               </label>
@@ -156,21 +181,20 @@ const AuthForm = () => {
                 Sign In
               </button>
 
-              <button
-                id="gotoSignup"
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsNewUser(true);
-                }}
-                className="w-auto p-2 rounded border-2 border-[#4CAF50] text-[#4CAF50] text-lg hover:bg-[#4CAF50] hover:text-white"
-              >
-                Sign up
-              </button>
+              <p className="text-center mt-4 text-sm">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={toggleForm}
+                  className="text-[#4CAF50] hover:underline"
+                >
+                  Sign up
+                </button>
+              </p>
             </form>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
