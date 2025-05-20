@@ -6,7 +6,7 @@ const {
   GraphQLID,
   GraphQLNonNull,
   GraphQLInt,
-  GraphQLBoolean
+  GraphQLBoolean,
 } = require("graphql");
 const { User, Task, Project, Message } = require("./models"); // <-- Add Message
 const mongoose = require("mongoose");
@@ -45,7 +45,8 @@ const ProjectType = new GraphQLObjectType({
         return await User.find({ _id: { $in: parent.students } });
       },
     },
-    tasks: {  // Correct type: GraphQLList of TaskType
+    tasks: {
+      // Correct type: GraphQLList of TaskType
       type: new GraphQLList(TaskType),
       async resolve(parent) {
         return await Task.find({ projectId: parent.id });
@@ -70,7 +71,9 @@ const TaskType = new GraphQLObjectType({
         try {
           // محاولة تحويل المعرف إلى ObjectId إذا كان ممكنًا
           if (mongoose.Types.ObjectId.isValid(parent.assignedTo)) {
-            return await User.findById(new mongoose.Types.ObjectId(parent.assignedTo));
+            return await User.findById(
+              new mongoose.Types.ObjectId(parent.assignedTo)
+            );
           }
           // إذا لم يكن معرف صالح، ابحث عن المستخدم بطريقة أخرى
           // مثلاً بالاسم أو أي حقل آخر
@@ -87,7 +90,9 @@ const TaskType = new GraphQLObjectType({
         try {
           // محاولة تحويل المعرف إلى ObjectId إذا كان ممكنًا
           if (mongoose.Types.ObjectId.isValid(parent.assignedBy)) {
-            return await User.findById(new mongoose.Types.ObjectId(parent.assignedBy));
+            return await User.findById(
+              new mongoose.Types.ObjectId(parent.assignedBy)
+            );
           }
           // إذا لم يكن معرف صالح، ابحث عن المستخدم بطريقة أخرى
           return null;
@@ -113,7 +118,6 @@ const MessageType = new GraphQLObjectType({
     timestamp: { type: GraphQLString },
   }),
 });
-
 
 const DashboardStatsType = new GraphQLObjectType({
   name: "DashboardStats",
@@ -180,7 +184,7 @@ const RootQuery = new GraphQLObjectType({
         return User.findById(args.id);
       },
     },
-   project: {
+    project: {
       type: ProjectType,
       args: { id: { type: GraphQLID } },
       resolve(_, args) {
@@ -200,7 +204,9 @@ const RootQuery = new GraphQLObjectType({
         const projectsCount = await Project.countDocuments();
         const studentsCount = await User.countDocuments({ role: "student" });
         const tasksCount = await Task.countDocuments();
-        const finishedProjectsCount = await Project.countDocuments({ status: "Completed" });
+        const finishedProjectsCount = await Project.countDocuments({
+          status: "Completed",
+        });
 
         return {
           projectsCount,
@@ -212,7 +218,6 @@ const RootQuery = new GraphQLObjectType({
     },
   },
 });
-
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
@@ -232,16 +237,16 @@ module.exports = new GraphQLSchema({
           projectName: { type: GraphQLString },
         },
         async resolve(_, args) {
-         // استخدام المعرفات كما هي بدون تحويل
+          // استخدام المعرفات كما هي بدون تحويل
           //console.log("Task data:", args);
-           const taskData = { ...args };
-    
-            // تحويل التاريخ إلى كائن Date
-            if (args.dueDate) {
-              taskData.dueDate = new Date(args.dueDate);
-            }
-           const task = new Task(args);
-           return task.save();
+          const taskData = { ...args };
+
+          // تحويل التاريخ إلى كائن Date
+          if (args.dueDate) {
+            taskData.dueDate = new Date(args.dueDate);
+          }
+          const task = new Task(args);
+          return task.save();
         },
       },
       addUser: {
@@ -283,15 +288,20 @@ module.exports = new GraphQLSchema({
             };
 
             // Only add createdBy if it's a valid ObjectId
-            if (args.createdBy && mongoose.Types.ObjectId.isValid(args.createdBy)) {
-              projectData.createdBy = new mongoose.Types.ObjectId(args.createdBy);
+            if (
+              args.createdBy &&
+              mongoose.Types.ObjectId.isValid(args.createdBy)
+            ) {
+              projectData.createdBy = new mongoose.Types.ObjectId(
+                args.createdBy
+              );
             }
 
             // Handle students array - filter out invalid ObjectIds
             if (args.students && args.students.length > 0) {
               projectData.students = args.students
-                .filter(id => mongoose.Types.ObjectId.isValid(id))
-                .map(id => new mongoose.Types.ObjectId(id));
+                .filter((id) => mongoose.Types.ObjectId.isValid(id))
+                .map((id) => new mongoose.Types.ObjectId(id));
             } else {
               projectData.students = [];
             }
@@ -301,7 +311,7 @@ module.exports = new GraphQLSchema({
             // Create and save the project
             const project = new Project(projectData);
             const savedProject = await project.save();
-            
+
             return savedProject;
           } catch (error) {
             console.error("Error adding project:", error);
@@ -309,43 +319,53 @@ module.exports = new GraphQLSchema({
           }
         },
       },
-    },
+
       updateTask: {
         type: TaskType,
         args: {
-         id: { type: new GraphQLNonNull(GraphQLID) },
-         title: { type: GraphQLString },
-         description: { type: GraphQLString },
-         status: { type: GraphQLString },
-         dueDate: { type: GraphQLString },
-         assignedTo: { type: GraphQLID },
-        assignedBy: { type: GraphQLID },
+          id: { type: new GraphQLNonNull(GraphQLID) },
+          title: { type: GraphQLString },
+          description: { type: GraphQLString },
+          status: { type: GraphQLString },
+          dueDate: { type: GraphQLString },
+          assignedTo: { type: GraphQLID },
+          assignedBy: { type: GraphQLID },
         },
-       async resolve(_, args) {
-          // Convertir IDs de string a ObjectId
+        async resolve(_, args) {
           const updateData = { ...args };
-          delete updateData.id; // Eliminar el ID del objeto de actualización
-          
-          if (args.assignedTo && mongoose.Types.ObjectId.isValid(args.assignedTo)) {
-            updateData.assignedTo = new mongoose.Types.ObjectId(args.assignedTo);
+          delete updateData.id;
+
+          if (
+            args.assignedTo &&
+            mongoose.Types.ObjectId.isValid(args.assignedTo)
+          ) {
+            updateData.assignedTo = new mongoose.Types.ObjectId(
+              args.assignedTo
+            );
           }
-          
-          if (args.assignedBy && mongoose.Types.ObjectId.isValid(args.assignedBy)) {
-            updateData.assignedBy = new mongoose.Types.ObjectId(args.assignedBy);
+
+          if (
+            args.assignedBy &&
+            mongoose.Types.ObjectId.isValid(args.assignedBy)
+          ) {
+            updateData.assignedBy = new mongoose.Types.ObjectId(
+              args.assignedBy
+            );
           }
-          
+
           return Task.findByIdAndUpdate(args.id, updateData, { new: true });
-          },
+        },
       },
-       updateTaskStatus: {
-       type: TaskType,
-       args: {
-       id: { type: new GraphQLNonNull(GraphQLID) },
-       status: { type: new GraphQLNonNull(GraphQLString) },
-       },
+      updateTaskStatus: {
+        type: TaskType,
+        args: {
+          id: { type: new GraphQLNonNull(GraphQLID) },
+          status: { type: new GraphQLNonNull(GraphQLString) },
+        },
         async resolve(_, { id, status }) {
-        return Task.findByIdAndUpdate(id, { status }, { new: true });
-       },
+          return Task.findByIdAndUpdate(id, { status }, { new: true });
+        },
       },
+    },
   }),
 });

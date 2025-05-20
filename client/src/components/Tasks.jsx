@@ -114,62 +114,62 @@ const Tasks = () => {
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const { data } = await response.json();
       // طباعة البيانات الأصلية للتشخيص
-    console.log("Original tasks data:", data.tasks);
+      console.log("Original tasks data:", data.tasks);
       // معالجة التواريخ بطريقة آمنة
-    const processedTasks = data.tasks.map(task => {
-      // نسخة من المهمة
-      const processedTask = { ...task };
-      
-      // معالجة تاريخ الاستحقاق
-      try {
-        if (task.dueDate) {
-          // محاولة تحويل التاريخ إلى كائن Date
-          const dueDate = new Date(task.dueDate);
-          // التحقق من صحة التاريخ
-          if (!isNaN(dueDate.getTime())) {
-            processedTask.dueDate = dueDate.toISOString().split('T')[0]; // تنسيق YYYY-MM-DD
+      const processedTasks = data.tasks.map((task) => {
+        // نسخة من المهمة
+        const processedTask = { ...task };
+
+        // معالجة تاريخ الاستحقاق
+        try {
+          if (task.dueDate) {
+            // محاولة تحويل التاريخ إلى كائن Date
+            const dueDate = new Date(task.dueDate);
+            // التحقق من صحة التاريخ
+            if (!isNaN(dueDate.getTime())) {
+              processedTask.dueDate = dueDate.toISOString().split("T")[0]; // تنسيق YYYY-MM-DD
+            } else {
+              processedTask.dueDate = null;
+            }
           } else {
             processedTask.dueDate = null;
           }
-        } else {
+        } catch (e) {
+          console.error("Error processing dueDate:", e);
           processedTask.dueDate = null;
         }
-      } catch (e) {
-        console.error("Error processing dueDate:", e);
-        processedTask.dueDate = null;
-      }
-      
-      // معالجة تاريخ الإنشاء
-      try {
-        if (task.createdAt) {
-          // محاولة تحويل التاريخ إلى كائن Date
-          const createdAt = new Date(task.createdAt);
-          // التحقق من صحة التاريخ
-          if (!isNaN(createdAt.getTime())) {
-            processedTask.createdAt = createdAt.toISOString();
+
+        // معالجة تاريخ الإنشاء
+        try {
+          if (task.createdAt) {
+            // محاولة تحويل التاريخ إلى كائن Date
+            const createdAt = new Date(task.createdAt);
+            // التحقق من صحة التاريخ
+            if (!isNaN(createdAt.getTime())) {
+              processedTask.createdAt = createdAt.toISOString();
+            } else {
+              processedTask.createdAt = new Date().toISOString();
+            }
           } else {
             processedTask.createdAt = new Date().toISOString();
           }
-        } else {
+        } catch (e) {
+          console.error("Error processing createdAt:", e);
           processedTask.createdAt = new Date().toISOString();
         }
-      } catch (e) {
-        console.error("Error processing createdAt:", e);
-        processedTask.createdAt = new Date().toISOString();
+
+        return processedTask;
+      });
+
+      // تصفية المهام إذا كان المستخدم طالبًا
+      let filteredTasks = processedTasks;
+      if (user.role === "student") {
+        filteredTasks = filteredTasks.filter(
+          (task) => task.assignedTo && task.assignedTo.id === user.id
+        );
       }
-      
-      return processedTask;
-    });
-    
-    // تصفية المهام إذا كان المستخدم طالبًا
-    let filteredTasks = processedTasks;
-    if (user.role === "student") {
-      filteredTasks = filteredTasks.filter(task => 
-        task.assignedTo && task.assignedTo.id === user.id
-      );
-    }
-    
-    setTasks(filteredTasks);
+
+      setTasks(filteredTasks);
       return filteredTasks;
     } catch (err) {
       alert("Error fetching tasks: " + err.message);
@@ -191,7 +191,14 @@ const Tasks = () => {
     const dueDate = event.target.elements["due-date"].value;
 
     // Validation
-    if (!projectTitle || !taskName || !description || !assignedStudent || !status || !dueDate) {
+    if (
+      !projectTitle ||
+      !taskName ||
+      !description ||
+      !assignedStudent ||
+      !status ||
+      !dueDate
+    ) {
       alert("Please fill in all fields.");
       return;
     }
@@ -202,10 +209,10 @@ const Tasks = () => {
     }
 
     // Find project and user IDs
-    const project = projects.find(proj => proj.title === projectTitle);
+    const project = projects.find((proj) => proj.title === projectTitle);
     const projectId = project ? project.id : null;
 
-    const assignedUser = users.find(u => u.username === assignedStudent);
+    const assignedUser = users.find((u) => u.username === assignedStudent);
     const assignedToId = assignedUser ? assignedUser.id : null;
 
     if (!projectId || !assignedToId) {
@@ -266,7 +273,7 @@ const Tasks = () => {
             assignedTo: assignedToId,
             assignedBy: user.id,
             projectId: projectId,
-            projectName: projectTitle
+            projectName: projectTitle,
           },
         }),
       });
@@ -278,7 +285,7 @@ const Tasks = () => {
       }
 
       // Add the new task to the state
-      setTasks(prevTasks => [...prevTasks, data.addTask]);
+      setTasks((prevTasks) => [...prevTasks, data.addTask]);
 
       // Close the modal
       closeModal();
@@ -291,7 +298,7 @@ const Tasks = () => {
 
   // Update task status
   const sortState = async (taskId) => {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
     let nextStatus;
@@ -321,17 +328,13 @@ const Tasks = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: `
-            mutation UpdateTaskStatus($id: ID!, $status: String!) {
-              updateTaskStatus(id: $id, status: $status) {
+            mutation {
+              updateTaskStatus(id: "${taskId}", status: "${nextStatus}") {
                 id
                 status
               }
             }
           `,
-          variables: {
-            id: taskId,
-            status: nextStatus,
-          },
         }),
       });
 
@@ -342,9 +345,11 @@ const Tasks = () => {
       }
 
       // Update the task in the state
-      setTasks(prevTasks => prevTasks.map(t => 
-        t.id === taskId ? { ...t, status: nextStatus } : t
-      ));
+      setTasks((prevTasks) =>
+        prevTasks.map((t) =>
+          t.id === taskId ? { ...t, status: nextStatus } : t
+        )
+      );
     } catch (err) {
       console.error("Error updating task status:", err);
       alert("Failed to update task status: " + err.message);
@@ -421,7 +426,11 @@ const Tasks = () => {
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -468,41 +477,40 @@ const Tasks = () => {
           </tr>
         </thead>
         <tbody>
-  {tasks.map((task) => (
-    <tr key={task.id}>
-      <td>{`${task.id.substring(task.id.length - 1)}`}</td>
-      <td>{task.projectName || "Unknown"}</td>
-      <td>{task.title}</td>
-      <td>{task.description}</td>
-      <td>{task.assignedTo?.username || "Unknown"}</td>
-      <td
-        className="status"
-        onClick={() => sortState(task.id)}
-        data-status={task.status}
-      >
-        {task.status}
-      </td>
-      <td>
-        {task.dueDate ? 
-    (() => {
-      try {
-        // محاولة تنسيق التاريخ
-        const date = new Date(task.dueDate);
-        if (!isNaN(date.getTime())) {
-          return date.toLocaleDateString();
-        }
-        return "Invalid date";
-      } catch (e) {
-        console.error("Error formatting date:", e);
-        return "Invalid date";
-      }
-    })() : 
-    "No date"
-  }
-      </td>
-    </tr>
-  ))}
-</tbody>
+          {tasks.map((task) => (
+            <tr key={task.id}>
+              <td>{`${task.id.substring(task.id.length - 1)}`}</td>
+              <td>{task.projectName || "Unknown"}</td>
+              <td>{task.title}</td>
+              <td>{task.description}</td>
+              <td>{task.assignedTo?.username || "Unknown"}</td>
+              <td
+                className="status"
+                onClick={() => sortState(task.id)}
+                data-status={task.status}
+              >
+                {task.status}
+              </td>
+              <td>
+                {task.dueDate
+                  ? (() => {
+                      try {
+                        // محاولة تنسيق التاريخ
+                        const date = new Date(task.dueDate);
+                        if (!isNaN(date.getTime())) {
+                          return date.toLocaleDateString();
+                        }
+                        return "Invalid date";
+                      } catch (e) {
+                        console.error("Error formatting date:", e);
+                        return "Invalid date";
+                      }
+                    })()
+                  : "No date"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
 
       {/* Modal */}
@@ -569,7 +577,7 @@ const Tasks = () => {
                   )}
                   {user.role === "admin" ? (
                     users
-                      .filter(u => u.role === "student")
+                      .filter((u) => u.role === "student")
                       .map((u) => (
                         <option key={u.id} value={u.username}>
                           {u.username}

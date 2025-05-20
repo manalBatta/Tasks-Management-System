@@ -131,9 +131,10 @@ const seed = async () => {
     ];
     const createdProjects = await Project.insertMany(projects);
 
-    // Tasks
-     // Tasks
-     // Tasks
+    // Helper to get project _id by title
+    const getProjectId = (title) =>
+      createdProjects.find((p) => p.title === title)._id;
+
     const tasks = [
       {
         title: "Data Collection",
@@ -143,8 +144,8 @@ const seed = async () => {
         assignedBy: getUserId("adminUser"),
         createdAt: "2024-02-26T12:00:00Z",
         dueDate: "2025-05-30",
-        projectId: getProjectId("Website Redesign"), 
-        projectName:"Website Redesign",
+        projectId: getProjectId("Website Redesign"),
+        projectName: "Website Redesign",
       },
       {
         title: "UI Design",
@@ -154,11 +155,10 @@ const seed = async () => {
         assignedBy: getUserId("adminUser"),
         createdAt: "2024-02-26T12:30:00Z",
         dueDate: "2025-05-30",
-        projectId: getProjectId("Website Redesign"), 
-        projectName:"Website Redesign",
-
+        projectId: getProjectId("Website Redesign"),
+        projectName: "Website Redesign",
       },
-          {
+      {
         title: "Develo Mobiles",
         description: "Think how mobiles can be develop",
         status: "Pending",
@@ -166,13 +166,12 @@ const seed = async () => {
         assignedBy: getUserId("adminUser"),
         createdAt: "2024-02-26T12:00:00Z",
         dueDate: "2025-05-30",
-        projectId: getProjectId("Mobile App Development"), 
-        projectName:"Mobile App Development",
-
+        projectId: getProjectId("Mobile App Development"),
+        projectName: "Mobile App Development",
       },
     ];
     await Task.insertMany(tasks);
-    
+
     // Messages (chat)
     const messages = [
       {
