@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -18,17 +17,35 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           return;
         }
-
-        // إعداد الهيدر للطلبات
-        axios.defaults.headers.common["x-auth-token"] = token;
-
-        // التحقق من صحة التوكن
-        const res = await axios.get("http://localhost:5000/api/auth/verify");
-        setUser(res.data.user);
+        // GraphQL query to verify token and get user
+        const res = await fetch("http://localhost:3000/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                verifyToken {
+                  id
+                  username
+                  role
+                  universityID
+                }
+              }
+            `,
+          }),
+        });
+        const { data } = await res.json();
+        if (data && data.verifyToken) {
+          setUser(data.verifyToken);
+        } else {
+          localStorage.removeItem("token");
+        }
       } catch (err) {
         console.error("Authentication error:", err);
         localStorage.removeItem("token");
-        delete axios.defaults.headers.common["x-auth-token"];
       } finally {
         setLoading(false);
       }
@@ -39,23 +56,41 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     setError(null);
+    console.log("Logging in with:", username, password);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        username,
-        password,
+      const res = await fetch("http://localhost:3000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            mutation {
+              login(username: "${username}", password: "${password}") {
+                token
+                user {
+                  id
+                  username
+                  role
+                  universityID
+                }
+              }
+            }
+          `,
+        }),
       });
+      const { data, errors } = await res.json();
+      console.log("Login response:", data, errors);
+      if (errors || !data.login)
+        throw new Error(
+          (errors && errors[0]?.message) ||
+            "Invalid username or password. Please try again."
+        );
 
-      // حفظ التوكن في التخزين المحلي
-      localStorage.setItem("token", res.data.token);
-      
-      // إعداد الهيدر للطلبات المستقبلية
-      axios.defaults.headers.common["x-auth-token"] = res.data.token;
-      
-      setUser(res.data.user);
-      return res.data.user;
+      localStorage.setItem("token", data.login.token);
+      setUser(data.login.user);
+      return data.login.user;
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid username or password. Please try again.");
-      alert(err.response?.data?.message || "Invalid username or password. Please try again.");
+      setError(err.message);
+      alert(err.message);
       throw err;
     }
   };
@@ -66,53 +101,58 @@ export const AuthProvider = ({ children }) => {
       alert("Please fill in all fields.");
       return;
     }
-    
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", {
-        username,
-        password,
-        universityID,
+      const res = await fetch("http://localhost:3000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `
+            mutation {
+              signup(username: "${username}", password: "${password}", universityID: "${
+            universityID || ""
+          }") {
+                id
+                username
+                role
+                universityID
+              }
+            }
+          `,
+        }),
       });
+      const { data, errors } = await res.json();
+      if (errors || !data.signup)
+        throw new Error(
+          (errors && errors[0]?.message) || "Signup failed. Please try again."
+        );
 
-      // حفظ التوكن في التخزين المحلي
-      localStorage.setItem("token", res.data.token);
-      
-      // إعداد الهيدر للطلبات المستقبلية
-      axios.defaults.headers.common["x-auth-token"] = res.data.token;
-      
-      setUser(res.data.user);
-      return res.data.user;
+      // Optionally, you may want to auto-login after signup by calling login()
+      setUser(data.signup);
+      return data.signup;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Signup failed. Please try again.";
-      setError(errorMessage);
-      alert(errorMessage);
+      setError(err.message);
+      alert(err.message);
       throw err;
     }
   };
 
   const logout = () => {
-    // إزالة التوكن من التخزين المحلي
     localStorage.removeItem("token");
-    
-    // إزالة الهيدر من الطلبات المستقبلية
-    delete axios.defaults.headers.common["x-auth-token"];
-    
     setUser(null);
   };
 
-  // التحقق مما إذا كان المستخدم مسجل الدخول
   const isAuthenticated = () => !!user;
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        login, 
-        logout, 
-        signup, 
-        loading, 
-        error, 
-        isAuthenticated 
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        signup,
+        loading,
+        error,
+        isAuthenticated,
       }}
     >
       {children}
