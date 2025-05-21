@@ -6,20 +6,17 @@ const schema = require("./graphql");
 const WebSocket = require("ws");
 const http = require("http");
 const cors = require("cors");
-const jwt = require("jsonwebtoken"); // إضافة استيراد JWT
-const bcrypt = require("bcryptjs"); // إضافة استيراد bcrypt
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
-// استيراد النماذج
-const { Message, User } = require("./models");
+const { Messageser } = require("./models");
 
-// مفتاح سري للتوقيع JWT
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Middleware للتحقق من التوكن وإضافة المستخدم إلى الطلب
 app.use((req, res, next) => {
   const token = req.header("x-auth-token");
   if (token) {
@@ -33,7 +30,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware للتحقق من المصادقة
 const authMiddleware = (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) {
@@ -49,7 +45,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// مسار محمي للاختبار
 app.get("/api/protected", authMiddleware, (req, res) => {
   res.json({ message: "This is a protected route", user: req.user });
 });
@@ -60,7 +55,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-
     const server = http.createServer(app);
 
     // Create WebSocket server attached to same HTTP server
@@ -87,7 +81,6 @@ mongoose
             const savedMessage = new Message(parsed);
             await savedMessage.save();
           } else {
-            // Invalid message format, do not broadcast
             console.warn(
               "Invalid chat message received, not broadcasting:",
               parsed
@@ -95,7 +88,6 @@ mongoose
             return;
           }
         } catch (err) {
-          // Not valid JSON, do not broadcast
           console.warn(
             "Non-JSON or invalid message received, not broadcasting:",
             message
@@ -113,7 +105,7 @@ mongoose
     });
 
     // Start HTTP server
-    const PORT = 3000;
+    const PORT = process.env.PORT || 3000;
     server.listen(PORT, () => {
       console.log("Server running on port", PORT);
       console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);

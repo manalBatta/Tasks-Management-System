@@ -55,7 +55,6 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
-// تحويل التاريخ إلى كائن Date قبل الحفظ
 taskSchema.pre('save', function(next) {
   if (this.dueDate && typeof this.dueDate === 'string') {
     try {
@@ -66,7 +65,6 @@ taskSchema.pre('save', function(next) {
   }
   next();
 });
-// إضافة getters
 taskSchema.set('toJSON', { getters: true });
 taskSchema.set('toObject', { getters: true });
 
